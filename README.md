@@ -11,7 +11,7 @@ I'm still learning how to package lua code. At the moment,
 this is how you create a new alloapp:
 
 1. Install clang, cmake, luajit
-2. Create your own repo, with a `src/main.lua`
+2. Create your own repo, with a `src/main.lua` and `src/app.lua`
 3. Add submodules:
 
 ```
@@ -30,12 +30,12 @@ cp liballonet.so ../../../src/
 echo "*.so" >> ../../../.gitignore
 ```
 
-5. Use this skeleton in your main.lua:
+5. Put this bootstrap code in `main.lua`:
 
 ```
-local scriptPath = arg[0]
-local srcDir = string.sub(scriptPath, 1, string.find(scriptPath, "main.lua")-2)
-local libDir = srcDir.."/../lib"
+scriptPath = arg[0]
+srcDir = string.sub(scriptPath, 1, string.find(scriptPath, "main.lua")-2)
+libDir = srcDir.."/../lib"
 
 package.cpath = string.format("%s;%s/?.so", package.cpath, srcDir)
 package.path = string.format(
@@ -48,9 +48,14 @@ package.path = string.format(
 )
 
 require("liballonet")
-local Client = require("alloui.client")
-local ui = require("alloui.ui")
+Client = require("alloui.client")
+ui = require("alloui.ui")
+require("app")
+```
 
+6. Put your app in `app.lua`:
+
+```
 local client = Client(
     arg[1], 
     "allo-jukebox"
