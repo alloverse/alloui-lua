@@ -15,8 +15,9 @@ this is how you create a new alloapp:
 3. Add submodules:
 
 ```
-git submodule add --recursive https://github.com/alloverse/allonet.git lib/allonet
-git submodule add --recursive https://github.com/alloverse/alloui-lua.git lib/alloui-lua
+git submodule add https://github.com/alloverse/allonet.git lib/allonet
+git submodule add https://github.com/alloverse/alloui-lua.git lib/alloui-lua
+git submodule update --init --recursive
 ```
 
 4. Compile liballonet.so and copy it to your `src` folder:
@@ -30,7 +31,7 @@ cp liballonet.so ../../../src/
 echo "*.so" >> ../../../.gitignore
 ```
 
-5. Put this bootstrap code in `main.lua`:
+5. Put this bootstrap code in `src/main.lua`:
 
 ```
 scriptPath = arg[0]
@@ -53,7 +54,7 @@ ui = require("alloui.ui")
 require("app")
 ```
 
-6. Put your app in `app.lua`:
+6. Put your app in `src/app.lua`:
 
 ```
 local client = Client(
@@ -62,8 +63,9 @@ local client = Client(
 )
 local app = App(client)
 
-local myAppView = ui.View()
-... #configure your app's startup UI
+local myAppView = ui.View(ui.Bounds(0,0,0,1,1,1))
+-- ... configure your app's startup UI
+
 
 app.mainView = myAppView
 app:connect()
