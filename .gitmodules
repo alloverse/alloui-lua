@@ -1,0 +1,6 @@
+[submodule "lib/cpml"]
+	path = lib/cpml
+	url = https://github.com/excessive/cpml.git
+[submodule "lib/pl"]
+	path = lib/pl
+	url = https://github.com/Tieske/Penlight
