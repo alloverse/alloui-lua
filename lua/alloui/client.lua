@@ -1,8 +1,9 @@
-local json = require("json")
+local modules = (...):gsub('%.[^%.]+$', '') .. "."
+local json = require(modules.."json")
 local tablex = require("pl.tablex")
-local Entity, componentClasses = unpack(require("entity"))
+local Entity, componentClasses = unpack(require(modules.."entity"))
 local class = require("pl.class")
-require "random_string"
+require(modules.."random_string")
 
 class.Client()
 

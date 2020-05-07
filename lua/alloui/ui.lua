@@ -1,10 +1,12 @@
+local modules = (...):gsub('%.[^%.]+$', '') .. "."
+
 local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
-local vec3 = require("cpml.vec3")
-local mat4 = require("cpml.mat4")
-require "random_string"
-local util = require "util"
+local vec3 = require("modules.vec3")
+local mat4 = require("modules.mat4")
+require(modules .."random_string")
+local util = require(modules.."util")
 
 class.View()
 function View:_init(bounds)
