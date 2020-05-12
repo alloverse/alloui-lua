@@ -17,9 +17,8 @@ function Client:_init(url, name)
         entities = {}
     }
 
-    self.client:set_disconnected_callback(function()
-        print("Lost connection :(")
-        exit()
+    self.client:set_disconnected_callback(function(code, message)
+        self.delegates.onDisconnected(code, message)
     end)
     self.client:set_interaction_callback(function(inter)
         self:onInteraction(inter)
@@ -30,19 +29,21 @@ function Client:_init(url, name)
     self.avatar_id = ""
 
     self.delegates = {
+        onStateChanged = function() end,
         onEntityAdded = function(e) end,
         onEntityRemoved = function(e) end,
         onComponentAdded = function(k, v) end,
         onComponentChanged = function(k, v) end,
         onComponentRemoved = function(k, v) end,
-        onInteraction = function(inter, body, receiver, sender) end
+        onInteraction = function(inter, body, receiver, sender) end,
+        onDisconnected = function(code, message) end
     }
 
     return self
 end
 
 function Client:connect(avatar_spec)
-    self.client:connect(
+    return self.client:connect(
         self.url,
         json.encode({display_name = self.name}),
         json.encode(avatar_spec)
@@ -119,6 +120,7 @@ function Client:updateState(newState)
     end
   
     -- Run callbacks
+    self.delegates.onStateChanged()
     tablex.map(function(x) 
         self:_respondToEquery(x)
         self.delegates.onEntityAdded(x) 
