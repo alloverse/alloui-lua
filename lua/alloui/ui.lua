@@ -102,7 +102,7 @@ function Surface:specification()
                   --   #bl                   #br                  #tl                    #tr
             vertices= {{w2, 0.0, -h2},       {w2, 0.0, h2},       {-w2, 0.0, -h2},       {-w2, 0.0, h2}},
             uvs=      {{0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},            {1.0, 1.0}},
-            triangles= {{0, 3, 1}, {0, 2, 3}},
+            triangles= {{0, 3, 1}, {0, 2, 3}, {1, 3, 0}, {3, 2, 0}},
             texture= self.texture
         },
     })
