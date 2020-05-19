@@ -236,6 +236,7 @@ end
 
 function Pose:rotate(angle, x, y, z)
     self.transform = mat4.rotate(self.transform, self.transform, angle, vec3(x, y, z))
+    return self
 end
 
 class.Size()
@@ -256,6 +257,11 @@ function Bounds:_init(a, b, z, w, h, d)
         self.pose = Pose(a, b, z)
         self.size = Size(w, h, d)
     end
+end
+
+function Bounds:rotate(angle, x, y, z)
+    self.pose:rotate(angle, x, y, z)
+    return self
 end
 
 class.ScheduledAction()
