@@ -42,20 +42,24 @@ function View:specification()
     return mySpec
 end
 
-function View:setTransform(transform)
-    self.transform = transform
+function View:updateComponents(changes)
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
         body = {
             "change_components",
             self.entity.id,
-            "add_or_change", {
-                transform= {matrix= self:_poseWithTransform()}
-            },
+            "add_or_change", changes,
             "remove", {}
         }
       })
+end
+
+function View:setTransform(transform)
+    self.transform = transform
+    self:updateComponents({
+        transform= {matrix= self:_poseWithTransform()}
+    })
 end
 
 function View:addSubview(subview)
@@ -107,6 +111,15 @@ function Surface:specification()
         },
     })
     return mySpec
+end
+
+-- Set a base64-encoded png texture on a surface that is alive.
+function Surface:setTexture(base64png)
+    self.texture = base64png
+    local geom = self:specification().geometry
+    self:updateComponents({
+        geometry= geom
+    })
 end
 
 
