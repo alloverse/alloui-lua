@@ -93,7 +93,11 @@ function Client:updateState(newState)
           table.insert(newComponents, newComponent)
         elseif tablex.deepcompare(oldComponent, newComponent, false) == false then
           -- it's a changed component
-          table.insert(updatedComponents, oldComponent)
+          local oldCopy = tablex.deepcopy(oldComponent)
+          table.insert(updatedComponents, {
+            old=oldCopy,
+            new=oldComponent -- will be new after copy
+          })
           tablex.update(oldComponent, newComponent)
         end
       end
@@ -127,7 +131,7 @@ function Client:updateState(newState)
     end, newEntities)
     tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
     tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
-    tablex.map(function(x) self.delegates.onComponentChanged(x.key, x) end, updatedComponents)
+    tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
     tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
 end
 
