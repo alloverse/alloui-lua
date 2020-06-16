@@ -181,7 +181,8 @@ function Client:onInteraction(inter)
     local body = json.decode(inter.body)
     if body[1] == "announce" then
         self.avatar_id = body[2]
-        print("Determined avatar ID: " .. self.avatar_id)
+        self.placename = body[3]
+        print("Welcome to",self.placename,". Our avatar ID: " .. self.avatar_id)
     end
     local callback = self.outstanding_response_callbacks[inter.request_id]
     if callback ~= nil then
