@@ -10,6 +10,7 @@ class.Client()
 function Client:_init(url, name)
     self.client = allonet.create()
     self.url = url
+    self.placename = "Untitled place"
     self.name = name
     self.outstanding_response_callbacks = {}
     self.outstanding_entity_callbacks = {}
