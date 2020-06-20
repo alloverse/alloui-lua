@@ -27,6 +27,9 @@ function Client:_init(url, name)
     self.client:set_state_callback(function(state)
         self:updateState(state)
     end)
+    self.client:set_audio_callback(function(track_id, audio)
+        self.delegates.onAudio(track_id, audio)
+    end)
     self.avatar_id = ""
 
     self.delegates = {
@@ -37,7 +40,8 @@ function Client:_init(url, name)
         onComponentChanged = function(k, v) end,
         onComponentRemoved = function(k, v) end,
         onInteraction = function(inter, body, receiver, sender) end,
-        onDisconnected = function(code, message) end
+        onDisconnected = function(code, message) end,
+        onAudio = function(track_id, audio) end
     }
 
     return self
@@ -194,6 +198,26 @@ function Client:onInteraction(inter)
         local receiver = self.state.entities[inter.receiver_entity_id]
         self.delegates.onInteraction(inter, body, receiver, sender)
     end
+end
+
+function Client:setIntent(intent)
+  self.client:set_intent(intent)
+end
+
+function Client:sendAudio(trackId, audio)
+  self.client:send_audio(trackId, audio)
+end
+
+function Client:poll()
+  self.client:poll()
+end
+
+function Client:simulate(dt)
+  self.client:simulate(dt)
+end
+
+function Client:disconnect(code)
+  self.client:disconnect(code)
 end
 
 

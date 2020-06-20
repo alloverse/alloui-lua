@@ -324,7 +324,7 @@ function App:run()
                 table.bininsert(self.scheduledActions, nextAction, compareActions)
             end
         end
-        self.client.client:poll()
+        self.client:poll()
     end
 end
 
