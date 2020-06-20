@@ -7,8 +7,8 @@ require(modules.."random_string")
 
 class.Client()
 
-function Client:_init(url, name)
-    self.client = allonet.create()
+function Client:_init(url, name, client)
+    self.client = client and client or allonet.create()
     self.url = url
     self.placename = "Untitled place"
     self.name = name
