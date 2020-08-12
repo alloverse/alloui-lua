@@ -103,10 +103,10 @@ function Surface:specification()
     local mySpec = tablex.union(View.specification(self), {
         geometry = {
             type = "inline",
-                  --   #bl                   #br                  #tl                    #tr
-            vertices= {{w2, 0.0, -h2},       {w2, 0.0, h2},       {-w2, 0.0, -h2},       {-w2, 0.0, h2}},
-            uvs=      {{0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},            {1.0, 1.0}},
-            triangles= {{0, 3, 1}, {0, 2, 3}, {1, 3, 0}, {3, 2, 0}},
+                  --   #bl                   #br                  #tl                   #tr
+            vertices= {{-w2, -h2, 0.0},      {w2, -h2, 0.0},      {-w2, h2, 0.0},       {w2, h2, 0.0}},
+            uvs=      {{0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}},
+            triangles= {{0, 1, 3}, {0, 3, 2}, {1, 0, 2}, {1, 2, 3}},
             texture= self.texture
         },
     })
