@@ -7,9 +7,10 @@ require(modules.."random_string")
 
 class.Client()
 
-function Client:_init(url, name)
-    self.client = allonet.create()
+function Client:_init(url, name, client)
+    self.client = client and client or allonet.create()
     self.url = url
+    self.placename = "Untitled place"
     self.name = name
     self.outstanding_response_callbacks = {}
     self.outstanding_entity_callbacks = {}
@@ -26,6 +27,9 @@ function Client:_init(url, name)
     self.client:set_state_callback(function(state)
         self:updateState(state)
     end)
+    self.client:set_audio_callback(function(track_id, audio)
+        self.delegates.onAudio(track_id, audio)
+    end)
     self.avatar_id = ""
 
     self.delegates = {
@@ -36,7 +40,8 @@ function Client:_init(url, name)
         onComponentChanged = function(k, v) end,
         onComponentRemoved = function(k, v) end,
         onInteraction = function(inter, body, receiver, sender) end,
-        onDisconnected = function(code, message) end
+        onDisconnected = function(code, message) end,
+        onAudio = function(track_id, audio) end
     }
 
     return self
@@ -93,7 +98,11 @@ function Client:updateState(newState)
           table.insert(newComponents, newComponent)
         elseif tablex.deepcompare(oldComponent, newComponent, false) == false then
           -- it's a changed component
-          table.insert(updatedComponents, oldComponent)
+          local oldCopy = tablex.deepcopy(oldComponent)
+          table.insert(updatedComponents, {
+            old=oldCopy,
+            new=oldComponent -- will be new after copy
+          })
           tablex.update(oldComponent, newComponent)
         end
       end
@@ -127,7 +136,7 @@ function Client:updateState(newState)
     end, newEntities)
     tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
     tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
-    tablex.map(function(x) self.delegates.onComponentChanged(x.key, x) end, updatedComponents)
+    tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
     tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
 end
 
@@ -177,7 +186,8 @@ function Client:onInteraction(inter)
     local body = json.decode(inter.body)
     if body[1] == "announce" then
         self.avatar_id = body[2]
-        print("Determined avatar ID: " .. self.avatar_id)
+        self.placename = body[3]
+        print("Welcome to",self.placename,". Our avatar ID: " .. self.avatar_id)
     end
     local callback = self.outstanding_response_callbacks[inter.request_id]
     if callback ~= nil then
@@ -188,6 +198,26 @@ function Client:onInteraction(inter)
         local receiver = self.state.entities[inter.receiver_entity_id]
         self.delegates.onInteraction(inter, body, receiver, sender)
     end
+end
+
+function Client:setIntent(intent)
+  self.client:set_intent(intent)
+end
+
+function Client:sendAudio(trackId, audio)
+  self.client:send_audio(trackId, audio)
+end
+
+function Client:poll()
+  self.client:poll()
+end
+
+function Client:simulate(dt)
+  self.client:simulate(dt)
+end
+
+function Client:disconnect(code)
+  self.client:disconnect(code)
 end
 
 
