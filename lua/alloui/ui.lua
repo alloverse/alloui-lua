@@ -226,6 +226,37 @@ function GrabHandle:specification()
 end
 
 
+
+
+class.ResizeHandle(Surface)
+function ResizeHandle:_init(bounds, axes)
+  self:super(bounds)
+  self.texture = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADUSURBVHgB7ZWNCcQgDEbjcQN0hI7QjdoNOkLbDd3AUXKXUqX4fyonhTwICGq+BwYUAIDQkRd0hgVY4NkCiHhWN4EWsEBQYF1XGMcRaqEe1CsG2rVtGxJKKfTt69KE9odhOHsQ1DNwzh9OLMtSJUBFPTQBibLwXIEMCTc8Rkogh7uEGUIhBPwLO8vY7PtuLOd5bvYE1EtDGRAbwl8kcgQS4a6ALTFNU7EA3U2E4xs8fA+btZQSSqG7x3E4Pe+Iy6QIvH7CmgHmz6i7QNUMtICfgAVY4AOLW73fV8wFIwAAAABJRU5ErkJggg=="
+  self.isActivated = false
+  self.isHighlighted = false
+  self.constrainedAxes = axes and axes or {"x", "y", "z"}
+end
+
+function ResizeHandle:specification()
+  local s = self.bounds.size
+  local w2 = s.width / 2.0
+  local h2 = s.depth / 2.0
+  local mySpec = tablex.union(Surface.specification(self), {
+      collider= {
+          type= "box",
+          width= s.width, height= s.height, depth= s.depth
+      },
+      
+      grabbable= {
+          constrain_axes= self.constrainedAxes, -- NOT IMPLEMENTED YET
+          constrain_rotation = nil
+      }
+  })
+  return mySpec
+end
+
+
+
 class.Speaker(View)
 function Speaker:awake()
     self.app.client:sendInteraction({
@@ -366,6 +397,7 @@ return {
     Surface = Surface,
     Button = Button,
     GrabHandle = GrabHandle,
+    ResizeHandle = ResizeHandle,
     Speaker = Speaker,
     Bounds = Bounds,
     Pose = Pose,
