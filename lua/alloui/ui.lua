@@ -351,6 +351,7 @@ class.App()
 function App:_init(client)
     self.client = client
     self.mainView = View()
+    self.running = true
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -375,7 +376,13 @@ function App:scheduleAction(delay, repeats, callback)
 end
 
 function App:run()
-    while true do
+    pcall(function() self:_run() end)
+    print("Exiting")
+    self.client:disconnect(0)
+end
+
+function App:_run()
+    while self.running do
         local nextAction = self.scheduledActions[1]
         local now = util.getTime()
         if nextAction and nextAction.when < now then
