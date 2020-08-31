@@ -298,20 +298,31 @@ function Pose:rotate(angle, x, y, z)
     return self
 end
 
+function Pose:move(x, y, z)
+    self.transform = mat4.translate(self.transform, self.transform, vec3(x, y, z))
+    return self
+end
+
 class.Size()
 function Size:_init(width, height, depth)
-    self.width = width
-    self.height = height
-    self.depth = depth
+    self.width = width and width or 0
+    self.height = height and height or 0
+    self.depth = depth and depth or 0
 end
 
 class.Bounds()
+-- Bounds{pose=,size=}
 -- Bounds(pose, size)
 -- Bounds(x, y, z, w, h)
 function Bounds:_init(a, b, z, w, h, d)
     if type(a) == "table" then
-        self.pose = a
-        self.size = b
+        if type(b) == table then
+            self.pose = a
+            self.size = b
+        else
+            self.pose = a.pose and a.pose or Pose()
+            self.size = a.size and a.size or Size()
+        end
     else
         self.pose = Pose(a, b, z)
         self.size = Size(w, h, d)
@@ -320,6 +331,11 @@ end
 
 function Bounds:rotate(angle, x, y, z)
     self.pose:rotate(angle, x, y, z)
+    return self
+end
+
+function Bounds:move(x, y, z)
+    self.pose:move(x, y, z)
     return self
 end
 
