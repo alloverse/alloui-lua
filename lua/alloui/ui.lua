@@ -99,7 +99,7 @@ end
 function Surface:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0
-    local h2 = s.depth / 2.0
+    local h2 = s.height / 2.0
     local mySpec = tablex.union(View.specification(self), {
         geometry = {
             type = "inline",
