@@ -314,18 +314,22 @@ end
 
 function App:run()
     while true do
-        local nextAction = self.scheduledActions[1]
-        local now = util.getTime()
-        if nextAction and nextAction.when < now then
-            table.remove(self.scheduledActions, 1)
-            nextAction.callback()
-            if nextAction.repeats then
-                nextAction.when = nextAction.when + nextAction.delay
-                table.bininsert(self.scheduledActions, nextAction, compareActions)
-            end
-        end
-        self.client:poll()
+        self:runOnce()
     end
+end
+
+function App:runOnce()
+  local nextAction = self.scheduledActions[1]
+  local now = util.getTime()
+  if nextAction and nextAction.when < now then
+      table.remove(self.scheduledActions, 1)
+      nextAction.callback()
+      if nextAction.repeats then
+          nextAction.when = nextAction.when + nextAction.delay
+          table.bininsert(self.scheduledActions, nextAction, compareActions)
+      end
+  end
+  self.client:poll()
 end
 
 function App:onInteraction(inter, body, receiver, sender) 
