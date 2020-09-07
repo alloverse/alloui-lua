@@ -22,6 +22,10 @@ end
 function View:awake()
 end
 
+function View:isAwake()
+  return self.entity ~= nil
+end
+
 function View:_poseWithTransform()
     local out = mat4.identity()
     mat4.mul(out, self.transform, self.bounds.pose.transform)
@@ -116,10 +120,12 @@ end
 -- Set a base64-encoded png texture on a surface that is alive.
 function Surface:setTexture(base64png)
     self.texture = base64png
-    local geom = self:specification().geometry
-    self:updateComponents({
-        geometry= geom
-    })
+    if self:isAwake() then
+      local geom = self:specification().geometry
+      self:updateComponents({
+          geometry= geom
+      })
+    end
 end
 
 
