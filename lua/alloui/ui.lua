@@ -375,8 +375,9 @@ end
 
 function App:connect()
     local mainSpec = self.mainView:specification()
-    self.client:connect(mainSpec)
+    local ret = self.client:connect(mainSpec)
     self.mainView:setApp(self)
+    return ret
 end
 
 function compareActions(a, b)
