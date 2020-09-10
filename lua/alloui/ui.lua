@@ -22,6 +22,10 @@ end
 function View:awake()
 end
 
+function View:isAwake()
+  return self.entity ~= nil
+end
+
 function View:_poseWithTransform()
     local out = mat4.identity()
     mat4.mul(out, self.transform, self.bounds.pose.transform)
@@ -99,7 +103,7 @@ end
 function Surface:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0
-    local h2 = s.depth / 2.0
+    local h2 = s.height / 2.0
     local mySpec = tablex.union(View.specification(self), {
         geometry = {
             type = "inline",
@@ -116,10 +120,12 @@ end
 -- Set a base64-encoded png texture on a surface that is alive.
 function Surface:setTexture(base64png)
     self.texture = base64png
-    local geom = self:specification().geometry
-    self:updateComponents({
-        geometry= geom
-    })
+    if self:isAwake() then
+      local geom = self:specification().geometry
+      self:updateComponents({
+          geometry= geom
+      })
+    end
 end
 
 
@@ -129,6 +135,7 @@ function Button:_init(bounds)
     self.selected = false
     self.highlighted = false
     self.onActivated = nil
+    self.label = ""
     self:setDefaultTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAG7SURBVHgB7Zu7TgJREIb/Q8sldIYOTLDV0kqBF8AHMNpYi1hLkNDLbktloi/AEwh2VlJLonQkViZgvc7ILlkPW3qJZ+ZLJmczS/N/O4duDCyCIKjQcUBVpyrCDcZhdYwx08RfUPA8VS9wH86Yj3KbKDwdd1Q7kAFPQ5Wm4S0VNtqQE57hrJwZhr5+kc6X+NvZ7BXdjofJ5Bnz+Tv+O3v7u2ien6BQ2LBfVVnANT0cRx0Of3R46kTwOJlsGje3vi3B5yuwHe/0rvrOhWcWlKnb8e12nQV8ufv3owe4yhNdaYtiCoJYJEy2KAFJqAAIRwVAOCoAwlEBEI4KgHBUAISjAiAcFQDhqAAIRwVAOCoAwlEBEI4KgHBUAISjAiAcFQDhqAAIRwVAOCoAwlEBEI4KgHBUAISjAiCcNQHZbBqSYAHTeKNc3oSr8PKUxZgFDOKdVvvMySnI5TKfm2MWY94aq2C5NLmCN8e8Xh+j4d/tDxlj8B3wxyxvlXDRaiStzZWizVGPjgZk4ZHkptTV2Ueq2mp1lh/oqFL5cJuAiqe9FmbG2kULV2kvsVyo/M2JCPBzTLH8sx9Q8GH8xQeQyFapUwYxYQAAAABJRU5ErkJggg==")
     self:setHighlightTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEfSURBVHgB7ZvBccJAEAR7FQEh4AjsEJATgIyMIzAOhQjsDKwMrBCcwXm3JHgAX3hopqu27urqPtva02+CC1prm1x2WdusNctgmOs9IsabN7LxVdZHWz7V4+rUd5yaz+Ur6wUNahr6nIa/bj54Q6f5onqtnon8+utcf9GkrwnYo8uuBDyjy7aeQEOYDnEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHFKwIguQwk4ostQmaENU2hSkacuIr5z84keh8oRq0Znf7Jez9HZ2uTSs/xJqIjggbn5OoirG1OUds8UqHzkRNwzvzgy/eyP85M/8w/NcyFcDaSY1AAAAABJRU5ErkJggg==")
     self:setActivatedTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAGeSURBVHgB7ZuhUsNQEEXv1pcpFhWHLAg86Q8UhWX4AsDgGOjgMG2/ACwo+gUg0FCLIgpLZ/iAsEuSTl8TCZ3pu3tmdl5mE3NPNnErWCLP8309DrT6WgniYFrWQESyxic0eEdrmMePZexUuaUKr8eT1g44sGlIdRpmrbJxCZ7whmW1zBB9+4meH8Htzwy4OAbeVdT3DGtPqr+08yGwldTumIA7vTiatyz84W4cwRdp61f+8LYsYWyfQDd48OY0vvCGZbKpDunbBORBqyuIFpuCl6+g1QITDZPNJaABFwByXADIcQEgxwWAHBcAclwAyHEBIMcFgBwXAHJcAMhxASDHBYAcFwByXADIcQEgxwWAHBcAclwAyHEBIMcFgBwXAHJcAMhxASCnLqDdARMmIAs62xEvj9nyVMjUBEyC1vVtnFOwsVlsjoX8CngMWrZVZdtVdVurReRvyoLvpcD9a9Pa3KDaHB3pcQIuRiJyxro6qyOO3nx11i700DnBGHFjK4I27b0yM2pLguUq7RWKhcpVTkSO/yND8bOfaPDnxRs/kt5D/NR/QkwAAAAASUVORK5CYII=")
@@ -136,14 +143,19 @@ end
 
 function Button:specification()
     local s = self.bounds.size
-    local w2 = s.width / 2.0
-    local h2 = s.depth / 2.0
     local mySpec = tablex.union(Surface.specification(self), {
         collider= {
             type= "box",
             width= s.width, height= s.height, depth= s.depth
         }
     })
+    if #self.label > 0 then
+      mySpec["text"] = {
+        string = self.label,
+        height = s.height * 0.8,
+        wrap = s.width
+      }
+    end
     return mySpec
 end
 
@@ -366,20 +378,31 @@ function Pose:rotate(angle, x, y, z)
     return self
 end
 
+function Pose:move(x, y, z)
+    self.transform = mat4.translate(self.transform, self.transform, vec3(x, y, z))
+    return self
+end
+
 class.Size()
 function Size:_init(width, height, depth)
-    self.width = width
-    self.height = height
-    self.depth = depth
+    self.width = width and width or 0
+    self.height = height and height or 0
+    self.depth = depth and depth or 0
 end
 
 class.Bounds()
+-- Bounds{pose=,size=}
 -- Bounds(pose, size)
 -- Bounds(x, y, z, w, h)
 function Bounds:_init(a, b, z, w, h, d)
     if type(a) == "table" then
-        self.pose = a
-        self.size = b
+        if type(b) == table then
+            self.pose = a
+            self.size = b
+        else
+            self.pose = a.pose and a.pose or Pose()
+            self.size = a.size and a.size or Size()
+        end
     else
         self.pose = Pose(a, b, z)
         self.size = Size(w, h, d)
@@ -388,6 +411,11 @@ end
 
 function Bounds:rotate(angle, x, y, z)
     self.pose:rotate(angle, x, y, z)
+    return self
+end
+
+function Bounds:move(x, y, z)
+    self.pose:move(x, y, z)
     return self
 end
 
@@ -403,6 +431,7 @@ class.App()
 function App:_init(client)
     self.client = client
     self.mainView = View()
+    self.running = true
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -414,8 +443,9 @@ end
 
 function App:connect()
     local mainSpec = self.mainView:specification()
-    self.client:connect(mainSpec)
+    local ret = self.client:connect(mainSpec)
     self.mainView:setApp(self)
+    return ret
 end
 
 function compareActions(a, b)
@@ -427,19 +457,29 @@ function App:scheduleAction(delay, repeats, callback)
 end
 
 function App:run()
+    pcall(function() self:_run() end)
+    print("Exiting")
+    self.client:disconnect(0)
+end
+
+function App:_run()
     while true do
-        local nextAction = self.scheduledActions[1]
-        local now = util.getTime()
-        if nextAction and nextAction.when < now then
-            table.remove(self.scheduledActions, 1)
-            nextAction.callback()
-            if nextAction.repeats then
-                nextAction.when = nextAction.when + nextAction.delay
-                table.bininsert(self.scheduledActions, nextAction, compareActions)
-            end
-        end
-        self.client:poll()
+        self:runOnce()
     end
+end
+
+function App:runOnce()
+  local nextAction = self.scheduledActions[1]
+  local now = util.getTime()
+  if nextAction and nextAction.when < now then
+      table.remove(self.scheduledActions, 1)
+      nextAction.callback()
+      if nextAction.repeats then
+          nextAction.when = nextAction.when + nextAction.delay
+          table.bininsert(self.scheduledActions, nextAction, compareActions)
+      end
+  end
+  self.client:poll()
 end
 
 function App:onInteraction(inter, body, receiver, sender) 

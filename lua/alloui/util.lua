@@ -31,24 +31,40 @@ ffi.cdef[[
             long     tv_nsec;       /* nanoseconds */
     } nanotime;
     int clock_gettime(clockid_t clk_id, struct timespec *tp);
+
+    // windows
+    typedef long clock_t;
+    clock_t clock( void );
 ]]
 
+local base = nil
 function clock_gettime()
     local pnano = assert(ffi.new("nanotime[?]", 1))
 
     -- CLOCK_REALTIME -> 0
     ffi.C.clock_gettime(0, pnano)
-    return pnano[0]
+    if base == nil then
+        base = nano[0].tv_sec
+    end
+    return tonumber(pnano[0].tv_sec - base) + tonumber(pnano[0].tv_nsec)/1000000000.0
 end
 
-local base = nil
-function getTime()
-    local nano = clock_gettime()
-    if base == nil then
-        base = nano.tv_sec
-    end
-    return tonumber(nano.tv_sec - base) + tonumber(nano.tv_nsec)/1000000000.0
+function clock()
+  return ffi.C.clock() / 1000.0
 end
+
+local getTimeImpl = nil
+function getTime()
+  if getTimeImpl == nil then
+    local success, _ = pcall(function() return ffi.cast("void*", gl.clock_gettime) end)
+    if success then
+        getTimeImpl = clock_gettime
+    else
+        getTimeImpl = clock
+    end
+  end
+  return getTimeImpl()
+end 
 
 
 
