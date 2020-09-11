@@ -208,8 +208,8 @@ function Client:sendAudio(trackId, audio)
   self.client:send_audio(trackId, audio)
 end
 
-function Client:poll()
-  self.client:poll()
+function Client:poll(timeout)
+  self.client:poll(timeout)
 end
 
 function Client:simulate(dt)
@@ -223,7 +223,7 @@ end
 
 function Client:run()
     while true do
-        self.client:poll()
+        self.client:poll(1.0/20.0)
     end
 end
 

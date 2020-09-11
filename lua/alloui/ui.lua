@@ -464,11 +464,11 @@ end
 
 function App:_run()
     while true do
-        self:runOnce()
+        self:runOnce(1.0/40.0)
     end
 end
 
-function App:runOnce()
+function App:runOnce(timeout)
   local nextAction = self.scheduledActions[1]
   local now = util.getTime()
   if nextAction and nextAction.when < now then
@@ -479,7 +479,7 @@ function App:runOnce()
           table.bininsert(self.scheduledActions, nextAction, compareActions)
       end
   end
-  self.client:poll()
+  self.client:poll(timeout)
 end
 
 function App:onInteraction(inter, body, receiver, sender) 
