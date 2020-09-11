@@ -3,6 +3,7 @@ local json = require(modules.."json")
 local tablex = require("pl.tablex")
 local Entity, componentClasses = unpack(require(modules.."entity"))
 local class = require("pl.class")
+local pretty = require("pl.pretty")
 require(modules.."random_string")
 
 class.Client()
@@ -96,14 +97,19 @@ function Client:updateState(newState)
           newComponent.key = cname
           entity.components[cname] = newComponent
           table.insert(newComponents, newComponent)
-        elseif tablex.deepcompare(oldComponent, newComponent, false) == false then
-          -- it's a changed component
-          local oldCopy = tablex.deepcopy(oldComponent)
-          table.insert(updatedComponents, {
-            old=oldCopy,
-            new=oldComponent -- will be new after copy
-          })
-          tablex.update(oldComponent, newComponent)
+        else
+          -- copy these over so old and new aren't considered different just 'cause getEntity is another closure
+          newComponent.key = oldComponent.key
+          newComponent.getEntity = oldComponent.getEntity
+          if tablex.deepcompare(oldComponent, newComponent, false) == false then
+            -- it's a changed component
+            local oldCopy = tablex.deepcopy(oldComponent)
+            table.insert(updatedComponents, {
+              old=oldCopy,
+              new=oldComponent -- will be new after copy
+            })
+            tablex.update(oldComponent, newComponent)
+          end
         end
       end
       -- Check for deleted components
