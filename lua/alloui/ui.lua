@@ -214,6 +214,17 @@ function Button:setActivatedTexture(t)
   self.activatedTexture = t
 end
 
+function Button:setLabel(label)
+  self.label = label
+  self:updateComponents({
+    text = {
+      string = self.label,
+      height = self.bounds.size.height * 0.8,
+      wrap = self.bounds.size.width
+    }
+  })
+end
+
 
 class.GrabHandle(Surface)
 function GrabHandle:_init(bounds)
