@@ -85,7 +85,7 @@ end
 
 function Button:setDefaultTexture(t)
   self.defaultTexture = t
-  self.texture = t
+  self:setTexture(t)
 end
 
 function Button:setHighlightTexture(t)
