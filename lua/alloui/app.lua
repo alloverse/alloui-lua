@@ -11,11 +11,11 @@ class.ScheduledAction()
 -- delay: in how long (in seconds) should callback be called?
 -- repeats: should it then be rescheduled with the same delay again?
 -- callback: function to be called with no arguments
-function ScheduledAction:_init(delay, repeats, callback)
+function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
     self.callback = callback
-    self.when = util.getTime() + delay
+    self.when = client.client:get_time() + delay
 end
 
 -- Represents the Alloverse appliance. Mediates communication with
@@ -47,18 +47,18 @@ function compareActions(a, b)
     return a.next < b.next
 end
 function App:scheduleAction(delay, repeats, callback)
-    local action = ScheduledAction(delay, repeats, callback)
+    local action = ScheduledAction(self.client, delay, repeats, callback)
     table.bininsert(self.scheduledActions, action, compareActions)
 end
 
-function App:run()
-    pcall(function() self:_run() end)
+function App:run(hz)
+    pcall(function() self:_run(hz) end)
     print("Exiting")
     self.client:disconnect(0)
 end
 
 function App:_run(hz)
-    hz = hz or 40.0
+    hz = hz and hz or 40.0
     while true do
         self:runOnce(1.0/hz)
     end
@@ -66,7 +66,7 @@ end
 
 function App:runOnce(timeout)
   local nextAction = self.scheduledActions[1]
-  local now = util.getTime()
+  local now = self.client.client:get_time()
   if nextAction and nextAction.when < now then
       table.remove(self.scheduledActions, 1)
       nextAction.callback()

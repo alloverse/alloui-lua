@@ -20,52 +20,6 @@ function table.bininsert(t, value, fcomp)
     return (iMid+iState)
 end
 
-local ffi = require("ffi")
-
-ffi.cdef[[
-    typedef long time_t;
-    typedef int clockid_t;
-
-    typedef struct timespec {
-            time_t   tv_sec;        /* seconds */
-            long     tv_nsec;       /* nanoseconds */
-    } nanotime;
-    int clock_gettime(clockid_t clk_id, struct timespec *tp);
-
-    // windows
-    typedef long clock_t;
-    clock_t clock( void );
-]]
-
-local base = nil
-function clock_gettime()
-    local pnano = assert(ffi.new("nanotime[?]", 1))
-
-    -- CLOCK_REALTIME -> 0
-    ffi.C.clock_gettime(0, pnano)
-    if base == nil then
-        base = nano[0].tv_sec
-    end
-    return tonumber(pnano[0].tv_sec - base) + tonumber(pnano[0].tv_nsec)/1000000000.0
-end
-
-function clock()
-  return ffi.C.clock() / 1000.0
-end
-
-local getTimeImpl = nil
-function getTime()
-  if getTimeImpl == nil then
-    local success, _ = pcall(function() return ffi.cast("void*", gl.clock_gettime) end)
-    if success then
-        getTimeImpl = clock_gettime
-    else
-        getTimeImpl = clock
-    end
-  end
-  return getTimeImpl()
-end 
-
 
 
 local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
