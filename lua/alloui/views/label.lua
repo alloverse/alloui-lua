@@ -8,7 +8,7 @@ local View = require(modules.."views.view")
 
 -- A text label. 
 class.Label(View)
--- Label{bounds=,text=,lineheight=,wrap=,halign=}
+-- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- Label(bounds)
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o
@@ -17,6 +17,7 @@ function Label:_init(o)
     self.lineheight = o.lineheight and o.lineheight or bounds.size.height
     self.wrap = o.wrap and o.wrap or bounds.size.width
     self.halign = o.halign and o.halign or "center"
+    self.color = o.color and o.color or {1,1,1,1}
 end
 
 function Label:specification()
@@ -26,6 +27,9 @@ function Label:specification()
             height = self.lineheight,
             wrap = self.wrap,
             halign = self.halign
+        },
+        material = {
+          color = self.color
         }
     })
     return mySpec
