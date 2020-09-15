@@ -2,41 +2,64 @@ local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
-local Surface = require(modules.."views.surface")
-
+local vec3 = require("modules.vec3")
+local mat4 = require("modules.mat4")
+local View = require(modules.."views.view")
+local Label = require(modules.."views.label")
+local Bounds = require(modules.."bounds")
 
 
 -- Button can be poked/clicked to perform an action.
--- set onActivated to a function you'd like to be called when the button is pressed.
--- set label to the string you want on the button
--- you can also set the button's default, highlighted and activated texture (see Surface
--- documentation for image format caveats)
-class.Button(Surface)
+-- Set onActivated to a function you'd like to be called when the button is pressed.
+-- button.label:setText(...) to the string you want on the button.
+-- You can also set the button's default, highlighted and activated texture (see Surface documentation for image format caveats).
+-- Or if you just want a colored button, you can set its color.
+-- Set either color or texture to nil to remove that attribute.
+class.Button(View)
 function Button:_init(bounds)
     self:super(bounds)
     self.selected = false
     self.highlighted = false
     self.onActivated = nil
-    self.label = ""
-    self:setDefaultTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAG7SURBVHgB7Zu7TgJREIb/Q8sldIYOTLDV0kqBF8AHMNpYi1hLkNDLbktloi/AEwh2VlJLonQkViZgvc7ILlkPW3qJZ+ZLJmczS/N/O4duDCyCIKjQcUBVpyrCDcZhdYwx08RfUPA8VS9wH86Yj3KbKDwdd1Q7kAFPQ5Wm4S0VNtqQE57hrJwZhr5+kc6X+NvZ7BXdjofJ5Bnz+Tv+O3v7u2ien6BQ2LBfVVnANT0cRx0Of3R46kTwOJlsGje3vi3B5yuwHe/0rvrOhWcWlKnb8e12nQV8ufv3owe4yhNdaYtiCoJYJEy2KAFJqAAIRwVAOCoAwlEBEI4KgHBUAISjAiAcFQDhqAAIRwVAOCoAwlEBEI4KgHBUAISjAiAcFQDhqAAIRwVAOCoAwlEBEI4KgHBUAISjAiCcNQHZbBqSYAHTeKNc3oSr8PKUxZgFDOKdVvvMySnI5TKfm2MWY94aq2C5NLmCN8e8Xh+j4d/tDxlj8B3wxyxvlXDRaiStzZWizVGPjgZk4ZHkptTV2Ueq2mp1lh/oqFL5cJuAiqe9FmbG2kULV2kvsVyo/M2JCPBzTLH8sx9Q8GH8xQeQyFapUwYxYQAAAABJRU5ErkJggg==")
-    self:setHighlightTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEfSURBVHgB7ZvBccJAEAR7FQEh4AjsEJATgIyMIzAOhQjsDKwMrBCcwXm3JHgAX3hopqu27urqPtva02+CC1prm1x2WdusNctgmOs9IsabN7LxVdZHWz7V4+rUd5yaz+Ur6wUNahr6nIa/bj54Q6f5onqtnon8+utcf9GkrwnYo8uuBDyjy7aeQEOYDnEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHEsAHFKwIguQwk4ostQmaENU2hSkacuIr5z84keh8oRq0Znf7Jez9HZ2uTSs/xJqIjggbn5OoirG1OUds8UqHzkRNwzvzgy/eyP85M/8w/NcyFcDaSY1AAAAABJRU5ErkJggg==")
-    self:setActivatedTexture("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAGeSURBVHgB7ZuhUsNQEEXv1pcpFhWHLAg86Q8UhWX4AsDgGOjgMG2/ACwo+gUg0FCLIgpLZ/iAsEuSTl8TCZ3pu3tmdl5mE3NPNnErWCLP8309DrT6WgniYFrWQESyxic0eEdrmMePZexUuaUKr8eT1g44sGlIdRpmrbJxCZ7whmW1zBB9+4meH8Htzwy4OAbeVdT3DGtPqr+08yGwldTumIA7vTiatyz84W4cwRdp61f+8LYsYWyfQDd48OY0vvCGZbKpDunbBORBqyuIFpuCl6+g1QITDZPNJaABFwByXADIcQEgxwWAHBcAclwAyHEBIMcFgBwXAHJcAMhxASDHBYAcFwByXADIcQEgxwWAHBcAclwAyHEBIMcFgBwXAHJcAMhxASCnLqDdARMmIAs62xEvj9nyVMjUBEyC1vVtnFOwsVlsjoX8CngMWrZVZdtVdVurReRvyoLvpcD9a9Pa3KDaHB3pcQIuRiJyxro6qyOO3nx11i700DnBGHFjK4I27b0yM2pLguUq7RWKhcpVTkSO/yND8bOfaPDnxRs/kt5D/NR/QkwAAAAASUVORK5CYII=")
+
+    self.label = Label(Bounds(0, 0, bounds.size.depth+0.01,   bounds.size.width, bounds.size.height*0.7, 0.01))
+    self.color = {0.9, 0.4, 0.3, 1.0}
+    self:addSubview(self.label)
 end
 
 function Button:specification()
     local s = self.bounds.size
-    local mySpec = tablex.union(Surface.specification(self), {
+    local w2 = s.width / 2.0
+    local h2 = s.height / 2.0
+    local d = s.depth
+    local mySpec = tablex.union(View.specification(self), {
+        geometry = {
+            type = "inline",
+                  --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr
+            vertices= {{-w2, -h2, d},      {w2, -h2, d},      {-w2, h2, d},       {w2, h2, d},     {-w2, -h2, 0.0},      {w2, -h2, 0.0},      {-w2, h2, 0.0},       {w2, h2, 0.0}},
+            uvs=      {{0.0, 0.0},         {1.0, 0.0},        {0.0, 1.0},         {1.0, 1.0},      {0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}   },
+            triangles= {
+              {0, 1, 2}, {1, 3, 2}, -- front
+              {2, 3, 6}, {3, 7, 6}, -- top
+              {1, 7, 3}, {5, 7, 1}, -- right
+              {5, 1, 0}, {4, 5, 0}, -- bottom
+              {4, 0, 2}, {4, 2, 6}, -- left
+              {1, 0, 2}, {1, 2, 3}, -- rear
+            },
+        },
+        material = {
+        },
         collider= {
             type= "box",
             width= s.width, height= s.height, depth= s.depth
         }
     })
-    if #self.label > 0 then
-      mySpec["text"] = {
-        string = self.label,
-        height = s.height * 0.8,
-        wrap = s.width
-      }
+
+    if self.texture then
+      mySpec.material.texture = self.texture
+    end
+    if self.color then
+      mySpec.material.color = self:_effectiveColor()
     end
     return mySpec
 end
@@ -58,23 +81,41 @@ end
 function Button:setHighlighted(highlighted)
     if highlighted == self.highlighted then return end
     self.highlighted = highlighted
-    self:_updateTransform()
+    self:_updateLooks()
 end
 
 function Button:setSelected(selected)
     if selected == self.selected then return end
     self.selected = selected
-    self:_updateTransform()
+    self:_updateLooks()
 end
 
-function Button:_updateTransform()
-    if self.selected and self.highlighted then
-        self:setTexture(self.activatedTexture)
-    elseif self.highlighted then
-        self:setTexture(self.highlightTexture)
-    else
-        self:setTexture(self.defaultTexture)
-    end
+function Button:_updateLooks()
+  -- compress button when pressed
+  mat4.scale(self.transform, mat4.identity(), vec3(1, 1, (self.selected and self.highlighted) and 0.01 or 1.0))
+
+  if self.selected and self.highlighted then
+    if self.activatedTexture then self.texture = self.activatedTexture end
+  elseif self.highlighted then
+      if self.highlightTexture then self.texture = self.highlightTexture end
+  else
+      if self.defaultTexture then self.texture = self.defaultTexture end
+  end
+
+  if self:isAwake() then
+    local spec = self:specification()
+    self:updateComponents(spec)
+  end
+end
+
+function Button:_effectiveColor()
+  if self.color == nil then return nil end
+  if self.selected then
+    return {self.color[1]*0.6, self.color[2]*0.6, self.color[3]*0.6, 1.0}
+  elseif self.highlighted then
+    return {self.color[1]*0.8, self.color[2]*0.8, self.color[3]*0.8, 1.0}
+  end
+  return self.color
 end
 
 function Button:activate()
@@ -96,15 +137,24 @@ function Button:setActivatedTexture(t)
   self.activatedTexture = t
 end
 
-function Button:setLabel(label)
-  self.label = label
-  self:updateComponents({
-    text = {
-      string = self.label,
-      height = self.bounds.size.height * 0.8,
-      wrap = self.bounds.size.width
-    }
-  })
+function Button:setTexture(base64png)
+    self.texture = base64png
+    if self:isAwake() then
+      local mat = self:specification().material
+      self:updateComponents({
+          material= mat
+      })
+    end
+end
+
+function Button:setColor(rgba)
+    self.color = rgba
+    if self:isAwake() then
+      local mat = self:specification().material
+      self:updateComponents({
+          material= mat
+      })
+    end
 end
 
 return Button
