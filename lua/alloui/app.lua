@@ -57,9 +57,10 @@ function App:run()
     self.client:disconnect(0)
 end
 
-function App:_run()
+function App:_run(hz)
+    hz = hz or 40.0
     while true do
-        self:runOnce(1.0/40.0)
+        self:runOnce(1.0/hz)
     end
 end
 
