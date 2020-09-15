@@ -1,5 +1,6 @@
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
+local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local Surface = require(modules.."views.surface")
 
