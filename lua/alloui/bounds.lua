@@ -2,7 +2,8 @@ local modules = (...):gsub(".[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
-
+local Pose = require(modules .."pose")
+local Size = require(modules .."size")
 
 -- defines the pose and size of a view, i e its bounds within the world.
 class.Bounds()

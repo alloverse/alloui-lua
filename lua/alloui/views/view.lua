@@ -5,6 +5,7 @@ local pretty = require('pl.pretty')
 local vec3 = require("modules.vec3")
 local mat4 = require("modules.mat4")
 require(modules .."random_string")
+local Bounds = require(modules .."bounds")
 
 -- The view class acts as base for anything visual in an alloapp. It
 -- manages a tree of sub-views; its bounds (transform and size);
@@ -12,7 +13,7 @@ require(modules .."random_string")
 class.View()
 function View:_init(bounds)
     self.viewId = string.random(16)
-    self.bounds = bounds
+    self.bounds = bounds and bounds or Bounds(0,0,0, 0,0,0)
     -- a transform applied on top of the bounds. Use for temporary adjustments, e g scale.
     self.transform = mat4.identity()
     self.subviews = {}
