@@ -37,7 +37,9 @@ end
 
 function Label:setText(text)
     self.text = text
-    self:updateComponents(self:specification())
+    if self:isAwake() then
+        self:updateComponents(self:specification())
+    end
 end
 
 return Label
