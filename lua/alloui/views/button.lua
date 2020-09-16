@@ -139,6 +139,7 @@ end
 
 function Button:setTexture(base64png)
     self.texture = base64png
+    self.color = {1, 1, 1, 1}
     if self:isAwake() then
       local mat = self:specification().material
       self:updateComponents({
