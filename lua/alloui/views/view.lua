@@ -80,9 +80,20 @@ end
 
 function View:setTransform(transform)
     self.transform = transform
+    if self:isAwake() then
+      self:updateComponents({
+          transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
+      })
+    end
+end
+
+function View:setBounds(bounds)
+  self.bounds = bounds
+  if self:isAwake() then
     self:updateComponents({
-        transform= {matrix= self:_poseWithTransform()}
+        transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
     })
+  end
 end
 
 function View:addSubview(subview)
