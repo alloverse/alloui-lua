@@ -52,8 +52,8 @@ function App:scheduleAction(delay, repeats, callback)
 end
 
 function App:run(hz)
-    pcall(function() self:_run(hz) end)
-    print("Exiting")
+    local a,b = pcall(function() self:_run(hz) end)
+    print("Exiting", a, b)
     self.client:disconnect(0)
 end
 
