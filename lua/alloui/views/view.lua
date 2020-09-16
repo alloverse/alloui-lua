@@ -30,10 +30,21 @@ function View:isAwake()
 end
 
 function View:_poseWithTransform()
-    local out = mat4.identity()
-    mat4.mul(out, self.transform, self.bounds.pose.transform)
-    out._m = nil
-    return out
+    return mat4.mul(mat4.identity(), self.transform, self.bounds.pose.transform)
+end
+
+function View:transformFromWorld()
+  local transformFromLocal = self:_poseWithTransform()
+  if self.superview ~= nil then
+      return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
+  else
+      return transformFromLocal
+  end
+end
+
+function _arrayFromMat4(x)
+  x._m = nil
+  return x
 end
 
 -- The specification is used to describe the entity three required to represent
@@ -45,7 +56,7 @@ function View:specification()
             view_id = self.viewId
         },
         transform = {
-            matrix = self:_poseWithTransform()
+            matrix = _arrayFromMat4(self:_poseWithTransform())
         },
         children = tablex.map(function(v) return v:specification() end, self.subviews)
     }
@@ -77,6 +88,7 @@ end
 function View:addSubview(subview)
     table.insert(self.subviews, subview)
     subview.app = self.app
+    subview.superview = self
 end
 
 function View:findView(vid)
