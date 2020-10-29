@@ -31,12 +31,12 @@ function Button:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0
     local h2 = s.height / 2.0
-    local d = s.depth
+    local d2 = s.depth / 2.0
     local mySpec = tablex.union(View.specification(self), {
         geometry = {
             type = "inline",
                   --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr
-            vertices= {{-w2, -h2, d},      {w2, -h2, d},      {-w2, h2, d},       {w2, h2, d},     {-w2, -h2, 0.0},      {w2, -h2, 0.0},      {-w2, h2, 0.0},       {w2, h2, 0.0}},
+            vertices= {{-w2, -h2, d2},     {w2, -h2, d2},     {-w2, h2, d2},      {w2, h2, d2},    {-w2, -h2, -d2},      {w2, -h2, -d2},      {-w2, h2, -d2},       {w2, h2, -d2}},
             uvs=      {{0.0, 0.0},         {1.0, 0.0},        {0.0, 1.0},         {1.0, 1.0},      {0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}   },
             triangles= {
               {0, 1, 2}, {1, 3, 2}, -- front
