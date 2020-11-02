@@ -104,6 +104,8 @@ function View:setBounds(bounds)
 end
 
 function View:addSubview(subview)
+    assert(subview.superview == nil)
+
     table.insert(self.subviews, subview)
     subview:setApp(self.app)
     subview.superview = self
@@ -140,6 +142,7 @@ function View:removeFromSuperview()
             self.entity = nil
         end)
     end
+    self.superview = nil
 end
 
 function View:findView(vid)
