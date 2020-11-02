@@ -82,6 +82,8 @@ end
 -- Ask backend to update components on the server. Use to update things you've specified
 -- in :specification() but now want to change.
 function View:updateComponents(changes)
+    if self.app == nil or self.entity == nil then return end
+    
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
