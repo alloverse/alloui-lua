@@ -82,7 +82,11 @@ function App:onInteraction(inter, body, receiver, sender)
     if receiver == nil then return end
     local vid = receiver.components.ui.view_id
     local view = self.mainView:findView(vid)
-    view:onInteraction(inter, body, sender)
+    if view then
+        view:onInteraction(inter, body, sender)
+    else
+        print("warning: got interaction for nonexistent vid ", vid, "eid", receiver.id)
+    end
 end
 
 function App:onComponentAdded(cname, comp)

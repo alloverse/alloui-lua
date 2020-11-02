@@ -23,6 +23,9 @@ end
 
 -- awake() is called when entity exists and is bound to this view.
 function View:awake()
+    for _, subview in ipairs(self.subviews) do
+        subview:spawn()
+    end
 end
 
 function View:isAwake()
@@ -58,8 +61,12 @@ function View:specification()
         transform = {
             matrix = _arrayFromMat4(self:_poseWithTransform())
         },
-        children = tablex.map(function(v) return v:specification() end, self.subviews)
     }
+    if self.superview and self.superview:isAwake() then
+        mySpec.relationships = {
+            parent = self.superview.entity.id
+        }
+    end
     return mySpec
 end
 
@@ -75,7 +82,7 @@ function View:updateComponents(changes)
             "add_or_change", changes,
             "remove", {}
         }
-      })
+    })
 end
 
 function View:setTransform(transform)
@@ -98,8 +105,41 @@ end
 
 function View:addSubview(subview)
     table.insert(self.subviews, subview)
-    subview.app = self.app
+    subview:setApp(self.app)
     subview.superview = self
+    if self:isAwake() then
+        subview:spawn()
+    end -- else, wait for awake()
+end
+
+function View:spawn()
+    assert(self.superview and self.superview:isAwake())
+    self.app.client:sendInteraction({
+        sender_entity_id = self.superview.entity.id,
+        receiver_entity_id = "place",
+        body = {
+            "spawn_entity",
+            self:specification()
+        }
+    })
+end
+
+function View:removeFromSuperview()
+    local idx = tablex.find(self.superview.subviews, self)
+    assert(idx ~= -1)
+    table.remove(self.superview.subviews, idx)
+    if self:isAwake() then
+        self.app.client:sendInteraction({
+            sender_entity_id = self.entity.id,
+            receiver_entity_id = "place",
+            body = {
+                "remove_entity",
+                self.entity.id
+            }
+        }, function()
+            self.entity = nil
+        end)
+    end
 end
 
 function View:findView(vid)
