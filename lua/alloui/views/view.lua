@@ -37,11 +37,20 @@ function View:_poseWithTransform()
 end
 
 function View:transformFromWorld()
-  local transformFromLocal = self:_poseWithTransform()
-  if self.superview ~= nil then
-      return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
+  if self:isAwake() then
+    local transformFromLocal = mat4.new(self.entity.components.transform.matrix)
+    if self.superview ~= nil then
+        return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
+    else
+        return transformFromLocal
+    end
   else
-      return transformFromLocal
+    local transformFromLocal = self:_poseWithTransform()
+    if self.superview ~= nil then
+        return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
+    else
+        return transformFromLocal
+    end
   end
 end
 
