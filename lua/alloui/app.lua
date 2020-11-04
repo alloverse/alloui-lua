@@ -59,9 +59,13 @@ end
 
 function App:_run(hz)
     hz = hz and hz or 40.0
-    while true do
+    while self.running do
         self:runOnce(1.0/hz)
     end
+end
+
+function App:quit()
+    self.running = false
 end
 
 function App:runOnce(timeout)
