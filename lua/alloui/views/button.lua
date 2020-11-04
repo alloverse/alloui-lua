@@ -104,7 +104,10 @@ function Button:_updateLooks()
 
   if self:isAwake() then
     local spec = self:specification()
-    self:updateComponents(spec)
+    self:updateComponents({
+      material=spec.material,
+      transform=spec.transform
+    })
   end
 end
 
