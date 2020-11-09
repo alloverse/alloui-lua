@@ -65,7 +65,8 @@ function Client:updateState(newState)
     local newComponents = {}
     local updatedComponents = {}
     local deletedComponents = {}
-  
+    self.entityCount = 0
+
     -- While at it, also make Entities and their Components classes so they get convenience methods from entity.lua
   
     -- Entity:getSibling(eid) to get any entity from an entity.
@@ -74,6 +75,8 @@ function Client:updateState(newState)
     for eid, newEntity in pairs(newState.entities) do
       local existingEntity = oldEntities[eid]
       local entity = existingEntity
+      self.entityCount = self.entityCount + 1
+      
       -- Check for new entity
       if entity == nil then
         entity = newEntity
