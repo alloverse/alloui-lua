@@ -218,8 +218,8 @@ function Client:poll(timeout)
   self.client:poll(timeout)
 end
 
-function Client:simulate(dt)
-  self.client:simulate(dt)
+function Client:simulate()
+  self.client:simulate()
 end
 
 function Client:disconnect(code)
