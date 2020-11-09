@@ -89,7 +89,7 @@ function App:onInteraction(inter, body, receiver, sender)
     if view then
         view:onInteraction(inter, body, sender)
     else
-        print("warning: got interaction for nonexistent vid ", vid, "eid", receiver.id)
+        print("warning: got interaction", body[1], "for nonexistent vid ", vid, "eid", receiver.id)
     end
 end
 
