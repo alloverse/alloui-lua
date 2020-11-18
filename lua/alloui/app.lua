@@ -33,12 +33,19 @@ function App:_init(client)
     client.delegates.onComponentAdded = function(cname, comp)
         self:onComponentAdded(cname, comp)
     end
+    client.delegates.onDisconnected = function(code, message)
+        print("DISCONNECTED", code, message)
+        self.running = false
+    end
     self.scheduledActions = {}
 end
 
 function App:connect()
     local mainSpec = self.mainView:specification()
     local ret = self.client:connect(mainSpec)
+    if not ret then
+        error("Failed to connect")
+    end
     self.mainView:setApp(self)
     return ret
 end
