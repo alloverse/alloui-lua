@@ -8,7 +8,7 @@ require(modules.."random_string")
 
 class.Client()
 
-function Client:_init(url, name, client)
+function Client:_init(url, name, client, updateStateAutomatically)
     self.client = client and client or allonet.create()
     self.url = url
     self.placename = "Untitled place"
@@ -25,9 +25,11 @@ function Client:_init(url, name, client)
     self.client:set_interaction_callback(function(inter)
         self:onInteraction(inter)
     end)
-    self.client:set_state_callback(function(state)
-        self:updateState(state)
-    end)
+    if updateStateAutomatically == nil or updateStateAutomatically == true then
+        self.client:set_state_callback(function(state)
+            self:updateState(state)
+        end)
+    end
     self.client:set_audio_callback(function(track_id, audio)
         self.delegates.onAudio(track_id, audio)
     end)
@@ -57,6 +59,10 @@ function Client:connect(avatar_spec)
 end
 
 function Client:updateState(newState)
+    if newState == nil then
+        newState = self.client:get_state()
+    end
+
     local oldEntities = tablex.copy(self.state.entities)
 
     -- Compare existing state to the new incoming state, and apply appropriate functions when we're done.
