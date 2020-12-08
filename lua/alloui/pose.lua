@@ -31,4 +31,9 @@ function Pose:move(x, y, z)
     return self
 end
 
+function Pose:scale(x, y, z)
+    self.transform = mat4.scale(self.transform, self.transform, vec3(x, y, z))
+    return self
+end
+
 return Pose

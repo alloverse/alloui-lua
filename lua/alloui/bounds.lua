@@ -35,4 +35,9 @@ function Bounds:move(x, y, z)
     return self
 end
 
+function Bounds:scale(x, y, z)
+    self.pose:scale(x, y, z)
+    return self
+end
+
 return Bounds
