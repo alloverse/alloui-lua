@@ -13,6 +13,6 @@ function string.random(length)
   end
 end
 
-math.randomseed( os.time() )
+math.randomseed( allonet.get_random_seed() )
 
 return string.random
