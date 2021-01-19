@@ -19,6 +19,7 @@ function View:_init(bounds)
     self.subviews = {}
     self.entity = nil
     self.app = nil
+    self.grabbable = false
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -74,6 +75,14 @@ function View:specification()
     if self.superview and self.superview:isAwake() then
         mySpec.relationships = {
             parent = self.superview.entity.id
+        }
+    end
+    if self.grabbable then
+        local s = self.bounds.size
+        mySpec.grabbable = {grabbable= true}
+        mySpec.collider = {
+            type= "box",
+            width= s.width, height= s.height, depth= s.depth
         }
     end
     return mySpec
