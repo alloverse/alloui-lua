@@ -4,6 +4,7 @@ local modules = (...):gsub('%.[^%.]+$', '') .. "."
 return {
     View = require(modules.."views.view"),
     Surface = require(modules.."views.surface"),
+    Cube = require(modules.."views.cube"),
     NavStack = require(modules.."views.navstack"),
     Button = require(modules.."views.button"),
     Label = require(modules.."views.label"),
