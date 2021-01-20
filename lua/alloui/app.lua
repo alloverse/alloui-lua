@@ -51,7 +51,7 @@ function App:connect()
 end
 
 function compareActions(a, b)
-    return a.next < b.next
+    return a.when < b.when
 end
 function App:scheduleAction(delay, repeats, callback)
     local action = ScheduledAction(self.client, delay, repeats, callback)
