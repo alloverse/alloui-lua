@@ -43,9 +43,11 @@ function Client:_init(url, name, client, updateStateAutomatically)
         onComponentChanged = function(k, v) end,
         onComponentRemoved = function(k, v) end,
         onInteraction = function(inter, body, receiver, sender) end,
+        onConnected = function () end,
         onDisconnected = function(code, message) end,
-        onAudio = function(track_id, audio) end
+        onAudio = function(track_id, audio) end,
     }
+    self.connected = false
 
     return self
 end
@@ -144,6 +146,11 @@ function Client:updateState(newState)
     end
   
     -- Run callbacks
+    if self.connected == false then
+      self.connected = true
+      self.delegates.onConnected()
+    end
+
     self.delegates.onStateChanged()
     tablex.map(function(x) 
         self:_respondToEquery(x)
