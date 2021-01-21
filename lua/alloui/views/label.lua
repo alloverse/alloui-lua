@@ -18,6 +18,7 @@ function Label:_init(o)
     self.wrap = o.wrap and o.wrap or bounds.size.width
     self.halign = o.halign and o.halign or "center"
     self.color = o.color and o.color or {1,1,1,1}
+    self.fitToWidth = o.fitToWidth and o.fitToWidth or 0
 end
 
 function Label:specification()
@@ -26,7 +27,8 @@ function Label:specification()
             string = self.text,
             height = self.lineheight,
             wrap = self.wrap,
-            halign = self.halign
+            halign = self.halign,
+            fitToWidth = self.fitToWidth
         },
         material = {
           color = self.color
