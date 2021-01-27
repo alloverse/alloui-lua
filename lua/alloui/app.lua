@@ -46,6 +46,7 @@ function App:_init(client)
         end
     end
     self.scheduledActions = {}
+    self.assetManager = AssetManager(client.client)
 end
 
 function App:connect()
