@@ -101,6 +101,7 @@ function AssetManager:_beganLoading(name, asset)
 end
 
 function AssetManager:_finishedLoading(name, asset)
+    self:add(asset)
     self._assets.loading[name] = nil
 end
 
