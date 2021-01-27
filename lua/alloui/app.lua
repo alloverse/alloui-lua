@@ -27,6 +27,7 @@ function App:_init(client)
     self.client = client
     self.mainView = View()
     self.running = true
+    self.connected = false
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -34,8 +35,15 @@ function App:_init(client)
         self:onComponentAdded(cname, comp)
     end
     client.delegates.onDisconnected = function(code, message)
+        self.connected = false
         print("DISCONNECTED", code, message)
         self.running = false
+    end
+    client.delegates.onConnected = function()
+        self.connected = true
+        if self.onConnected then 
+            self.onConnected()
+        end
     end
     self.scheduledActions = {}
 end
