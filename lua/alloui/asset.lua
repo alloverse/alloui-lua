@@ -70,11 +70,13 @@ function AssetManager:count()
 end
 
 -- callback: function(name, asset_or_nil)
+-- returns true if the asset is loading. 
+-- returns false if asset was found in cache
 function AssetManager:load(name, callback)
     local asset = self:_published(name)
     if asset ~= nil then
         callback(name, asset)
-        return
+        return true
     end
     asset = self:_loading(name)
     if asset ~= nil then
@@ -83,13 +85,14 @@ function AssetManager:load(name, callback)
             chained(name, x)
             callback(name, x)
         end
-        return
+        return false
     end
 
     local asset = Asset()
     asset.completionCallback = callback
     self:_beganLoading(name, asset)
     self.client:asset_request(name)
+    return false
 end
 
 function AssetManager:_published(name)
