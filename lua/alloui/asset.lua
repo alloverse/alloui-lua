@@ -63,6 +63,21 @@ end
 
 -- callback: function(name, asset_or_nil)
 function AssetManager:load(name, callback)
+    local asset = self:_published(name)
+    if asset ~= nil then
+        callback(name, asset)
+        return
+    end
+    asset = self:_loading(name)
+    if asset ~= nil then
+        local chained = asset.completionCallback
+        asset.completionCallback = function (name, x)
+            chained(name, x)
+            callback(name, x)
+        end
+        return
+    end
+
     local asset = Asset()
     asset.completionCallback = callback
     self:_beganLoading(name, asset)
