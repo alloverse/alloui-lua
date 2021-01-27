@@ -110,6 +110,9 @@ end
 function AssetManager:_finishedLoading(name, asset)
     self:add(asset)
     self._assets.loading[name] = nil
+    if name ~= asset:id() then 
+        print("Asset id mismatch. Expected "..name.." but got "..asset:id())
+    end
 end
 
 function AssetManager:_handleRequest(name, offset, length)
