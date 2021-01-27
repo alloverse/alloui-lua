@@ -2,7 +2,7 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local ffi = require('ffi')
-
+local types = require ('pl.types')
 
 AssetManager = class()
 
@@ -32,15 +32,32 @@ function AssetManager:_init(client)
 end
 
 function AssetManager:add(asset)
-    table.insert(self._assets.published, asset)
+    if asset.id then
+        print("adding "..asset:id())
+        table.insert(self._assets.published, asset)
+    elseif types.is_indexable(asset) then 
+        tablex.foreachi(asset, function(asset) self:add(asset) end)
+    elseif types.is_iterable(asset) then
+        tablex.foreach(asset, function(asset) self:add(asset) end)
+    else 
+        error("not an asset")
+    end
 end
 
 function AssetManager:remove(asset)
-    for i, v in ipairs(self._assets.published) do
-        if v == asset then
-            table.remove(self._assets.published, i)
-            return;
+    if asset.id then
+        for i, v in ipairs(self._assets.published) do
+            if v == asset then
+                table.remove(self._assets.published, i)
+                return;
+            end
         end
+    elseif types.is_indexable(asset) then
+        tablex.foreachi(asset, function(asset) self:remove(asset) end)
+    elseif types.is_iterable(asset) then
+        tablex.foreach(asset, function(asset) self:remove(asset) end)
+    else
+        error("not an asset")
     end
 end
 
@@ -92,6 +109,7 @@ end
 function AssetManager:_handleRequest(name, offset, length)
     local asset = self:_published(name)
     if asset == nil then
+        print("Can not serve asset "..name)
         self.client:asset_send(name, nil, offset, 0)
         return
     end
