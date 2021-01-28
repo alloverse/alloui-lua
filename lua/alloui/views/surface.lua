@@ -6,8 +6,7 @@ local View = require(modules.."views.view")
 
 
 -- A Surface is a View subclass which displays a single texture on a square.
--- The texture will later be a reference to an image asset, but for now you specify
--- the texture as a base64-encoded png.
+-- The texture is a reference to an image asset
 class.Surface(View)
 function Surface:_init(bounds)
     self:super(bounds)
@@ -31,7 +30,7 @@ function Surface:specification()
         },
     })
     if self.texture then
-      mySpec.material.texture = self.texture
+      mySpec.material.texture = self.texture:id()
     end
     if self.color then
       mySpec.material.color = self.color
@@ -39,11 +38,10 @@ function Surface:specification()
     return mySpec
 end
 
--- Set a base64-encoded png texture on a surface.
--- Use e g https://www.base64-image.de/ to convert your image to base64.
--- Please keep this small, as this base64 hack is very resource intensive.
-function Surface:setTexture(base64png)
-    self.texture = base64png
+-- Set an asset as texture on a surface.
+-- Asset instance or a raw string hash
+function Surface:setTexture(asset)
+    self.texture = asset
     if self:isAwake() then
       local mat = self:specification().material
       self:updateComponents({

@@ -4,7 +4,7 @@ local pretty = require('pl.pretty')
 local ffi = require('ffi')
 local types = require ('pl.types')
 
-AssetManager = class()
+AssetManager = class.AssetManager()
 
 function AssetManager:_init(client)
     assert(client, "AssetManager needs the client")
@@ -33,12 +33,12 @@ end
 
 function AssetManager:add(asset)
     if asset.id then
-        print("adding "..asset:id())
-        table.insert(self._assets.published, asset)
+        print("Adding " .. tostring(asset))
+        self._assets.published[asset:id()] = asset
+    elseif types.is_iterable(asset) or types.is_indexable(asset) then
+        tablex.foreach(asset, function(asset) self:add(asset) end)
     elseif types.is_indexable(asset) then 
         tablex.foreachi(asset, function(asset) self:add(asset) end)
-    elseif types.is_iterable(asset) then
-        tablex.foreach(asset, function(asset) self:add(asset) end)
     else 
         error("not an asset")
     end
@@ -46,36 +46,27 @@ end
 
 function AssetManager:remove(asset)
     if asset.id then
-        for i, v in ipairs(self._assets.published) do
-            if v == asset then
-                table.remove(self._assets.published, i)
-                return;
-            end
-        end
-    elseif types.is_indexable(asset) then
-        tablex.foreachi(asset, function(asset) self:remove(asset) end)
+        print("Removing " .. tostring(asset))
+        self._assets.published[asset:id()] = nil
     elseif types.is_iterable(asset) then
         tablex.foreach(asset, function(asset) self:remove(asset) end)
+    elseif types.is_indexable(asset) then
+        tablex.foreachi(asset, function(asset) self:remove(asset) end)
     else
         error("not an asset")
     end
 end
 
-function AssetManager:get(name_or_index)
-    if type(name_or_index) == "string" then
-        return self:_published(name_or_index)
-    elseif type(name_or_index) == "number" then
-        return self:all()[name_or_index]
-    end
+function AssetManager:get(name)
+    return self:_published(name)
 end
 
 function AssetManager:all()
-    return self._assets.published
+    return tablex.values(self._assets.published)
 end
 
 function AssetManager:count()
-    local list = self._assets.published
-    return #list
+    return tablex.size(self._assets.published)
 end
 
 -- callback: function(name, asset_or_nil)
@@ -87,11 +78,7 @@ function AssetManager:load(name, callback)
 end
 
 function AssetManager:_published(name)
-    for i, v in ipairs(self._assets.published) do
-        if v:id() == name then
-            return v
-        end
-    end
+    return self._assets.published[name]
 end
 
 function AssetManager:_loading(name)
@@ -141,7 +128,16 @@ function AssetManager:_handleState(name, state)
     self:_finishedLoading(name, asset)
 end
 
-Asset = class()
+Asset = class.Asset()
+
+function Asset.__eq(a, b)
+    if getmetatable(a) ~= Asset or getmetatable(b) ~= Asset then return false end
+    return a:id() == b:id()
+end
+
+function Asset:__tostring()
+    return self._name .. "<" .. self:id() .. ">"
+end
 
 function Asset:_init(data)
     self.data = data
@@ -175,7 +171,7 @@ function Asset:id(refresh)
     return self._id
 end
 
-Base64Asset = class(Asset)
+Base64Asset = class.Base64Asset(Asset)
 
 function Base64Asset:_init(base64)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
@@ -193,10 +189,10 @@ function Base64Asset:_init(base64)
     end))
     self:super(data)
 end
+Asset.Base64 = Base64Asset
 
 
-
-FileAsset = class(Asset)
+FileAsset = class.FileAsset(Asset)
 
 function FileAsset:_init(path)
     self._path = path
@@ -228,7 +224,7 @@ end
 
 
 if package.loaded['cairo'] then 
-    CairoAsset = class(Asset)
+    CairoAsset = class.CairoAsset(Asset)
 
     function CairoAsset:_init(surface)
         self.surface = surface

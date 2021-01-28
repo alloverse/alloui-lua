@@ -56,7 +56,7 @@ function Button:specification()
     })
 
     if self.texture then
-      mySpec.material.texture = self.texture
+      mySpec.material.texture = self.texture:id()
     end
     if self.color then
       mySpec.material.color = self:_effectiveColor()
@@ -140,8 +140,8 @@ function Button:setActivatedTexture(t)
   self.activatedTexture = t
 end
 
-function Button:setTexture(base64png)
-    self.texture = base64png
+function Button:setTexture(asset)
+    self.texture = asset
     self.color = {1, 1, 1, 1}
     if self:isAwake() then
       local mat = self:specification().material
