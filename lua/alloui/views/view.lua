@@ -11,6 +11,8 @@ local Bounds = require(modules .."bounds")
 -- manages a tree of sub-views; its bounds (transform and size);
 -- and a connection to a low-level entity.
 class.View()
+-- Export assets
+View.assets = {}
 function View:_init(bounds)
     self.viewId = string.random(16)
     self.bounds = bounds and bounds or Bounds(0,0,0, 0,0,0)
@@ -180,8 +182,18 @@ end
 
 function View:setApp(app)
     self.app = app
+    if self.app then self:registerAssets() end
+
     for i, v in ipairs(self.subviews) do
         v:setApp(app)
+    end
+end
+
+function View:registerAssets()
+    local mt = getmetatable(self)
+    while mt do
+        self.app.assetManager:add(mt.assets or {})
+        mt = mt._base
     end
 end
 
