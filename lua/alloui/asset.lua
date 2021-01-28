@@ -262,45 +262,6 @@ if package.loaded['cairo'] then
     Asset.Cairo = CairoAsset
 end
 
-
-AssetView = class(View)
-
-function AssetView:_init(asset, bounds)
-    self:super(bounds)
-    self._asset = asset
-end
-
-function AssetView:_geometry()
-    return {
-        type = "asset",
-        name = self._asset:id()
-    }
-end
-
-function AssetView:specification()
-    local mySpec = tablex.union(ui.View.specification(self), {
-        geometry = self:_geometry(),
-        grabbable = {
-            grabbable = true,
-        },
-        collider= {
-            type= "box",
-            width= 1, height= 1, depth= 1
-        },
-    })
-    return mySpec
-end
-
-function AssetView:asset(asset)
-    if asset == nil then
-        return self._asset
-    else 
-        self._asset = asset
-        self:updateComponents({geometry = self:_geometry()})
-    end
-end
-Asset.View = AssetView
-
 Asset.Manager = AssetManager
 Asset.Data = Asset
 Asset.File = FileAsset
