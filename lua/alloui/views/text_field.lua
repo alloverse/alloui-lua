@@ -24,6 +24,11 @@ function TextField:_init(o)
     self.plaque.color = {0.9, 0.9, 0.9, 1.0}
     self:addSubview(self.plaque)
 
+    local borderBounds = Bounds{size=self.bounds.size:copy()}:scale(0.9, 0.9, 0.95)
+    self.border = Cube(borderBounds)
+    self.border.color = {0.4, 0.4, 0.4, 1.0}
+    self:addSubview(self.border)
+
     local labelBounds = plaqueBounds:copy()
     labelBounds:move(0.02, 0, plaqueBounds.size.depth/2+0.001)
     labelBounds.size.height = labelBounds.size.height * 0.7
@@ -71,6 +76,10 @@ function TextField:layout()
         mat4.translate(self.transform, self.transform, vec3(0, 0, -self.bounds.size.depth*2))
     end
     self:setTransform(self.transform)
+
+    mat4.identity(self.border.transform)
+    mat4.scale(self.border.transform, self.border.transform, self.isFocused and vec3(1.15, 1.16, 1.0) or vec3(1,1,1))
+    self.border:setTransform(self.border.transform)
 end
 
 return TextField
