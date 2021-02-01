@@ -224,7 +224,7 @@ function View:onInteraction(inter, body, sender)
         local ok = self:onFocus(sender)
         inter:respond({"focus", ok and "ok" or "denied"})
     elseif body[1] == "defocus" then
-        if sender.id == self.focusedBy.id then
+        if self.focusedBy and sender.id == self.focusedBy.id then
             self:onFocus(nil)
         end
     end
