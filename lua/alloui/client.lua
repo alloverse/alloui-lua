@@ -184,6 +184,13 @@ function Client:_respondToEquery(e)
 end
 
 function Client:sendInteraction(interaction, callback)
+    if interaction.sender then
+      interaction.sender_entity_id = interaction.sender.id
+    end
+    if interaction.receiver then
+      interaction.receiver_entity_id = interaction.receiver.id
+    end
+
     if interaction.sender_entity_id == nil then
         assert(self.avatar_id ~= nil)
         interaction.sender_entity_id = self.avatar_id
