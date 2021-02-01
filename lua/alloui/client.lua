@@ -227,7 +227,7 @@ function Client:onInteraction(inter)
     if body[1] == "announce" then
         self.avatar_id = body[2]
         self.placename = body[3]
-        print("Welcome to",self.placename,". Our avatar ID: " .. self.avatar_id)
+        print("Welcome to",self.placename,", ",self.name,". Our avatar ID: " .. self.avatar_id)
     end
 
     if inter.type == "request" then
