@@ -65,6 +65,7 @@ function Button:specification()
 end
 
 function Button:onInteraction(inter, body, sender)
+    View.onInteraction(self, inter, body, sender)
     if body[1] == "point" then
         self:setHighlighted(true)
     elseif body[1] == "point-exit" then

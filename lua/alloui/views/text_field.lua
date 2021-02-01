@@ -48,11 +48,8 @@ function TextField:_init(o)
 end
 
 function TextField:onInteraction(inter, body, sender)
-    if body[1] == "focus" then
-        self:setFocused(true)
-    elseif body[1] == "defocus" then
-        self:setFocused(false)
-    elseif body[1] == "keydown" then
+    View.onInteraction(self, inter, body, sender)
+    if body[1] == "keydown" then
         self:handleKey(body[2])
     elseif body[1] == "keyup" then
         --
@@ -61,10 +58,13 @@ function TextField:onInteraction(inter, body, sender)
     end
 end
 
-function TextField:setFocused(newFocused)
+function TextField:onFocus(newFocused)
+    View.onFocus(self, newFocused)
     self.isFocused = newFocused
     self:layout()
+    return true
 end
+
 
 function TextField:specification()
     local s = self.bounds.size
