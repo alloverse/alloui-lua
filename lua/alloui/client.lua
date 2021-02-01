@@ -119,7 +119,16 @@ function Client:updateState(newState)
               old=oldCopy,
               new=oldComponent -- will be new after copy
             })
-            tablex.update(oldComponent, newComponent)
+            -- copy over new values...
+            for key, value in pairs(newComponent) do
+              oldComponent[key] = value
+            end
+            -- and remove now-removed values...
+            for key, _ in pairs(oldComponent) do
+              if newComponent[key] == nil then
+                oldComponent[key] = nil
+              end
+            end
           end
         end
       end
