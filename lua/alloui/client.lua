@@ -195,9 +195,11 @@ end
 function Client:sendInteraction(interaction, callback)
     if interaction.sender then
       interaction.sender_entity_id = interaction.sender.id
+      interaction.sender = nil
     end
     if interaction.receiver then
       interaction.receiver_entity_id = interaction.receiver.id
+      interaction.receiver = nil
     end
 
     if interaction.sender_entity_id == nil then
@@ -212,7 +214,7 @@ function Client:sendInteraction(interaction, callback)
         if callback ~= nil then
             self.outstanding_response_callbacks[interaction.request_id] = callback
         end
-    else
+    elseif interaction.request_id == nil then
         interaction.request_id = "" -- todo, fix this in allonet
     end
     interaction.body = json.encode(interaction.body)
@@ -227,6 +229,20 @@ function Client:onInteraction(inter)
         self.placename = body[3]
         print("Welcome to",self.placename,". Our avatar ID: " .. self.avatar_id)
     end
+
+    if inter.type == "request" then
+      inter.respond = function(request, responseBody)
+        local response = {
+          sender_entity_id = inter.receiver_entity_id,
+          receiver_entity_id = inter.sender_entity_id,
+          request_id = inter.request_id,
+          type = "response",
+          body = responseBody
+        }
+        self:sendInteraction(response)
+      end
+    end
+
     local callback = self.outstanding_response_callbacks[inter.request_id]
     if callback ~= nil then
         callback(inter, body)
