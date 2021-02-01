@@ -38,6 +38,12 @@ function TextField:_init(o)
     self.label = Label(o)
     self:addSubview(self.label)
 
+    -- whether to insert the return or not. use and return false to do things like submit a form.
+    self.onReturn = o.onReturn and o.onReturn or function(field, text) return true end
+
+    -- whether to accept change
+    self.onChange = o.onChange and o.onChange or function(field, oldText, newText) return true end
+
     self:layout()
 end
 
@@ -93,13 +99,22 @@ end
 
 function TextField:appendText(text)
     local newText = self.label.text .. text
-    self.label:setText(newText)
+    if self.onChange(self, self.label.text, newText) then
+        self.label:setText(newText)
+    end
 end
 
 function TextField:handleKey(code)
     local newText = self.label.text
     if code == "backspace" then
         newText = newText:sub(1, -2)
+    elseif code == "return" or code == "enter" then
+        if self.onReturn(self, self.label.text) then
+            newText = newText .. "\n"
+        end
+    end
+
+    if newText ~= self.label.text and self.onChange(self, self.label.text, newText) then
         self.label:setText(newText)
     end
 end
