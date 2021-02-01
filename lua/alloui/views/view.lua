@@ -119,8 +119,10 @@ end
 function View:setBounds(bounds)
   self.bounds = bounds
   if self:isAwake() then
+    local c = self:specification()
     self:updateComponents({
-        transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
+        transform= c.transform,
+        collider= c.collider
     })
   end
 end
