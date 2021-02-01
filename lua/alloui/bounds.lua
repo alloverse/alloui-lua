@@ -25,6 +25,12 @@ function Bounds:_init(a, b, z, w, h, d)
     end
 end
 
+function Bounds:copy()
+    return Bounds{
+        pose=self.pose:copy(),
+        size=self.size:copy()
+    }
+end
 function Bounds:rotate(angle, x, y, z)
     self.pose:rotate(angle, x, y, z)
     return self

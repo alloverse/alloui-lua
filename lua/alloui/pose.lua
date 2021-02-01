@@ -21,6 +21,10 @@ function Pose:_init(a, b, c, d)
     end
 end
 
+function Pose:copy()
+    return Pose(mat4(self.transform))
+end
+
 function Pose:rotate(angle, x, y, z)
     self.transform = mat4.rotate(self.transform, self.transform, angle, vec3(x, y, z))
     return self
