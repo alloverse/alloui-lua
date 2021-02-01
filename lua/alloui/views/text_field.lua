@@ -46,6 +46,12 @@ function TextField:onInteraction(inter, body, sender)
         self:setFocused(true)
     elseif body[1] == "defocus" then
         self:setFocused(false)
+    elseif body[1] == "keydown" then
+        self:handleKey(body[2])
+    elseif body[1] == "keyup" then
+        --
+    elseif body[1] == "textinput" then
+        self:appendText(body[2])
     end
 end
 
@@ -80,6 +86,22 @@ function TextField:layout()
     mat4.identity(self.border.transform)
     mat4.scale(self.border.transform, self.border.transform, self.isFocused and vec3(1.15, 1.16, 1.0) or vec3(1,1,1))
     self.border:setTransform(self.border.transform)
+
+    self.label.insertionMarker = self.isFocused
+    self.label:updateComponents({text=self.label:specification().text})
+end
+
+function TextField:appendText(text)
+    local newText = self.label.text .. text
+    self.label:setText(newText)
+end
+
+function TextField:handleKey(code)
+    local newText = self.label.text
+    if code == "backspace" then
+        newText = newText:sub(1, -2)
+        self.label:setText(newText)
+    end
 end
 
 return TextField
