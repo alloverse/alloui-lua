@@ -15,4 +15,8 @@ function Size:_init(width, height, depth)
     self.depth = depth and depth or 0
 end
 
+function Size:copy()
+    return Size(self.width, self.height, self.depth)
+end
+
 return Size
