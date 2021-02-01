@@ -44,6 +44,8 @@ function TextField:_init(o)
     -- whether to accept change
     self.onChange = o.onChange and o.onChange or function(field, oldText, newText) return true end
 
+    self.onLostFocus = o.onLostFocus and o.onLostFocus or function(field) end
+    
     self:layout()
 end
 
@@ -62,6 +64,9 @@ function TextField:onFocus(newFocused)
     View.onFocus(self, newFocused)
     self.isFocused = newFocused
     self:layout()
+    if not newFocused then
+        self.onLostFocus(self)
+    end
     return true
 end
 
