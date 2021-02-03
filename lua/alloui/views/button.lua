@@ -57,6 +57,7 @@ function Button:specification()
 
     if self.texture then
       mySpec.material.texture = self.texture:id()
+    end
     if self.color then
       mySpec.material.color = self:_effectiveColor()
     end
