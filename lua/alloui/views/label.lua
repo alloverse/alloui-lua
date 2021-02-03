@@ -34,6 +34,9 @@ function Label:specification()
           color = self.color
         }
     })
+    if self.insertionMarker then
+        mySpec.text.insertionMarker = true
+    end
     return mySpec
 end
 

@@ -60,4 +60,16 @@ function Surface:setColor(rgba)
     end
 end
 
+function Surface:setBounds(bounds)
+  View.setBounds(self, bounds)
+
+  if self:isAwake() then
+    local geom = self:specification().geometry
+    self:updateComponents({
+        geometry= geom
+    })
+  end
+
+end
+
 return Surface

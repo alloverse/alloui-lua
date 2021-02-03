@@ -1,0 +1,127 @@
+local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
+local class = require('pl.class')
+local tablex = require('pl.tablex')
+local pretty = require('pl.pretty')
+local vec3 = require("modules.vec3")
+local mat4 = require("modules.mat4")
+local View = require(modules.."views.view")
+local Label = require(modules.."views.label")
+local Cube = require(modules.."views.cube")
+local Bounds = require(modules.."bounds")
+local Pose = require(modules.."pose")
+local Size = require(modules.."size")
+
+
+
+-- A text field, for inputting text. 
+class.TextField(View)
+-- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
+-- TextField(bounds)
+function TextField:_init(o)
+    self:super(o.bounds and o.bounds or o)
+    local plaqueBounds = Bounds{size=self.bounds.size:copy()}
+    self.plaque = Cube(plaqueBounds)
+    self.plaque.color = {0.9, 0.9, 0.9, 1.0}
+    self:addSubview(self.plaque)
+
+    local borderBounds = Bounds{size=self.bounds.size:copy()}:scale(0.9, 0.9, 0.95)
+    self.border = Cube(borderBounds)
+    self.border.color = {0.4, 0.4, 0.4, 1.0}
+    self:addSubview(self.border)
+
+    local labelBounds = plaqueBounds:copy()
+    labelBounds:move(0.02, 0, plaqueBounds.size.depth/2+0.001)
+    labelBounds.size.height = labelBounds.size.height * 0.7
+    o.bounds = labelBounds
+    o.halign = o.halign and o.halign or "left"
+    o.color = o.color and o.color or {0, 0, 0, 1}
+    self.label = Label(o)
+    self:addSubview(self.label)
+
+    -- whether to insert the return or not. use and return false to do things like submit a form.
+    self.onReturn = o.onReturn and o.onReturn or function(field, text) return true end
+
+    -- whether to accept change
+    self.onChange = o.onChange and o.onChange or function(field, oldText, newText) return true end
+
+    self.onLostFocus = o.onLostFocus and o.onLostFocus or function(field) end
+    
+    self:layout()
+end
+
+function TextField:onInteraction(inter, body, sender)
+    View.onInteraction(self, inter, body, sender)
+    if body[1] == "keydown" then
+        self:handleKey(body[2])
+    elseif body[1] == "keyup" then
+        --
+    elseif body[1] == "textinput" then
+        self:appendText(body[2])
+    end
+end
+
+function TextField:onFocus(newFocused)
+    View.onFocus(self, newFocused)
+    self.isFocused = newFocused
+    self:layout()
+    if not newFocused then
+        self.onLostFocus(self)
+    end
+    return true
+end
+
+
+function TextField:specification()
+    local s = self.bounds.size
+    local mySpec = tablex.union(View.specification(self), {
+        focus = {
+            type= "key"
+        },
+        collider= {
+            type= "box",
+            width= s.width, height= s.height, depth= s.depth
+        }
+    })
+    return mySpec
+end
+
+function TextField:layout()
+    mat4.identity(self.transform)
+    
+    mat4.scale(self.transform, self.transform, vec3(1, 1, self.isFocused and 1.0 or 0.1))
+    if not self.isFocused then
+        mat4.translate(self.transform, self.transform, vec3(0, 0, -self.bounds.size.depth*2))
+    end
+    self:setTransform(self.transform)
+
+    mat4.identity(self.border.transform)
+    mat4.scale(self.border.transform, self.border.transform, self.isFocused and vec3(1.15, 1.16, 1.0) or vec3(1,1,1))
+    self.border:setTransform(self.border.transform)
+
+    self.label.insertionMarker = self.isFocused
+    self.label:updateComponents({text=self.label:specification().text})
+end
+
+function TextField:appendText(text)
+    local newText = self.label.text .. text
+    if self.onChange(self, self.label.text, newText) then
+        self.label:setText(newText)
+    end
+end
+
+function TextField:handleKey(code)
+    local newText = self.label.text
+    if code == "backspace" then
+        newText = newText:sub(1, -2)
+    elseif code == "return" or code == "enter" then
+        if self.onReturn(self, self.label.text) then
+            newText = newText .. "\n"
+        end
+    end
+
+    if newText ~= self.label.text and self.onChange(self, self.label.text, newText) then
+        self.label:setText(newText)
+    end
+end
+
+return TextField

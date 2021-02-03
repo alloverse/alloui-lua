@@ -8,6 +8,7 @@ return {
     NavStack = require(modules.."views.navstack"),
     Button = require(modules.."views.button"),
     Label = require(modules.."views.label"),
+    TextField = require(modules.."views.text_field"),
     GrabHandle = require(modules.."views.grab_handle"),
     ResizeHandle = require(modules.."views.resize_handle"),
     Speaker = require(modules.."views.speaker"),

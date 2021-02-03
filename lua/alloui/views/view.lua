@@ -119,8 +119,10 @@ end
 function View:setBounds(bounds)
   self.bounds = bounds
   if self:isAwake() then
+    local c = self:specification()
     self:updateComponents({
-        transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
+        transform= c.transform,
+        collider= c.collider
     })
   end
 end
@@ -197,9 +199,35 @@ function View:registerAssets()
     end
 end
 
+function View:onFocus(by)
+    if self.focusedBy then
+        self:defocus()
+    end
+    self.focusedBy = by
+    return true
+end
+
+function View:defocus()
+    self.app.client:sendInteraction({
+        sender = self.entity,
+        receiver = self.focusedBy,
+        body = {
+            "defocus"
+        }
+    })
+end
+
 -- an interaction message was sent to this specific view.
 -- See https://github.com/alloverse/docs/blob/master/specifications/interactions.md
 function View:onInteraction(inter, body, sender)
+    if body[1] == "focus" then
+        local ok = self:onFocus(sender)
+        inter:respond({"focus", ok and "ok" or "denied"})
+    elseif body[1] == "defocus" then
+        if self.focusedBy and sender.id == self.focusedBy.id then
+            self:onFocus(nil)
+        end
+    end
 end
 
 return View

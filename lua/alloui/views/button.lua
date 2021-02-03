@@ -22,7 +22,7 @@ function Button:_init(bounds)
     self.highlighted = false
     self.onActivated = nil
 
-    self.label = Label(Bounds(0, 0, bounds.size.depth+0.01,   bounds.size.width*0.9, bounds.size.height*0.7, 0.01))
+    self.label = Label(Bounds(0, 0, bounds.size.depth/2+0.01,   bounds.size.width*0.9, bounds.size.height*0.7, 0.01))
     self.color = {0.9, 0.4, 0.3, 1.0}
     self:addSubview(self.label)
 end
@@ -57,7 +57,6 @@ function Button:specification()
 
     if self.texture then
       mySpec.material.texture = self.texture:id()
-    end
     if self.color then
       mySpec.material.color = self:_effectiveColor()
     end
@@ -65,6 +64,7 @@ function Button:specification()
 end
 
 function Button:onInteraction(inter, body, sender)
+    View.onInteraction(self, inter, body, sender)
     if body[1] == "point" then
         self:setHighlighted(true)
     elseif body[1] == "point-exit" then

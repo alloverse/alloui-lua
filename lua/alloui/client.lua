@@ -119,7 +119,16 @@ function Client:updateState(newState)
               old=oldCopy,
               new=oldComponent -- will be new after copy
             })
-            tablex.update(oldComponent, newComponent)
+            -- copy over new values...
+            for key, value in pairs(newComponent) do
+              oldComponent[key] = value
+            end
+            -- and remove now-removed values...
+            for key, _ in pairs(oldComponent) do
+              if newComponent[key] == nil then
+                oldComponent[key] = nil
+              end
+            end
           end
         end
       end
@@ -184,6 +193,15 @@ function Client:_respondToEquery(e)
 end
 
 function Client:sendInteraction(interaction, callback)
+    if interaction.sender then
+      interaction.sender_entity_id = interaction.sender.id
+      interaction.sender = nil
+    end
+    if interaction.receiver then
+      interaction.receiver_entity_id = interaction.receiver.id
+      interaction.receiver = nil
+    end
+
     if interaction.sender_entity_id == nil then
         assert(self.avatar_id ~= nil)
         interaction.sender_entity_id = self.avatar_id
@@ -196,7 +214,7 @@ function Client:sendInteraction(interaction, callback)
         if callback ~= nil then
             self.outstanding_response_callbacks[interaction.request_id] = callback
         end
-    else
+    elseif interaction.request_id == nil then
         interaction.request_id = "" -- todo, fix this in allonet
     end
     interaction.body = json.encode(interaction.body)
@@ -209,8 +227,22 @@ function Client:onInteraction(inter)
     if body[1] == "announce" then
         self.avatar_id = body[2]
         self.placename = body[3]
-        print("Welcome to",self.placename,". Our avatar ID: " .. self.avatar_id)
+        print("Welcome to",self.placename,", ",self.name,". Our avatar ID: " .. self.avatar_id)
     end
+
+    if inter.type == "request" then
+      inter.respond = function(request, responseBody)
+        local response = {
+          sender_entity_id = inter.receiver_entity_id,
+          receiver_entity_id = inter.sender_entity_id,
+          request_id = inter.request_id,
+          type = "response",
+          body = responseBody
+        }
+        self:sendInteraction(response)
+      end
+    end
+
     local callback = self.outstanding_response_callbacks[inter.request_id]
     if callback ~= nil then
         callback(inter, body)

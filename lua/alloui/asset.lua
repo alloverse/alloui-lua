@@ -11,9 +11,29 @@ function AssetManager:_init(client)
     self.client = client
 
     self._assets = {
-        loading = {},
-        published = {}
+        loading = {}, -- Assets requested but not completed
+        cache = {}, -- All assets are put into a weak list and managed while in used
+        published = {}, -- Explicitly added assets are also in a strong list to remain in memory
+
+        publish = function (self, asset, manage)
+            self.cache[asset:id()] = asset
+            if manage then 
+                self.published[asset:id()] = asset
+            end
+        end,
+        get = function (self, name)
+            return self.cache[name]
+        end,
+        remove = function (self, asset)
+            asset = asset.id and asset:id() or asset
+            self.cache[asset] = nil
+            self.published[asset] = nil
+            self.loading[asset] = nil
+        end
     }
+
+    -- make the loaded table weak
+    setmetatable(self._assets.cache, { __mode = "v" })
 
     -- For providing assets
     client:set_asset_request_callback(function (name, offset, length)
@@ -31,14 +51,17 @@ function AssetManager:_init(client)
     end)
 end
 
-function AssetManager:add(asset)
+-- @tparam bool manage If true the assetManager will hold on to the asset for you,
+--                     otherwise it will only serve the asset as long as you keep
+--                     a reference to it.
+function AssetManager:add(asset, manage)
     if asset.id then
         print("Adding " .. tostring(asset))
-        self._assets.published[asset:id()] = asset
+        self._assets:publish(asset, manage)
     elseif types.is_iterable(asset) or types.is_indexable(asset) then
-        tablex.foreach(asset, function(asset) self:add(asset) end)
+        tablex.foreach(asset, function(asset) self:add(asset, manage) end)
     elseif types.is_indexable(asset) then 
-        tablex.foreachi(asset, function(asset) self:add(asset) end)
+        tablex.foreachi(asset, function(asset) self:add(asset, manage) end)
     else 
         error("not an asset")
     end
@@ -58,23 +81,43 @@ function AssetManager:remove(asset)
 end
 
 function AssetManager:get(name)
-    return self:_published(name)
+    return self._assets:get(name)
 end
 
 function AssetManager:all()
-    return tablex.values(self._assets.published)
+    return tablex.values(self._assets.cache)
 end
 
 function AssetManager:count()
-    return tablex.size(self._assets.published)
+    return tablex.size(self._assets.cache)
 end
 
 -- callback: function(name, asset_or_nil)
+-- returns true if the asset is loading. 
+-- returns false if asset was found in cache
 function AssetManager:load(name, callback)
+    local asset = self:get(name)
+    if asset then
+        callback(name, asset)
+        return true
+    end
+
+    asset = self:_loading(name)
+    if asset then
+        local chained = asset.completionCallback
+        asset.completionCallback = function (name, x)
+            chained(name, x)
+            callback(name, x)
+        end
+        return false
+    end
+
     local asset = Asset()
     asset.completionCallback = callback
     self:_beganLoading(name, asset)
     self.client:asset_request(name)
+
+    return true
 end
 
 function AssetManager:_published(name)
@@ -91,10 +134,14 @@ end
 
 function AssetManager:_finishedLoading(name, asset)
     self._assets.loading[name] = nil
+    if name ~= asset:id() then 
+        print("Asset id mismatch. Expected "..name.." but got "..asset:id())
+    end
+    self._assets.cache[asset:id()] = asset
 end
 
 function AssetManager:_handleRequest(name, offset, length)
-    local asset = self:_published(name)
+    local asset = self:get(name)
     if asset == nil then
         print("Can not serve asset "..name)
         self.client:asset_send(name, nil, offset, 0)
@@ -223,6 +270,24 @@ function FileAsset:write(data, offset)
 end
 
 
+Asset.View = class.AssetView(View)
+function AssetView:_init(asset, bounds)
+    self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
+    self.asset = asset
+end
+function AssetView:specification()
+    local spec = View.specification(self)
+    spec.geometry = {
+        type = "asset",
+        name = self.asset:id(),
+    }
+    return spec
+end
+
+function Asset:makeView(bounds)
+    return AssetView(self, bounds)
+end
+
 if package.loaded['cairo'] then 
     CairoAsset = class.CairoAsset(Asset)
 
@@ -245,45 +310,6 @@ if package.loaded['cairo'] then
     end
     Asset.Cairo = CairoAsset
 end
-
-
-AssetView = class(View)
-
-function AssetView:_init(asset, bounds)
-    self:super(bounds)
-    self._asset = asset
-end
-
-function AssetView:_geometry()
-    return {
-        type = "asset",
-        name = self._asset:id()
-    }
-end
-
-function AssetView:specification()
-    local mySpec = tablex.union(ui.View.specification(self), {
-        geometry = self:_geometry(),
-        grabbable = {
-            grabbable = true,
-        },
-        collider= {
-            type= "box",
-            width= 1, height= 1, depth= 1
-        },
-    })
-    return mySpec
-end
-
-function AssetView:asset(asset)
-    if asset == nil then
-        return self._asset
-    else 
-        self._asset = asset
-        self:updateComponents({geometry = self:_geometry()})
-    end
-end
-Asset.View = AssetView
 
 Asset.Manager = AssetManager
 Asset.Data = Asset
