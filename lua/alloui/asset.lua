@@ -270,19 +270,22 @@ function FileAsset:write(data, offset)
 end
 
 
-Asset.View = class.AssetView(View)
+AssetView = class.AssetView(View)
 function AssetView:_init(asset, bounds)
     self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset
 end
 function AssetView:specification()
     local spec = View.specification(self)
-    spec.geometry = {
-        type = "asset",
-        name = self.asset:id(),
-    }
+    if self.asset then 
+        spec.geometry = {
+            type = "asset",
+            name = self.asset:id(),
+        }
+    end
     return spec
 end
+Asset.View = AssetView
 
 function Asset:makeView(bounds)
     return AssetView(self, bounds)
