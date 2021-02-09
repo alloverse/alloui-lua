@@ -19,4 +19,11 @@ function Size:copy()
     return Size(self.width, self.height, self.depth)
 end
 
+function Size:inset(byWidth, byHeight, byDepth)
+    self.width = self.width - byWidth
+    self.height = self.height - byHeight
+    self.depth = self.depth - byDepth
+    return self
+end
+
 return Size

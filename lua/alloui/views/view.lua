@@ -136,6 +136,7 @@ function View:addSubview(subview)
     if self:isAwake() then
         subview:spawn()
     end -- else, wait for awake()
+    return subview
 end
 
 function View:spawn()

@@ -46,4 +46,9 @@ function Bounds:scale(x, y, z)
     return self
 end
 
+function Bounds:inset(w, h, d)
+    self.size:inset(w, h, d)
+    return self
+end
+
 return Bounds
