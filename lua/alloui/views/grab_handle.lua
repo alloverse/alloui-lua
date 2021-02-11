@@ -15,6 +15,7 @@ GrabHandle.assets = {
 function GrabHandle:_init(bounds)
     self:super(bounds)
     self.texture = GrabHandle.assets.image
+    self.rotationConstraint = {0, 1, 0}
 end
 
 function GrabHandle:specification()
@@ -27,7 +28,8 @@ function GrabHandle:specification()
             width= s.width, height= s.height, depth= s.depth
         },
         grabbable= {
-            actuate_on= "$parent"
+            actuate_on= "$parent",
+            rotation_constraint= self.rotationConstraint
         }
     })
     return mySpec
