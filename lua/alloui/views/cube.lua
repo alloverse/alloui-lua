@@ -33,7 +33,7 @@ function Cube:specification()
               {1, 7, 3}, {5, 7, 1}, -- right
               {5, 1, 0}, {4, 5, 0}, -- bottom
               {4, 0, 2}, {4, 2, 6}, -- left
-              {1, 0, 2}, {1, 2, 3}, -- rear
+              {4, 6, 5}, {5, 6, 7}, -- read
             },
         },
         material = {
