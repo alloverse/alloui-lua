@@ -1,11 +1,4 @@
-local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
-local class = require('pl.class')
-local tablex = require('pl.tablex')
-local pretty = require('pl.pretty')
-local View = require(modules.."views.view")
-
-
--- A place to emit sound from. Allocates an audio track on backend when created.
+--- A place to emit sound from. Allocates an audio track on backend when created.
 -- Use it e g like this to send audio you generate 20ms at a time:
 -- app:scheduleAction(0.02, true, function()
 --    local leftAudio, rightAudio = player:generateAudio(960)
@@ -13,6 +6,13 @@ local View = require(modules.."views.view")
 --        app.client.client:send_audio(leftSpeaker.trackId, leftAudio)
 --    end
 -- end)
+-- @classmod Speaker
+
+local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
+local class = require('pl.class')
+local tablex = require('pl.tablex')
+local pretty = require('pl.pretty')
+local View = require(modules.."views.view")
 
 class.Speaker(View)
 function Speaker:awake()

@@ -1,3 +1,6 @@
+--- TextField
+-- @classmod TextField
+
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -13,9 +16,9 @@ local Size = require(modules.."size")
 
 
 
--- A text field, for inputting text. 
+--- A text field, for inputting text. 
 class.TextField(View)
--- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
+--- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- TextField(bounds)
 function TextField:_init(o)
     self:super(o.bounds and o.bounds or o)

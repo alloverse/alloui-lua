@@ -1,3 +1,11 @@
+--- Button can be poked/clicked to perform an action.
+-- Set onActivated to a function you'd like to be called when the button is pressed.
+-- button.label:setText(...) to the string you want on the button.
+-- You can also set the button's default, highlighted and activated texture (see Surface documentation for image format caveats).
+-- Or if you just want a colored button, you can set its color.
+-- Set either color or texture to nil to remove that attribute.
+-- @classmod Button
+
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -8,13 +16,6 @@ local View = require(modules.."views.view")
 local Label = require(modules.."views.label")
 local Bounds = require(modules.."bounds")
 
-
--- Button can be poked/clicked to perform an action.
--- Set onActivated to a function you'd like to be called when the button is pressed.
--- button.label:setText(...) to the string you want on the button.
--- You can also set the button's default, highlighted and activated texture (see Surface documentation for image format caveats).
--- Or if you just want a colored button, you can set its color.
--- Set either color or texture to nil to remove that attribute.
 class.Button(View)
 function Button:_init(bounds)
     self:super(bounds)

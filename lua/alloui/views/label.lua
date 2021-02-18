@@ -1,3 +1,5 @@
+--- A text label. 
+-- @classmod Label
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -6,9 +8,10 @@ local View = require(modules.."views.view")
 
 
 
--- A text label. 
+
 class.Label(View)
--- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
+
+--- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- Label(bounds)
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o

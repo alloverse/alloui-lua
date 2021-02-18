@@ -6,9 +6,9 @@ local util = require(modules .."util")
 
 
 
--- Schedule work to be done later
+--- Schedule work to be done later
 class.ScheduledAction()
--- delay: in how long (in seconds) should callback be called?
+--- delay: in how long (in seconds) should callback be called?
 -- repeats: should it then be rescheduled with the same delay again?
 -- callback: function to be called with no arguments
 function ScheduledAction:_init(client, delay, repeats, callback)
@@ -18,7 +18,7 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.when = client.client:get_time() + delay
 end
 
--- Represents the Alloverse appliance. Mediates communication with
+--- Represents the Alloverse appliance. Mediates communication with
 -- backend, and maintains the runloop.Create one of these, configure it,
 -- connect it and run it, and you have an alloapp.
 class.App()

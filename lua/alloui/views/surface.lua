@@ -1,3 +1,6 @@
+--- Surface
+-- @classmod Surface
+
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -5,7 +8,7 @@ local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
 
 
--- A Surface is a View subclass which displays a single texture on a square.
+--- A Surface is a View subclass which displays a single texture on a square.
 -- The texture is a reference to an image asset
 class.Surface(View)
 function Surface:_init(bounds)

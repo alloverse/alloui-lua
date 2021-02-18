@@ -1,3 +1,6 @@
+--- A view
+--@classmod View
+
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -7,7 +10,7 @@ local mat4 = require("modules.mat4")
 require(modules .."random_string")
 local Bounds = require(modules .."bounds")
 
--- The view class acts as base for anything visual in an alloapp. It
+--- The view class acts as base for anything visual in an alloapp. It
 -- manages a tree of sub-views; its bounds (transform and size);
 -- and a connection to a low-level entity.
 class.View()
@@ -62,7 +65,7 @@ function _arrayFromMat4(x)
   return x
 end
 
--- The specification is used to describe the entity three required to represent
+--- The specification is used to describe the entity three required to represent
 -- this view inside the Alloverse. In a subclass, call this implementation and then
 -- add/modify your own components.
 function View:specification()
@@ -90,7 +93,7 @@ function View:specification()
     return mySpec
 end
 
--- Ask backend to update components on the server. Use to update things you've specified
+--- Ask backend to update components on the server. Use to update things you've specified
 -- in :specification() but now want to change.
 function View:updateComponents(changes)
     if self.app == nil or self.entity == nil then return end
@@ -218,7 +221,7 @@ function View:defocus()
     })
 end
 
--- an interaction message was sent to this specific view.
+--- an interaction message was sent to this specific view.
 -- See https://github.com/alloverse/docs/blob/master/specifications/interactions.md
 function View:onInteraction(inter, body, sender)
     if body[1] == "focus" then
