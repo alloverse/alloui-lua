@@ -42,9 +42,13 @@ function View:_poseWithTransform()
     return mat4.mul(mat4.identity(), self.transform, self.bounds.pose.transform)
 end
 
+function View:transformFromParent()
+    return mat4.new(self.entity.components.transform.matrix)
+end
+
 function View:transformFromWorld()
   if self:isAwake() then
-    local transformFromLocal = mat4.new(self.entity.components.transform.matrix)
+    local transformFromLocal = self:transformFromParent()
     if self.superview ~= nil then
         return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
     else
