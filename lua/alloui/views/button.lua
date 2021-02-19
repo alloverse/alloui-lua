@@ -75,7 +75,7 @@ function Button:onInteraction(inter, body, sender)
         self:setSelected(body[2])
 
         if self.selected == false and self.highlighted == true then
-            self:activate()
+            self:activate(sender)
         end
     end
 end
@@ -123,9 +123,9 @@ function Button:_effectiveColor()
   return self.color
 end
 
-function Button:activate()
+function Button:activate(byEntity)
     if self.onActivated then
-        self.onActivated()
+        self.onActivated(byEntity)
     end
 end
 
