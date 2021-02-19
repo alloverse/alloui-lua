@@ -17,5 +17,5 @@ return {
     App = require(modules.."app"),
     Size = require(modules.."size"),
     util = require(modules.."util"),
-    Asset = require(modules.."asset"),
+    Asset = require(modules.."asset.init"),
 }

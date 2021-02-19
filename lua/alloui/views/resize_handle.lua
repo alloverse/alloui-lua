@@ -3,7 +3,7 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local Surface = require(modules.."views.surface")
-local Base64Asset = require(modules.."asset").Base64
+local Base64Asset = require(modules.."asset.init").Base64
 
 
 -- Like a window resize widget. Drag to resize your view.

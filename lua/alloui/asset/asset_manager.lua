@@ -177,3 +177,5 @@ function AssetManager:_handleState(name, state)
     end
     self:_finishedLoading(name, asset)
 end
+
+return AssetManager

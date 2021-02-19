@@ -48,3 +48,5 @@ if package.loaded['cairo'] then
     end
     Asset.Cairo = CairoAsset
 end
+
+return AssetView

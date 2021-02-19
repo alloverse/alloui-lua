@@ -1,7 +1,7 @@
-local Asset = require 'asset'
+local Asset = require 'alloui.asset.asset'
 
-return {
-    Manager = require 'asset_manager',
-    Base64 = require 'base64_asset',
-    File = require 'file_asset',
-}
+Asset.Manager = require 'alloui.asset.asset_manager'
+Asset.Base64 = require 'alloui.asset.base64_asset'
+Asset.File = require 'alloui.asset.file_asset'
+
+return Asset

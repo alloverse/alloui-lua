@@ -8,7 +8,7 @@ local Bounds = require(modules .."bounds")
 local Size = require(modules .."size")
 local View = require(modules .."views.view")
 local Button = require(modules .."views.button")
-local Base64Asset = require(modules.."asset").Base64
+local Base64Asset = require(modules.."asset.init").Base64
 
 -- Navigation stack: push and pop views to drill down a hierarchy of UI
 class.NavStack(View)

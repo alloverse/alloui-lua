@@ -68,4 +68,5 @@ function Asset:id(refresh)
     return self._id
 end
 
+
 return Asset

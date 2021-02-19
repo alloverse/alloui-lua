@@ -2,7 +2,7 @@
 -- @classmod Base64Asset
 
 local class = require('pl.class')
-local Asset = require ('asset')
+local Asset = require ('alloui.asset.asset')
 
 Base64Asset = class.Base64Asset(Asset)
 
@@ -22,4 +22,5 @@ function Base64Asset:_init(base64)
     end))
     self:super(data)
 end
-Asset.Base64 = Base64Asset
+
+return Base64Asset

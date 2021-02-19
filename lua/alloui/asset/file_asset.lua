@@ -2,7 +2,7 @@
 -- @classmod FileAsset
 
 local class = require('pl.class')
-local Asset = require ('asset')
+local Asset = require ('alloui.asset.asset')
 
 FileAsset = class.FileAsset(Asset)
 
@@ -33,3 +33,5 @@ function FileAsset:write(data, offset)
     self.file:seek(offset - 1) -- offset is 1-based but seek is 0-based
     self.file:write(data)
 end
+
+return FileAsset
