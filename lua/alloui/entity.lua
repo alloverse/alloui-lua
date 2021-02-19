@@ -1,4 +1,5 @@
 local class = require('pl.class')
+local mat4 = require("modules.mat4")
 
 class.Entity()
 function Entity:getParent()
@@ -21,14 +22,31 @@ function Component:getEntity()
 end
 
 class.TransformComponent(Component)
-function TransformComponent:getMatrix()
+function TransformComponent:transformFromParent()
+    if lovr then
+        return lovr.math.mat4(unpack(self.matrix))
+    else
+        return mat4.new(self.matrix)
+    end
+end
+
+function TransformComponent:transformFromWorld()
     local parent = self:getEntity():getParent()
-    local myMatrix = lovr.math.mat4(unpack(self.matrix))
+    local myMatrix = self:transformFromParent()
     if parent ~= nil then
-        return parent.components.transform:getMatrix():mul(myMatrix)
+        local parentMatrix = parent.components.transform:transformFromWorld()
+        if lovr then
+            return parentMatrix:mul(myMatrix)
+        else
+            return mat4.mul(myMatrix, parentMatrix, myMatrix)
+        end
     else
         return myMatrix
     end
+end
+
+function TransformComponent:getMatrix()
+    return self:transformFromWorld()
 end
 
 class.RelationshipsComponent(Component)
