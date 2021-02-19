@@ -155,9 +155,15 @@ function View:spawn()
 end
 
 function View:removeFromSuperview()
-    local idx = tablex.find(self.superview.subviews, self)
-    assert(idx ~= -1)
-    table.remove(self.superview.subviews, idx)
+    if self.superview then
+        local idx = tablex.find(self.superview.subviews, self)
+        assert(idx ~= -1)
+        table.remove(self.superview.subviews, idx)
+    else
+        local idx = tablex.find(self.app.rootViews, self)
+        assert(idx ~= -1)
+        table.remove(self.app.rootViews, idx)
+    end
     if self:isAwake() then
         self.app.client:sendInteraction({
             sender_entity_id = self.entity.id,

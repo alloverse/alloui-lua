@@ -26,6 +26,7 @@ App.ScheduledAction = ScheduledAction
 function App:_init(client)
     self.client = client
     self.mainView = View()
+    self.rootViews = {}
     self.running = true
     self.connected = false
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
@@ -42,7 +43,7 @@ function App:_init(client)
     client.delegates.onConnected = function()
         self.connected = true
         if self.onConnected then 
-            self.onConnected()
+            self:onConnected()
         end
     end
     self.scheduledActions = {}
@@ -51,12 +52,26 @@ end
 
 function App:connect()
     local mainSpec = self.mainView:specification()
+    table.insert(self.rootViews, self.mainView)
     local ret = self.client:connect(mainSpec)
     if not ret then
         error("Failed to connect")
     end
-    self.mainView:setApp(self)
+    for _, v in ipairs(self.rootViews) do
+        v:setApp(self)
+        if v ~= self.mainView then
+            self.client:spawnEntity(v:specification())
+        end
+    end
     return ret
+end
+
+function App:addRootView(view)
+    table.insert(self.rootViews, view)
+    if self.connected then
+        view:setApp(self)
+        self.client:spawnEntity(view:specification())
+    end
 end
 
 function compareActions(a, b)
@@ -98,10 +113,20 @@ function App:runOnce(timeout)
   self.client:poll(timeout)
 end
 
+function App:findView(vid)
+    for _, v in ipairs(self.rootViews) do
+        local found = v:findView(vid)
+        if found then
+            return found
+        end
+    end
+    return nil
+end
+
 function App:onInteraction(inter, body, receiver, sender) 
     if receiver == nil then return end
     local vid = receiver.components.ui.view_id
-    local view = self.mainView:findView(vid)
+    local view = self:findView(vid)
     if view then
         view:onInteraction(inter, body, sender)
     else
@@ -112,7 +137,7 @@ end
 function App:onComponentAdded(cname, comp)
     if cname == "ui" then
         local vid = comp.view_id
-        local view = self.mainView:findView(vid)
+        local view = self:findView(vid)
         if view then 
             view.entity = comp:getEntity()
             view:awake()
