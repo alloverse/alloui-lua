@@ -38,6 +38,9 @@ function Surface:specification()
     if self.color then
       mySpec.material.color = self.color
     end
+    if self.hasTransparency then 
+      mySpec.material.hasTransparency = self.hasTransparency
+    end
     return mySpec
 end
 
