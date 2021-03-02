@@ -83,8 +83,12 @@ function App:scheduleAction(delay, repeats, callback)
 end
 
 function App:run(hz)
-    local a,b = pcall(function() self:_run(hz) end)
-    print("Exiting", a, b)
+    xpcall(function()
+        self:_run(hz)
+    end, function(err)
+        print("Error while running "..self.client.name..":\n", err,"\n", debug.traceback())
+    end)
+    print("Exiting "..self.client.name)
     self.client:disconnect(0)
 end
 
