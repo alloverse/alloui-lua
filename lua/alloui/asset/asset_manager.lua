@@ -54,6 +54,14 @@ function AssetManager:_init(client)
     end)
 end
 
+function AssetManager:getStats() 
+    return {
+        published = tablex.size(self._assets.published),
+        loading = tablex.size(self._assets.loading),
+        cached = tablex.size(self._assets.cache),
+    }
+end
+
 -- @tparam bool manage If true the assetManager will hold on to the asset for you,
 --                     otherwise it will only serve the asset as long as you keep
 --                     a reference to it.
