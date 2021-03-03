@@ -31,6 +31,12 @@ function Bounds:copy()
         size=self.size:copy()
     }
 end
+
+function Bounds:moveToOrigin()
+    self.pose:identity()
+    return self
+end
+
 function Bounds:rotate(angle, x, y, z)
     self.pose:rotate(angle, x, y, z)
     return self

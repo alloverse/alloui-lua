@@ -25,6 +25,11 @@ function Pose:copy()
     return Pose(mat4(self.transform))
 end
 
+function Pose:identity()
+    self.transform = mat4.identity()
+    return self
+end
+
 function Pose:rotate(angle, x, y, z)
     self.transform = mat4.rotate(self.transform, self.transform, angle, vec3(x, y, z))
     return self
