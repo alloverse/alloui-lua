@@ -128,6 +128,7 @@ function View:setTransform(transform)
 end
 
 function View:setBounds(bounds)
+  if bounds == nil then bounds = self.bounds end
   self.bounds = bounds
   if self:isAwake() then
     local c = self:specification()
