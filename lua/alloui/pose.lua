@@ -35,6 +35,11 @@ function Pose:identity()
     return self
 end
 
+function Pose:set(other)
+    self.transform = mat4(other.transform)
+    return self
+end
+
 function Pose:rotate(angle, x, y, z)
     self.transform = mat4.rotate(self.transform, self.transform, angle, vec3(x, y, z))
     return self

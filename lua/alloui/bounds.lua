@@ -61,4 +61,13 @@ function Bounds:inset(w, h, d)
     return self
 end
 
+function Bounds:insetEdges(left, right, top, bottom, front, back)
+    self.size:inset(left+right, top+bottom, front+back)
+    self.pose:move(left/2-right/2, top/2-bottom/2, front/2-back/2)
+end
+
+function Bounds:extendEdges(left, right, top, bottom, front, back)
+    self:insetEdges(-left, -right, -top, -bottom, -front, -back)
+end
+
 return Bounds
