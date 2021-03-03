@@ -32,6 +32,10 @@ function View:awake()
     for _, subview in ipairs(self.subviews) do
         subview:spawn()
     end
+    if self.focusOnAwake then
+        self:askToFocus(self.focusOnAwake)
+        self.focusOnAwake = nil
+    end
 end
 
 function View:isAwake()
@@ -211,6 +215,21 @@ function View:registerAssets()
         self.app.assetManager:add(mt.assets or {})
         mt = mt._base
     end
+end
+
+function View:askToFocus(avatar)
+    if not self:isAwake() then 
+        self.focusOnAwake = avatar
+        return
+    end
+    self.app.client:sendInteraction({
+        sender = self.entity,
+        receiver = avatar,
+        body = {
+            "changeFocusTo",
+            self.entity.id
+        }
+    })
 end
 
 function View:onFocus(by)
