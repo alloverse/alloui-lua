@@ -66,21 +66,25 @@ function App:connect()
     return ret
 end
 
-function App:addRootView(view)
+function App:addRootView(view, cb)
     table.insert(self.rootViews, view)
     if self.connected then
         view:setApp(self)
-        self.client:spawnEntity(view:specification())
+        self.client:spawnEntity(view:specification(), function(entityOrFalse)
+            if cb then
+                cb(entityOrFalse and view or false)
+            end
+        end)
     end
 end
 
-function App:openPopupNearHand(popup, hand, distance)
+function App:openPopupNearHand(popup, hand, distance, cb)
     if distance == nil then distance = 0.6 end
 
     local handPose = ui.Pose(hand.components.transform:transformFromWorld())
     popup.bounds.pose = handPose
     popup.bounds:move(0, 0, -distance)
-    self:addRootView(popup)
+    self:addRootView(popup, cb)
     return popup
 end
 

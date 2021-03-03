@@ -162,13 +162,15 @@ function Client:updateState(newState)
 
     self.delegates.onStateChanged()
     tablex.map(function(x) 
-        self:_respondToEquery(x)
         self.delegates.onEntityAdded(x) 
     end, newEntities)
     tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
     tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
     tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
     tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
+    tablex.map(function(x) 
+      self:_respondToEquery(x)
+  end, newEntities)
 end
 
 function Client:getEntity(eid, cb)
@@ -177,7 +179,7 @@ function Client:getEntity(eid, cb)
         cb(existing)
     else
         local equeries = self.outstanding_entity_callbacks[eid] or {}
-        table.append(equeries, cb)
+        table.insert(equeries, cb)
         self.outstanding_entity_callbacks[eid] = equeries
     end
 end
@@ -201,7 +203,15 @@ function Client:spawnEntity(spec, cb)
         "spawn_entity",
         spec
     }
-  }, cb)
+  }, function(response, body)
+    if cb == nil then return end
+    if #body == 2 then
+      local eid = body[2]
+      self:getEntity(eid, cb)
+    else
+      cb(false)
+    end
+  end)
 end
 
 function Client:sendInteraction(interaction, callback)
