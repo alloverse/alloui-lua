@@ -25,6 +25,10 @@ function Bounds:_init(a, b, z, w, h, d)
     end
 end
 
+function Bounds:__tostring()
+    return "<Bounds "..tostring(self.size).." @ "..tostring(self.pose)..">"
+end
+
 function Bounds:copy()
     return Bounds{
         pose=self.pose:copy(),

@@ -15,6 +15,10 @@ function Size:_init(width, height, depth)
     self.depth = depth and depth or 0
 end
 
+function Size:__tostring()
+    return string.format("<Size %0.3fw %0.3fh %0.3fd>", self.width, self.height, self.depth)
+end
+
 function Size:copy()
     return Size(self.width, self.height, self.depth)
 end

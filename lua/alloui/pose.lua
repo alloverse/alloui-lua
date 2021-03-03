@@ -21,6 +21,11 @@ function Pose:_init(a, b, c, d)
     end
 end
 
+function Pose:__tostring()
+    local pos = self.transform * vec3()
+    return string.format("<Pose %0.3f, %0.3f, %0.3f>", pos.x, pos.y, pos.z)
+end
+
 function Pose:copy()
     return Pose(mat4(self.transform))
 end
