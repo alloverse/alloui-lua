@@ -18,25 +18,57 @@ function AssetManager:_init(client)
         cache = {}, -- All assets are put into a weak list and managed while in used
         published = {}, -- Explicitly added assets are also in a strong list to remain in memory
 
+        getTime = function ()
+            return os.time()
+        end,
         publish = function (self, asset, manage)
             self.cache[asset:id()] = asset
             if manage then 
                 self.published[asset:id()] = asset
             end
         end,
-        get = function (self, name)
-            return self.cache[name]
+        get = function (self, id)
+            local asset = self.cache[id]
+            if asset then 
+                asset.lru = self.getTime()
+            end
+            return asset
         end,
-        remove = function (self, asset)
-            asset = asset.id and asset:id() or asset
+        put = function(self, asset)
+            asset.lru = self.getTime()
+            self.cache[asset:id()] = asset
+            self:prune()
+        end,
+        remove = function (self, asset_or_id)
+            local asset = asset_or_id.id and asset_or_id:id() or asset_or_id
             self.cache[asset] = nil
             self.published[asset] = nil
             self.loading[asset] = nil
+        end,
+
+        prune = function(self)
+            local max_items = 100 -- what's a decent value?
+            if tablex.size(self.cache) > max_items then
+                local time = self.getTime()
+                local list = tablex.values(self.cache)
+                table.sort(list, function(a, b) 
+                    return a.lru < b.lru
+                end)
+
+                for _, asset in ipairs(list) do
+                    if time - asset.lru > 60 then -- force it to stay for a minute or so just to be nice
+                        self:remove(asset)
+                    end
+                    if tablex.size(self.cache) <= max_items then 
+                        return
+                    end
+                end
+            end
         end
     }
 
     -- make the loaded table weak
-    setmetatable(self._assets.cache, { __mode = "v" })
+    -- setmetatable(self._assets.cache, { __mode = "v" })
 
     -- For providing assets
     client:set_asset_request_callback(function (name, offset, length)
@@ -148,7 +180,7 @@ function AssetManager:_finishedLoading(name, asset)
     if name ~= asset:id() then 
         print("Asset id mismatch. Expected "..name.." but got "..asset:id())
     end
-    self._assets.cache[asset:id()] = asset
+    self._assets:put(asset)
 end
 
 function AssetManager:_handleRequest(name, offset, length)
