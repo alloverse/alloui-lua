@@ -74,6 +74,16 @@ function App:addRootView(view)
     end
 end
 
+function App:openPopupNearHand(popup, hand, distance)
+    if distance == nil then distance = 0.6 end
+
+    local handPose = ui.Pose(hand.components.transform:transformFromWorld())
+    popup.bounds.pose = handPose
+    popup.bounds:move(0, 0, -distance)
+    self:addRootView(popup)
+    return popup
+end
+
 function compareActions(a, b)
     return a.when < b.when
 end
