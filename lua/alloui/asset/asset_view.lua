@@ -3,7 +3,7 @@
 
 local class = require('pl.class')
 local View = require ('alloui.views.view')
-local Asset = require ('asset')
+local Asset = require ('alloui.asset.asset')
 
 AssetView = class.AssetView(View)
 function AssetView:_init(asset, bounds)
