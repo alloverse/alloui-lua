@@ -25,6 +25,7 @@ function View:_init(bounds)
     self.entity = nil
     self.app = nil
     self.grabbable = false
+    self.customSpecAttributes = {}
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -73,6 +74,23 @@ function _arrayFromMat4(x)
   return x
 end
 
+local function merge(t, u)
+    if t == nil or u == nil then return end
+    for key, _ in pairs(u) do
+        local left = t[key]
+        local right = u[key]
+        if type(left) == "table" and type(right) == "table" then
+            merge(left, right)
+        else
+            if type(u[key]) == "table" then 
+                t[key] = tablex.deepcopy(u[key])
+            else
+                t[key] = u[key]
+            end
+        end
+    end
+end
+
 --- The specification is used to describe the entity three required to represent
 -- this view inside the Alloverse. In a subclass, call this implementation and then
 -- add/modify your own components.
@@ -98,6 +116,7 @@ function View:specification()
             width= s.width, height= s.height, depth= s.depth
         }
     end
+    merge(mySpec, self.customSpecAttributes)
     return mySpec
 end
 
