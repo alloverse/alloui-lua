@@ -25,6 +25,7 @@ function ResizeHandle:_init(bounds, translationConstraint, rotationConstraint)
   self.onActivated = nil
   self.translationConstraint = translationConstraint
   self.rotationConstraint = rotationConstraint
+  self.hasTransparency = true
 end
 
 function ResizeHandle:specification()
