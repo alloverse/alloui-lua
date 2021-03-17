@@ -7,12 +7,13 @@ local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
 
 
-
-
 class.Label(View)
 
---- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
+--- Creates a text label
+-- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- Label(bounds)
+-- @tparam table o A table that includes a Bounds
+
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)
@@ -43,6 +44,8 @@ function Label:specification()
     return mySpec
 end
 
+--- Sets the Label's text
+-- @tparam string text The text the Label should display
 function Label:setText(text)
     self.text = text
     if self:isAwake() then

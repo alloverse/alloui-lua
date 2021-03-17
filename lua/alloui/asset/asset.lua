@@ -22,15 +22,15 @@ function Asset:__tostring()
 end
 
 --- Create a new asset
--- @param data string Raw data for the asset. 
+-- @tparam string data Raw data for the asset. 
 function Asset:_init(data)
     self.data = data
     self._id = nil
 end
 
 --- Read a part of the data
--- @param offset number The byte to start reading from
--- @param length number The number of bytes to read
+-- @tparam number offset The byte to start reading from
+-- @tparam number length The number of bytes to read
 -- @return string the requested data
 function Asset:read(offset, length)
     if self.data == nil then return nil end
@@ -38,9 +38,9 @@ function Asset:read(offset, length)
 end
 
 --- Write a part of the data
--- @param data string The data buffering
--- @param offset number The byte offset to start writing at
--- @param totalSize number The expected total size of the asset.
+-- @tparam string data The data buffering
+-- @tparam number offset The byte offset to start writing at
+-- @tparam number totalSize The expected total size of the asset.
 function Asset:write(data, offset, totalSize)
     if self.data == nil then
         self.data = data
@@ -58,7 +58,7 @@ end
 
 --- Returns a computed unique identifier for this asset
 -- The id is a hash of the asset data. This ensures the same asset identifier is always matched with the same data
--- @param refresh boolean By default a cached hash is returned, if one is available. Send `refresh` to true to recompute the id
+-- @tparam boolean refresh By default a cached hash is returned, if one is available. Send `refresh` to true to recompute the id
 function Asset:id(refresh)
     if self._id == nil or refresh then
         local data = self.data or self:read(1, self:size())

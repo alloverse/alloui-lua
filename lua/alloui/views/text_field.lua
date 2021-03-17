@@ -15,7 +15,6 @@ local Pose = require(modules.."pose")
 local Size = require(modules.."size")
 
 
-
 --- A text field, for inputting text. 
 class.TextField(View)
 --- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}

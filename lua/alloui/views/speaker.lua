@@ -1,11 +1,13 @@
 --- A place to emit sound from. Allocates an audio track on backend when created.
 -- Use it e g like this to send audio you generate 20ms at a time:
--- app:scheduleAction(0.02, true, function()
---    local leftAudio, rightAudio = player:generateAudio(960)
---    if left and leftSpeaker.trackId then
---        app.client.client:send_audio(leftSpeaker.trackId, leftAudio)
---    end
--- end)
+--~~~ lua
+--app:scheduleAction(0.02, true, function()
+--  local leftAudio, rightAudio = player:generateAudio(960)
+--  if left and leftSpeaker.trackId then
+--    app.client.client:send_audio(leftSpeaker.trackId, leftAudio)
+--  end
+--end)
+--~~~
 -- @classmod Speaker
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."

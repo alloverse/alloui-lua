@@ -1,9 +1,18 @@
 --- Button can be poked/clicked to perform an action.
 -- Set onActivated to a function you'd like to be called when the button is pressed.
--- button.label:setText(...) to the string you want on the button.
+-- Use `my_button.label:setText("this is my button")` to set the button's label.
 -- You can also set the button's default, highlighted and activated texture (see Surface documentation for image format caveats).
 -- Or if you just want a colored button, you can set its color.
 -- Set either color or texture to nil to remove that attribute.
+--~~~ lua
+-- my_button = Button(ui.Bounds(x, y, z, width, height, depth))
+--~~~
+-- 
+--~~~ lua
+-- my_button.onActivated = function()
+--  -- do something...
+-- end
+--~~~
 -- @classmod Button
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."

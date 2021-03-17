@@ -1,3 +1,8 @@
+--- A window resize widget.
+-- Grab and move to resize your view from its center point.
+-- @classmod ResizeHandle
+
+
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -6,8 +11,6 @@ local Surface = require(modules.."views.surface")
 local Base64Asset = require(modules.."asset.init").Base64
 
 
--- Like a window resize widget. Drag to resize your view.
--- WIP
 class.ResizeHandle(Surface)
 ResizeHandle.assets = {
   default = Base64Asset("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAoklEQVR42u3WPQoCMRCG4SAp9gQSJOWWFpZRLLz/Fay33SuMYBEShcTCyRB4n+6r8kH+xjkAfyAXSbLkdK5SKpOOsN3kkZc5PlOR4n4vkpLTdS2WCVWKVVLiq2VaiQpUeCfN+/BLhaT7JnQquKj/LJrsPhXmqjDulza5hp0KLoofO6t87v5h/LhkcgCp0KxgNTqbXMOvCiN+QwAAAAAAgNm8ADLo6BHvQOAJAAAAAElFTkSuQmCC"), --  iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMzSURBVHgB7Zs/TFNBHMe/j7gJhM2wFZKyGY0mhkkpjNXgKjG6FCMMAm4aK9YmjLZdrAEGE43ORDsSqZOaqE3cJNFuJE4m4Fzv99ojz6N/ctzdA+/uk1ze670m5ft9vzvufncXQKDRaEywy1VWpllJwA5qrZILgqDe9htM+BArhYb9kMYhrjvg4tnlHStn4QYUDSkWDb/7WhXLcEc8QVpJMwL29hPs+jP6dGfnF/K5Ira3f2B39w/+dy5eGsfS3QyGh0+Jj1JkwHN2c5PXkPgb1+9YITxK/8BJvHhZEk0oURM4E60pPFm1TjyxxzTlcyWxepoM+Kftv69+hK18Z01aINEHh9hrE9lOGdAObwAc5wQk+fDpjdT3xy9cgQqmf883AVjGABvwyGCdAbKDOOk+oBv5x0VU3m5CJ2KbTiZH8fTZivSb7oTWCMg+XET68hRMoVs8ob0JmDLBhHhC2QCaNovoNqGT+PW111BF2YBKZdOoCd3Er6+9gipamoApE0yLJ7T1AbpNiEM8obUT7GRCZnZGuvOiFJZp8QSlxBrRCtWxO5FOTyG7vBjeU4pt/va98CoDpbDK5RUkx0bDz7rEi3MLrQMhDkUCkbk1cyjxBCUv5ubuhyZUWZZK95vnGImA44wYAX42CMfxBsBxvAFwHG8AHMcbAMfxBsAQ4Xy+rJ7DM51oNWIAT2acO39ayQQu3qQJymuDvfL2NJ8nE+bZ1FZm0UIUTZ8Jcd2h19/TC60R0CmNRfN52RWbL5+/HagzEQnaDNCdwzOdbeZoMcBUAjMOE5RTYqaztzy9xnOMHN4nqKIcAXGkrrtFgirKBsSRuiY6maCK1v8CpsRzTJigNS2emb0Wlihx7xGSxW+RgWUc6RaZOBHWcw6NtAFxrxyZ/j2fD4DjeAPECt27sI47ZEA9WkGTG1uhw1MCNTJgI1pDsy4bo2BwsD/cdiNQow0SE2gemtyHdnQUC6uobh3d+aEgCKADepnJsRE8yC60OzY3wk+O0gxjAW5RZCYvuXp09isrk/tHZ+mGXVKslGA3NH6maJ9sacaBhtY6SvsIzQOVcUaEnsF9e+podvYbTPhW9MFffPRLow5rPaEAAAAASUVORK5CYII=

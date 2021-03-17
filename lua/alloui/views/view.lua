@@ -1,5 +1,6 @@
---- A view
---@classmod View
+--- The View class acts as base for anything visual in an alloapp.
+-- It manages a tree of sub-views; its bounds (transform and size) and a connection to a low-level entity.
+-- @classmod View
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
@@ -10,9 +11,7 @@ local mat4 = require("modules.mat4")
 require(modules .."random_string")
 local Bounds = require(modules .."bounds")
 
---- The view class acts as base for anything visual in an alloapp. It
--- manages a tree of sub-views; its bounds (transform and size);
--- and a connection to a low-level entity.
+
 class.View()
 -- Export assets
 View.assets = {}
@@ -120,8 +119,8 @@ function View:specification()
     return mySpec
 end
 
---- Ask backend to update components on the server. Use to update things you've specified
--- in :specification() but now want to change.
+--- Ask backend to update components on the server.
+-- Use to update things you've specified in :specification() but now want to change.
 function View:updateComponents(changes)
     if self.app == nil or self.entity == nil then return end
     
