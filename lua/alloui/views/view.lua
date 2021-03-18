@@ -118,11 +118,19 @@ function View:specification()
         }
     end
 
-    if self.acceptedFileExtensions then 
+    if self.acceptedFileExtensions then
         mySpec.acceptsfile = {
             extensions = self.acceptedFileExtensions
         }
     end
+
+    if self.hasTransparency then
+        if not mySpec.material then
+            mySpec.material = {}
+        end
+        mySpec.material.hasTransparency = self.hasTransparency
+    end
+
     merge(mySpec, self.customSpecAttributes)
     return mySpec
 end
