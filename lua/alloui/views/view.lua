@@ -287,7 +287,15 @@ function View:onInteraction(inter, body, sender)
         if self.focusedBy and sender.id == self.focusedBy.id then
             self:onFocus(nil)
         end
+    elseif body[1] == "accept-file" and body[2] and body[3] then 
+        self:onFileDropped(body[2], body[3])
     end
+end
+
+--- Callback called when a file is dropped on the view
+-- @tparam string filename The name of the dropped file
+-- @tparam string asset_id The id of the asset dropped on you
+function View:onFileDropped(filename, asset_id)
 end
 
 return View
