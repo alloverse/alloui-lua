@@ -286,7 +286,7 @@ function View:defocus()
 end
 
 --- an interaction message was sent to this specific view.
--- See https://github.com/alloverse/docs/blob/master/specifications/interactions.md
+-- See [Interactions](/protocol-reference/interactions)
 function View:onInteraction(inter, body, sender)
     if body[1] == "focus" then
         local ok = self:onFocus(sender)

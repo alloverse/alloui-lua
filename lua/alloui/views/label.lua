@@ -12,7 +12,7 @@ class.Label(View)
 --- Creates a text label
 -- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- Label(bounds)
--- @tparam table o A table that includes a Bounds
+-- @tparam table o A table that includes a Bounds (the position and size of your Label): {x, y, z, width, height, depth}
 
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o

@@ -1,18 +1,21 @@
---- Button can be poked/clicked to perform an action.
--- Set onActivated to a function you'd like to be called when the button is pressed.
--- Use `my_button.label:setText("this is my button")` to set the button's label.
--- You can also set the button's default, highlighted and activated texture (see Surface documentation for image format caveats).
--- Or if you just want a colored button, you can set its color.
--- Set either color or texture to nil to remove that attribute.
+--- A button that can be poked/clicked to perform an action.
+-- 
 --~~~ lua
 -- my_button = Button(ui.Bounds(x, y, z, width, height, depth))
 --~~~
 -- 
+-- Use `my_button.label:setText("this is my button")` to set the button's label.
+-- Set `onActivated` to a function you'd like to be called when the button is pressed:
+--
 --~~~ lua
 -- my_button.onActivated = function()
 --  -- do something...
 -- end
 --~~~
+--
+-- You can also set the button's default, highlighted and activated texture (see [Surface](Surface) documentation for image format caveats).
+-- Or if you just want a colored button, you can set its color.
+-- Set either color or texture to nil to remove that attribute.
 -- @classmod Button
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
@@ -162,6 +165,9 @@ function Button:setTexture(asset)
     end
 end
 
+--- Sets the color of the button
+-- Set the color to nil to remove that attribute.
+-- @tparam table rgba A table with the desired color's r, g, b and alpha values between 0-1, e.g. `{0.8, 0.4, 0.8, 0.5}`
 function Button:setColor(rgba)
     self.color = rgba
     if self:isAwake() then

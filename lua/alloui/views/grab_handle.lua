@@ -3,6 +3,7 @@
 -- as the subview of your root view to make it movable. You can set any bounds on
 -- this handle to position it at a good location in your view.
 -- @classmod GrabHandle
+-- @no_space_before_args = true
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 local class = require('pl.class')
@@ -21,6 +22,8 @@ function GrabHandle:_init(bounds)
     self.rotationConstraint = {0, 1, 0}
 end
 
+--- The GrabHandle's specification
+-- @treturn mySpec The specification
 function GrabHandle:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0

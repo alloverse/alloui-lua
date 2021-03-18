@@ -1,4 +1,4 @@
---- Represents data that can be shared to other clients in the Alloverse
+--- Represents data that can be shared to other clients in the Alloverse\
 -- An asset is just raw data
 -- @see AssetManager
 -- @see FileAsset
@@ -31,7 +31,7 @@ end
 --- Read a part of the data
 -- @tparam number offset The byte to start reading from
 -- @tparam number length The number of bytes to read
--- @return string the requested data
+-- @treturn string the requested data
 function Asset:read(offset, length)
     if self.data == nil then return nil end
     return string.sub(self.data, offset, offset + length - 1)
@@ -50,7 +50,7 @@ function Asset:write(data, offset, totalSize)
 end
 
 --- Returns the size of the asset
--- @return number The size of the data
+-- @treturn number The size of the data
 function Asset:size()
     if self.data == nil then return 0 end
     return string.len(self.data)
