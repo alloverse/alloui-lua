@@ -25,6 +25,8 @@ function View:_init(bounds)
     self.app = nil
     self.grabbable = false
     self.customSpecAttributes = {}
+    --- A list of file extensions the view might accept as drop target. 
+    self.acceptedFileExtensions = nil
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -113,6 +115,12 @@ function View:specification()
         mySpec.collider = {
             type= "box",
             width= s.width, height= s.height, depth= s.depth
+        }
+    end
+
+    if self.acceptedFileExtensions then 
+        mySpec.acceptsfile = {
+            extensions = self.acceptedFileExtensions
         }
     end
     merge(mySpec, self.customSpecAttributes)
