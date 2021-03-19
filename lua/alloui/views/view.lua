@@ -15,6 +15,12 @@ local Bounds = require(modules .."bounds")
 class.View()
 -- Export assets
 View.assets = {}
+
+---
+--~~~ lua
+-- view = View(bounds)
+--~~~
+--@tparam bounds bounds ???
 function View:_init(bounds)
     self.viewId = string.random(16)
     self.bounds = bounds and bounds or Bounds(0,0,0, 0,0,0)
@@ -93,7 +99,7 @@ local function merge(t, u)
     end
 end
 
---- The specification is used to describe the entity tree 
+-- The specification is used to describe the entity tree 
 -- It is required to represent this view inside the Alloverse.
 -- In a subclass, call this implementation and then add/modify your own components.
 function View:specification()

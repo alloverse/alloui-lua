@@ -9,8 +9,7 @@ local types = require ('pl.types')
 
 AssetManager = class.AssetManager()
 
---- Creates a new AssetManager
---
+---
 --
 --~~~ lua
 -- assetManager = AssetManager(client)

@@ -22,8 +22,7 @@ function Asset:__tostring()
     return self._name .. "<" .. self:id() .. ">"
 end
 
---- Creates a new Asset
---
+---
 --
 --~~~ lua
 -- asset = Asset(data)

@@ -1,4 +1,4 @@
---- 
+--- An Asset created from a Base64-encoded string
 -- @classmod Base64Asset
 
 local class = require('pl.class')
@@ -6,7 +6,7 @@ local Asset = require ('alloui.asset.asset')
 
 Base64Asset = class.Base64Asset(Asset)
 
---- Creates an Asset from a Base64-encoded string
+---
 --
 --~~~ lua
 -- my_asset = Base64Asset(base64)

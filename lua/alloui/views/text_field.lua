@@ -17,10 +17,7 @@ local Size = require(modules.."size")
 
 class.TextField(View)
 
-
---- Create a new TextField
--- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
--- TextField(bounds)
+---
 --
 --~~~ lua
 -- textfield = TextField(o)
@@ -96,11 +93,13 @@ function TextField:specification()
 end
 
 function TextField:layout()
-
     self.label.insertionMarker = self.isFocused
     self.label:updateComponents({text=self.label:specification().text})
 end
 
+--- Appends the provided text to the TextField
+--
+--@tparam string text The text to append
 function TextField:appendText(text)
     local newText = self.label.text .. text
     if self.onChange(self, self.label.text, newText) then

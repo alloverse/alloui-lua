@@ -9,8 +9,7 @@ local View = require(modules.."views.view")
 
 class.Label(View)
 
---- Creates a text label.
---
+---
 --
 --~~~ lua
 -- --Creates a Label, at origo, that is 1m wide, 20cm tall and 1cm deep

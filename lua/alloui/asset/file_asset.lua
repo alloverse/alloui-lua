@@ -6,7 +6,7 @@ local Asset = require ('alloui.asset.asset')
 
 FileAsset = class.FileAsset(Asset)
 
---- Creates a FileAsset `Asset` from a file
+---
 --
 --~~~ lua
 -- my_asset = FileAsset(path, load)

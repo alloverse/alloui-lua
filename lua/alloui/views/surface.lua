@@ -1,4 +1,4 @@
---- A Surface is a View subclass which displays a single texture on a square.
+--- A Surface is a [View](view) subclass which displays a single texture on a square.
 -- @classmod Surface
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
@@ -8,6 +8,13 @@ local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
 
 class.Surface(View)
+---
+--
+--~~~ lua
+-- surface = Surface(bounds)
+--~~~
+--
+-- @tparam bounds bounds ???
 function Surface:_init(bounds)
     self:super(bounds)
     self.texture = nil
@@ -42,14 +49,14 @@ function Surface:specification()
 end
 
 
---- Set an asset as texture on a surface.
--- The `asset` parameter can be either an `Asset` instance or a raw string hash
+--- Set the Surface's texture using an Asset.  
+-- The `asset` parameter can be either an [Asset](asset) instance or a raw string hash
 --
 --~~~ lua
 -- Surface:setTexture(asset)
 --~~~
 --
--- @tparam Asset asset An instance of an Asset
+-- @tparam [Asset](asset) asset An instance of an Asset
 function Surface:setTexture(asset)
     self.texture = asset
     if self:isAwake() then

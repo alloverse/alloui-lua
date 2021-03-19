@@ -1,3 +1,5 @@
+--- A simple cube. Commonly used as a placeholder asset or marker.
+-- @classmod Cube
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
 
 local class = require('pl.class')
@@ -10,6 +12,14 @@ local View = require(modules.."views.view")
 local Bounds = require(modules.."bounds")
 
 class.Cube(View)
+
+---
+--
+--~~~ lua
+-- cube = Cube(bounds)
+--~~~
+--
+-- @tparam bounds bounds ???
 function Cube:_init(bounds)
     self:super(bounds)
 
@@ -44,7 +54,8 @@ function Cube:specification()
     return mySpec
 end
 
-
+--- Sets the Cube's color
+-- @tparam table rgba The r, g, b and a values of the text color, each defined between 0 and 1. For example, {1, 0.5, 0, 1}
 function Cube:setColor(rgba)
     self.color = rgba
     if self:isAwake() then
