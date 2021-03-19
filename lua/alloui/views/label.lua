@@ -78,7 +78,7 @@ function Label:setWrap(wrap)
   end
 end
 
---- Sets the Label's wrap attribute
+--- Sets the Label's horizontal align attribute
 -- @tparam **"center"**,"top","bottom" halign The alignment of the text within the Labels' bounds
 function Label:setHalign(halign)
   self.halign = halign
@@ -89,8 +89,8 @@ end
 
 --- Sets the Label's text color
 -- @tparam {r,g,b,a} color The r, g, b and a values of the text color, each defined between 0 and 1.
-function Label:setWrap(wrap)
-  self.wrap = wrap
+function Label:setColor(color)
+  self.color = color
   if self:isAwake() then
       self:updateComponents(self:specification())
   end
