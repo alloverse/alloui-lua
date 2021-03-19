@@ -26,9 +26,12 @@ function Surface:specification()
             uvs=      {{0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}},
             triangles= {{0, 1, 3}, {0, 3, 2}, {1, 0, 2}, {1, 2, 3}},
         },
-        material = {
-        },
     })
+
+    if (self.texture or self.color) and mySpec.material == nil then
+        mySpec.material = {}
+    end
+
     if self.texture then
       mySpec.material.texture = self.texture:id()
     end
