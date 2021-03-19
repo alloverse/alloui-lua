@@ -1,5 +1,6 @@
---- Represents data that can be shared to other clients in the Alloverse\
--- An asset is just raw data
+--- Represents data that can be shared to other clients in the Alloverse
+--  
+-- An asset is just raw data.
 -- @see AssetManager
 -- @see FileAsset
 -- @see Base64Asset

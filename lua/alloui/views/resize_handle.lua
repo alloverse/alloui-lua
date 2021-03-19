@@ -19,10 +19,10 @@ ResizeHandle.assets = {
 }
 
 --- A window resize widget.
--- Grab and move to resize your view from its center point.
+-- Grab and move to resize your view from the point of view of its center.
 -- @tparam table bounds A table defining the size and position of the handle
--- @tparam vector translationConstraint Only allow the indicated fraction of movement in the corresponding axis in the actuated entity’s local coordinate space. E g, to only allow movement along the floor (no lifting), set the y fraction to 0: “translation_constraint”: [1, 0, 1]”.
--- @tparam vector rotationConstraint Similarly, constrain rotation to the given fraction in the given euler axis in the actuated entity’s local coordinate space. E g, to only allow rotation along Y (so that it always stays up-right), use: "rotation_constraint": [0, 1, 0]
+-- @tparam table translationConstraint Only allow the indicated fraction of movement in the corresponding axis in the actuated entity’s local coordinate space. E g, to only allow movement along the floor (no lifting), set the y fraction to 0: `{1, 0, 1}`.
+-- @tparam table rotationConstraint Similarly, constrain rotation to the given fraction in the given euler axis in the actuated entity’s local coordinate space. E g, to only allow rotation along Y (so that it always stays up-right), use: `{0, 1, 0}`.
 function ResizeHandle:_init(bounds, translationConstraint, rotationConstraint)
   self:super(bounds)
   self:setDefaultTexture(self.assets.default)

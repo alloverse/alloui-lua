@@ -10,9 +10,20 @@ local View = require(modules.."views.view")
 class.Label(View)
 
 --- Creates a text label
--- Label{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
--- Label(bounds)
--- @tparam table o A table that includes a Bounds (the position and size of your Label): {x, y, z, width, height, depth}
+-- For example:
+--
+--~~~ lua
+-- local l = Label{bounds={0, 0, 0, 1.0, 0.1, 0.001}, color={1.0,0.2,0.4,1}, text="Hello!", halign="left"}
+--~~~
+--
+-- @tparam table o A table including *at least* a Bounds table (the position and size of your Label, i.e. {x, y, z, width, height, depth}). It may also include a number of other optional properties:
+-- @tparam string text The Label's text
+-- @tparam number lineheight The line height of the Label's text
+-- @tparam boolean wrap Whether the Label should insert a line break if the rendered text is wider than its explicit size (defined in its `bounds`)
+-- @tparam **"center"**,"top","bottom" halign The alignment of the text within the Labels' bounds
+-- @tparam {r,g,b,a} color The r, g, b and a values of the text color, each defined between 0 and 1.
+-- @tparam boolean fitToWidth If true, the Label's text size is automatically adjusted to fill the width of its bounds.
+-- @usage local l = Label{bounds= ui.Bounds(0, 0, 0,   1.0, 0.07, 0.001), color= {0.4,0.4,0.4,1}, text= "Hello!", halign= "left"}
 
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o

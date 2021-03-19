@@ -38,9 +38,15 @@ function Surface:specification()
     return mySpec
 end
 
+
 --- Set an asset as texture on a surface.
 -- The `asset` parameter can be either an `Asset` instance or a raw string hash
--- @tparam Asset asset An instance of an asset
+--
+--~~~ lua
+-- Surface:setTexture(asset)
+--~~~
+--
+-- @tparam Asset asset An instance of an Asset
 function Surface:setTexture(asset)
     self.texture = asset
     if self:isAwake() then
@@ -51,6 +57,14 @@ function Surface:setTexture(asset)
     end
 end
 
+--- Set the color of a Surface using a set of rgba values between 0 and 1.
+-- E.g. to set the surface to be red and 50% transparent, set this value to `{1, 0, 0, 0.5}`
+--
+--~~~ lua
+-- Surface:setColor(rgba)
+--~~~
+--
+-- @tparam table rgba A table defining a color value with alpha between 0-1.
 function Surface:setColor(rgba)
     self.color = rgba
     if self:isAwake() then

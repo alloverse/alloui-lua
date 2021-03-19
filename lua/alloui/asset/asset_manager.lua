@@ -1,4 +1,4 @@
---- 
+--- A utility class for access and manipulation of `Asset`s.
 -- @classmod AssetManager
 
 local class = require('pl.class')
@@ -9,6 +9,14 @@ local types = require ('pl.types')
 
 AssetManager = class.AssetManager()
 
+--- Creates a new AssetManager
+--
+--
+--~~~ lua
+-- assetManager = AssetManager(client)
+--~~~
+--
+-- @tparam Client client ???
 function AssetManager:_init(client)
     assert(client, "AssetManager needs the client")
     self.client = client
@@ -94,9 +102,14 @@ function AssetManager:getStats()
     }
 end
 
--- @tparam bool manage If true the assetManager will hold on to the asset for you,
---                     otherwise it will only serve the asset as long as you keep
---                     a reference to it.
+--- Adds an `Asset` to the `AssetManager`
+--
+--~~~ lua
+-- AssetManager:add(asset, manage)
+--~~~
+--
+-- @tparam Asset asset The `Asset` to add
+-- @tparam bool manage If set to `true`, the `AssetManager` will hold on to the asset for you. If set to `false`, it will only serve the asset as long as you keep a reference to it.
 function AssetManager:add(asset, manage)
     if asset.id then
         print("Adding " .. tostring(asset))
@@ -110,6 +123,13 @@ function AssetManager:add(asset, manage)
     end
 end
 
+--- Adds an `Asset` to the `AssetManager`
+--
+--~~~ lua
+-- AssetManager:remove(asset)
+--~~~
+--
+-- @tparam Asset asset The `Asset` to remove
 function AssetManager:remove(asset)
     if asset.id then
         print("Removing " .. tostring(asset))
@@ -123,18 +143,49 @@ function AssetManager:remove(asset)
     end
 end
 
+
+--- Get an Asset with the corresponding name. Returns `false` if no matching Asset is found.
+--
+--~~~ lua
+-- AssetManager:get(name)
+--~~~
+--
+-- @tparam String name The name of the requested string
+-- @treturn Asset The corresponding Asset
 function AssetManager:get(name)
     return self._assets:get(name)
 end
 
+
+--- Gets all Assets currently held by the AssetManager
+--
+--~~~ lua
+-- AssetManager:all()
+--~~~
+--
+-- @treturn Table All assets held by the `AssetManager`
 function AssetManager:all()
     return tablex.values(self._assets.cache)
 end
 
+--- Get the number of Assets currently held by the AssetManager
+--
+--~~~ lua
+-- AssetManager:count()
+--~~~
+--
+-- @treturn number The number of assets held by the `AssetManager`
 function AssetManager:count()
     return tablex.size(self._assets.cache)
 end
 
+
+--- ???
+--
+--~~~ lua
+-- AssetManager:load(name, callback)
+--~~~
+--
 -- callback: function(name, asset_or_nil)
 -- returns true if the asset is loading. 
 -- returns false if asset was found in cache

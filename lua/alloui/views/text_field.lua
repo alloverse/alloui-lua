@@ -1,4 +1,4 @@
---- TextField
+--- A text field, used for inputting text.
 -- @classmod TextField
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
@@ -15,10 +15,18 @@ local Pose = require(modules.."pose")
 local Size = require(modules.."size")
 
 
---- A text field, for inputting text. 
 class.TextField(View)
---- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
+
+
+--- Create a new TextField
+-- TextField{bounds=,text=,lineheight=,wrap=,halign=,color={r,g,b,a}}
 -- TextField(bounds)
+--
+--~~~ lua
+-- textfield = TextField(o)
+--~~~
+--
+-- @tparam table o ???
 function TextField:_init(o)
     self:super(o.bounds and o.bounds or o)
     local plaqueBounds = Bounds{size=self.bounds.size:copy()}

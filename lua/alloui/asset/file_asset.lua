@@ -1,4 +1,4 @@
---- 
+--- A type of Asset generated from a file
 -- @classmod FileAsset
 
 local class = require('pl.class')
@@ -6,6 +6,15 @@ local Asset = require ('alloui.asset.asset')
 
 FileAsset = class.FileAsset(Asset)
 
+--- Creates a FileAsset `Asset` from a file
+--
+--~~~ lua
+-- my_asset = FileAsset(path, load)
+--~~~
+--
+-- @tparam string path The path to the file
+-- @tparam boolean load ???
+-- @treturn FileAsset The generated FileAsset
 function FileAsset:_init(path, load)
     self._path = path
     self._file = assert(io.open(path, "r+b"))
@@ -14,10 +23,24 @@ function FileAsset:_init(path, load)
     end
 end
 
+--- Get the path to a FileAsset
+--
+--~~~ lua
+-- path = FileAsset:path()
+--~~~
+--
+-- @treturn string The path to the FileAsset
 function FileAsset:path()
     return self._path
 end
 
+--- Get the size of a FileAsset
+--
+--~~~ lua
+-- path = FileAsset:size()
+--~~~
+--
+-- @treturn string The size, in bytes, of the FileAsset
 function FileAsset:size()
     if self._size == nil then
         self._size = self._file:seek("end")

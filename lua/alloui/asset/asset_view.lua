@@ -1,4 +1,4 @@
---- 
+--- ???
 -- @classmod AssetView
 
 local class = require('pl.class')

@@ -154,6 +154,9 @@ function Button:setActivatedTexture(t)
   self.activatedTexture = t
 end
 
+--- Sets the texture of the button
+-- Set to nil to remove the attribute.
+-- @tparam Asset asset The texture asset
 function Button:setTexture(asset)
     self.texture = asset
     self.color = {1, 1, 1, 1}
@@ -166,7 +169,7 @@ function Button:setTexture(asset)
 end
 
 --- Sets the color of the button
--- Set the color to nil to remove that attribute.
+-- Set to nil to remove the attribute.
 -- @tparam table rgba A table with the desired color's r, g, b and alpha values between 0-1, e.g. `{0.8, 0.4, 0.8, 0.5}`
 function Button:setColor(rgba)
     self.color = rgba
