@@ -24,6 +24,7 @@ function View:_init(bounds)
     self.entity = nil
     self.app = nil
     self.grabbable = false
+    self.hasCollider = false
     self.customSpecAttributes = {}
     --- A list of file extensions the view might accept as drop target. 
     self.acceptedFileExtensions = nil
@@ -112,6 +113,10 @@ function View:specification()
     if self.grabbable then
         local s = self.bounds.size
         mySpec.grabbable = {grabbable= true}
+    end
+
+    if self.grabbable or self.hasCollider then
+        local s = self.bounds.size
         mySpec.collider = {
             type= "box",
             width= s.width, height= s.height, depth= s.depth
