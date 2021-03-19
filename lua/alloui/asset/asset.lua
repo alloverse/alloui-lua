@@ -22,8 +22,14 @@ function Asset:__tostring()
     return self._name .. "<" .. self:id() .. ">"
 end
 
---- Create a new asset
--- @tparam string data Raw data for the asset. 
+--- Creates a new Asset
+--
+--
+--~~~ lua
+-- asset = Asset(data)
+--~~~
+--
+-- @tparam string data Raw data for the asset.
 function Asset:_init(data)
     self.data = data
     self._id = nil

@@ -156,7 +156,7 @@ end
 
 --- Sets the texture of the button
 -- Set to nil to remove the attribute.
--- @tparam Asset asset The texture asset
+-- @tparam [Asset](Asset) asset The texture asset
 function Button:setTexture(asset)
     self.texture = asset
     self.color = {1, 1, 1, 1}

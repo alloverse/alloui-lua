@@ -6,14 +6,14 @@ local Asset = require ('alloui.asset.asset')
 
 Base64Asset = class.Base64Asset(Asset)
 
---- Creates an `Asset` from a Base64-encoded string
+--- Creates an Asset from a Base64-encoded string
 --
 --~~~ lua
 -- my_asset = Base64Asset(base64)
 --~~~
 --
 -- @tparam string base64 A Base64-encoded string representation of an asset
--- @treturn Asset The generated Asset
+-- @treturn [Asset](Asset) The generated Asset
 function Base64Asset:_init(base64)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
     base64 = string.gsub(base64, '[^'..b..'=]', '')

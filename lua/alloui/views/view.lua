@@ -92,9 +92,9 @@ local function merge(t, u)
     end
 end
 
---- The specification is used to describe the entity three required to represent
--- this view inside the Alloverse. In a subclass, call this implementation and then
--- add/modify your own components.
+--- The specification is used to describe the entity tree 
+-- It is required to represent this view inside the Alloverse.
+-- In a subclass, call this implementation and then add/modify your own components.
 function View:specification()
     local mySpec = {
         ui = {
