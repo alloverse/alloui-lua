@@ -3,8 +3,6 @@
 
 local class = require('pl.class')
 local tablex = require('pl.tablex')
-local pretty = require('pl.pretty')
-local ffi = require('ffi')
 local types = require ('pl.types')
 
 AssetManager = class.AssetManager()
@@ -15,7 +13,7 @@ AssetManager = class.AssetManager()
 -- assetManager = AssetManager(client)
 --~~~
 --
--- @tparam Client client The lua wrapper around allonet.create.
+-- @tparam Client client The allonet client to handle assets for
 function AssetManager:_init(client)
     assert(client, "AssetManager needs the client")
     self.client = client
