@@ -14,7 +14,7 @@ class.Surface(View)
 -- surface = Surface(bounds)
 --~~~
 --
--- @tparam bounds bounds ???
+-- @tparam [Bounds](bounds) bounds The Surface's bounds.
 function Surface:_init(bounds)
     self:super(bounds)
     self.texture = nil

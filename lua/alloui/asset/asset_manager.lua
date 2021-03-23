@@ -1,4 +1,4 @@
---- A utility class for access and manipulation of [Assets](Asset).
+--- A utility class for storage and access to [Assets](Asset).
 -- @classmod AssetManager
 
 local class = require('pl.class')

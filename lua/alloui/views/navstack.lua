@@ -23,7 +23,7 @@ NavStack.assets = {
 --~~~ lua
 -- navStack = NavStack(bounds)
 --~~~
---@tparam bounds bounds ???
+--@tparam [Bounds](bounds) bounds The NavStack's bounds.
 function NavStack:_init(bounds)
     self:super(bounds)
     self.stack = {}

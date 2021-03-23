@@ -1,3 +1,7 @@
+--- Represents the AlloApp.
+-- Mediates communication with backend, and maintains the runloop. Create one of these, configure it,
+-- connect it and run it, and you have an alloapp.
+-- @classmod App
 local modules = (...):gsub(".[^.]+$", '') .. "."
 local class = require('pl.class')
 local tablex = require('pl.tablex')
@@ -5,12 +9,14 @@ local pretty = require('pl.pretty')
 local util = require(modules .."util")
 
 
+class.ScheduledAction()
 
 --- Schedule work to be done later
-class.ScheduledAction()
---- delay: in how long (in seconds) should callback be called?
--- repeats: should it then be rescheduled with the same delay again?
--- callback: function to be called with no arguments
+-- 
+-- @tparam Client client ???
+-- @tparam number delay The time (in seconds) until the callback is called.
+-- @tparam boolean repeats Whether The callback should repeat (with the same delay) or only occur once.
+-- @tparam function callback The function to be called (with no arguments).
 function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
@@ -18,10 +24,9 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.when = client.client:get_time() + delay
 end
 
---- Represents the Alloverse appliance. Mediates communication with
--- backend, and maintains the runloop.Create one of these, configure it,
--- connect it and run it, and you have an alloapp.
 class.App()
+
+
 App.ScheduledAction = ScheduledAction
 function App:_init(client)
     self.client = client

@@ -24,7 +24,7 @@ ResizeHandle.assets = {
 -- resizeHandle = ResizeHandle(bounds, translationConstraint, rotationConstraint)
 --~~~
 --
--- @tparam table bounds A table defining the size and position of the handle
+-- @tparam Bounds bounds The ResizeHandle's bounds.
 -- @tparam table translationConstraint Only allow the indicated fraction of movement in the corresponding axis in the actuated entity’s local coordinate space. E g, to only allow movement along the floor (no lifting), set the y fraction to 0: `{1, 0, 1}`.
 -- @tparam table rotationConstraint Similarly, constrain rotation to the given fraction in the given euler axis in the actuated entity’s local coordinate space. E g, to only allow rotation along Y (so that it always stays up-right), use: `{0, 1, 0}`.
 function ResizeHandle:_init(bounds, translationConstraint, rotationConstraint)

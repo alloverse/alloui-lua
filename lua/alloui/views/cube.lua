@@ -19,7 +19,7 @@ class.Cube(View)
 -- cube = Cube(bounds)
 --~~~
 --
--- @tparam bounds bounds ???
+-- @tparam [Bounds](bounds) bounds The Cube's initial bounds.
 function Cube:_init(bounds)
     self:super(bounds)
 

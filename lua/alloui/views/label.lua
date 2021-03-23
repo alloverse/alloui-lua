@@ -13,13 +13,13 @@ class.Label(View)
 --
 --~~~ lua
 -- --Creates a Label, at origo, that is 1m wide, 20cm tall and 1cm deep
--- local l = Label{bounds={0, 0, 0, 1, 0.2, 0.01}}
+-- local l = Label{bounds=Bounds(0, 0, 0, 1, 0.2, 0.01)}
 --  
 -- --For convenience, you may also set some or all of the Label's properties within the constructor, i.e.:
--- local l = Label{bounds={0, 0, 0, 1.0, 0.1, 0.001}, color={1.0,0.2,0.4,1}, text="Hello!", halign="left"}
+-- local l = Label{bounds=Bounds(0, 0, 0, 1.0, 0.1, 0.001), color={1.0,0.2,0.4,1}, text="Hello!", halign="left"}
 --~~~
 --
--- @tparam table o A table including *at least* a Bounds table (the position and size of your Label, i.e. {x, y, z, width, height, depth}). It may also include a number of other optional properties:
+-- @tparam table o A table including *at least* a Bounds component. It may also include a number of other optional properties: text, lineheight, wrap, halign, color and fitToWidth.
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)

@@ -1,4 +1,28 @@
 --- A text field, used for inputting text.
+--
+-- Set `onReturn` to define a function that gets called when the enter key is pressed (while the text field is focused):
+--
+--~~~ lua 
+-- my_textfield.onReturn = function()
+-- -- do stuff
+--end
+--~~~
+--
+-- Set `onChange` to define a function that gets called when the contents of the text field have changed:
+--
+--~~~ lua 
+-- my_textfield.onChange = function()
+-- -- do stuff
+--end
+--~~~
+--
+-- Set `onLostFocus` to define a function that gets called when the text field loses focus:
+--
+--~~~ lua 
+-- my_textfield.onLostFocus = function()
+-- -- do stuff
+--end
+--~~~
 -- @classmod TextField
 
 local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
@@ -20,10 +44,15 @@ class.TextField(View)
 ---
 --
 --~~~ lua
--- textfield = TextField(o)
+-- local textfield = TextField(o)
 --~~~
 --
--- @tparam table o ???
+--For convenience, you may also set some or all of the TextField's properties within the constructor, i.e.:
+--~~~ lua
+-- local textfield = TextField{bounds=Bounds(0, 0, 0, 1.0, 0.1, 0.001), color={1.0,0.2,0.4,1}, halign="center"}
+--~~~
+--
+-- @tparam table o A table including *at least* a Bounds component.
 function TextField:_init(o)
     self:super(o.bounds and o.bounds or o)
     local plaqueBounds = Bounds{size=self.bounds.size:copy()}

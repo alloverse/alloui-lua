@@ -1,10 +1,10 @@
 --- A button that can be poked/clicked to perform an action.
 -- 
+-- Every button has a Label. Use [label:setText(...)](Label#labelsettext-text) to set it:
 --~~~ lua
--- my_button = Button(ui.Bounds(x, y, z, width, height, depth))
+-- my_button.label:setText("this is my button")
 --~~~
 -- 
--- Use `my_button.label:setText("this is my button")` to set the button's label.
 -- Set `onActivated` to a function you'd like to be called when the button is pressed:
 --
 --~~~ lua
@@ -29,6 +29,12 @@ local Label = require(modules.."views.label")
 local Bounds = require(modules.."bounds")
 
 class.Button(View)
+
+---
+--~~~ lua
+-- my_button = Button(bounds)
+--~~~
+-- @tparam [Bounds](bounds) bounds The button's initial bounds.
 function Button:_init(bounds)
     self:super(bounds)
     self.selected = false

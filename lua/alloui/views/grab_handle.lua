@@ -22,7 +22,7 @@ GrabHandle.assets = {
 -- grab_handle = GrabHandle(bounds)
 --~~~
 --
--- @tparam table bounds The desired size and position of the GrabHandle in the following format: `{x, y, z, width, height, depth}`.
+-- @tparam [Bounds](bounds) bounds The GrabHandle's bounds.
 
 function GrabHandle:_init(bounds)
     self:super(bounds)

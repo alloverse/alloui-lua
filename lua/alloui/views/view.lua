@@ -20,7 +20,7 @@ View.assets = {}
 --~~~ lua
 -- view = View(bounds)
 --~~~
---@tparam bounds bounds ???
+--@tparam [Bounds](bounds) bounds The View's Bounds component
 function View:_init(bounds)
     self.viewId = string.random(16)
     self.bounds = bounds and bounds or Bounds(0,0,0, 0,0,0)
@@ -99,7 +99,7 @@ local function merge(t, u)
     end
 end
 
--- The specification is used to describe the entity tree 
+--- The specification is used to describe the entity tree.  
 -- It is required to represent this view inside the Alloverse.
 -- In a subclass, call this implementation and then add/modify your own components.
 function View:specification()
@@ -146,8 +146,9 @@ function View:specification()
     return mySpec
 end
 
---- Ask backend to update components on the server.
+--- Asks the backend to update components on the server.
 -- Use to update things you've specified in :specification() but now want to change.
+-- @tparam ??? changes ???
 function View:updateComponents(changes)
     if self.app == nil or self.entity == nil then return end
     
@@ -172,6 +173,9 @@ function View:setTransform(transform)
     end
 end
 
+--- Sets the View's pose and size in the world  
+-- Note that simply changing a View's Bounds won't affect its size or position in the world until this method is run.
+-- @tparam [Bounds](bounds) bounds the Bounds with which to define the Size and Pose of the parent View in the world.
 function View:setBounds(bounds)
   if bounds == nil then bounds = self.bounds end
   self.bounds = bounds
@@ -184,6 +188,9 @@ function View:setBounds(bounds)
   end
 end
 
+--- Adds a View as a child component to the given View.
+--
+-- @tparam [View](view) subview The View to be added 
 function View:addSubview(subview)
     assert(subview.superview == nil)
 
