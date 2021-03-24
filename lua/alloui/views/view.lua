@@ -147,8 +147,8 @@ function View:specification()
 end
 
 --- Asks the backend to update components on the server.
--- Use to update things you've specified in :specification() but now want to change.
--- @tparam ??? changes ???
+-- Use this to update things you've specified in :specification() but now want to change.
+-- @tparam table changes A table with the desired changes, for example: {transform={...}, collider={...}}
 function View:updateComponents(changes)
     if self.app == nil or self.entity == nil then return end
     
@@ -173,7 +173,7 @@ function View:setTransform(transform)
     end
 end
 
---- Sets the View's pose and size in the world  
+--- Sets the View's bounds (pose and size) in the world.
 -- Note that simply changing a View's Bounds won't affect its size or position in the world until this method is run.
 -- @tparam [Bounds](bounds) bounds the Bounds with which to define the Size and Pose of the parent View in the world.
 function View:setBounds(bounds)

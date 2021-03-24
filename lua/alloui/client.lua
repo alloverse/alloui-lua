@@ -1,3 +1,7 @@
+--- ???
+-- 
+-- @classmod Client
+
 local modules = (...):gsub('%.[^%.]+$', '') .. "."
 local json = require(modules.."json")
 local tablex = require("pl.tablex")
@@ -8,6 +12,16 @@ require(modules.."random_string")
 
 class.Client()
 
+---
+--
+--~~~ lua
+-- client = Client(url, name, client, updateStateAutomatically)
+--~~~
+--
+-- @tparam string url ...
+-- @tparam string name ...
+-- @tparam [Client](Client) client The AlloNet client.
+-- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
 function Client:_init(url, name, client, updateStateAutomatically)
     self.client = client and client or allonet.create()
     self.url = url
@@ -295,7 +309,6 @@ end
 function Client:disconnect(code)
   self.client:disconnect(code)
 end
-
 
 function Client:run()
     while true do

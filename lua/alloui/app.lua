@@ -13,7 +13,7 @@ class.ScheduledAction()
 
 --- Schedule work to be done later
 -- 
--- @tparam Client client ???
+-- @tparam Client client The AlloNet client
 -- @tparam number delay The time (in seconds) until the callback is called.
 -- @tparam boolean repeats Whether The callback should repeat (with the same delay) or only occur once.
 -- @tparam function callback The function to be called (with no arguments).
@@ -26,8 +26,15 @@ end
 
 class.App()
 
-
 App.ScheduledAction = ScheduledAction
+
+---
+--
+--~~~ lua
+-- local app = App(client)
+--~~~
+--
+-- @tparam [Client](Client) client The AlloNet client wrapper
 function App:_init(client)
     self.client = client
     self.mainView = View()
@@ -96,6 +103,12 @@ end
 function compareActions(a, b)
     return a.when < b.when
 end
+
+--- Schedule work to be done later
+-- 
+-- @tparam number delay The time (in seconds) until the callback is called.
+-- @tparam boolean repeats Whether The callback should repeat (with the same delay) or only occur once.
+-- @tparam function callback The function to be called (with no arguments).
 function App:scheduleAction(delay, repeats, callback)
     local action = ScheduledAction(self.client, delay, repeats, callback)
     table.bininsert(self.scheduledActions, action, compareActions)

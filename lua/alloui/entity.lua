@@ -1,7 +1,12 @@
+--- An entity is the manifestation of an agent in a place.
+-- The only fixed information in an entity is its id. Everything else is specified as a set of components.
+-- @classmod Entity
 local class = require('pl.class')
 local mat4 = require("modules.mat4")
 
 class.Entity()
+--- Gets the parent of a given Entity.  
+-- @treturn [Entity](Entity) The parent Entity, or nil if it has no parent.
 function Entity:getParent()
     local relationships = self.components.relationships
     if relationships ~= nil then

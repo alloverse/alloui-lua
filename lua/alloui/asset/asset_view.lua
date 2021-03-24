@@ -1,4 +1,4 @@
---- ???
+--- Used to display an Asset that's 3d model.
 -- @classmod AssetView
 
 local class = require('pl.class')
@@ -6,6 +6,15 @@ local View = require ('alloui.views.view')
 local Asset = require ('alloui.asset.asset')
 
 AssetView = class.AssetView(View)
+
+---
+--
+--~~~ lua
+-- asset_view = AssetView(asset, bounds)
+--~~~
+--
+-- @tparam [Asset](Asset) asset An asset representing a 3d model.
+-- @tparam [Bounds](Bounds) The bounds of the Asset that is to be displayed in the world.
 function AssetView:_init(asset, bounds)
     self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset
@@ -22,6 +31,9 @@ function AssetView:specification()
 end
 Asset.View = AssetView
 
+--- Creates an AssetView with a given bounds
+-- @tparam [Bounds](Bounds) bounds The AssetView's bounds 
+-- @treturn AssetView The AssetView
 function Asset:makeView(bounds)
     return AssetView(self, bounds)
 end
