@@ -227,10 +227,11 @@ end
 
 function AssetManager:_finishedLoading(name, asset)
     self._assets.loading[name] = nil
-    if name ~= asset:id() then 
-        print("Asset id mismatch. Expected "..name.." but got "..asset:id())
+    if asset and name == asset:id() then
+        self._assets:put(asset)
+    elseif asset and asset:id() then
+        print("Asset id mismatch. Expected " .. name .. " but got " .. asset:id())
     end
-    self._assets:put(asset)
 end
 
 function AssetManager:_handleRequest(name, offset, length)
@@ -263,7 +264,12 @@ function AssetManager:_handleState(name, state)
             asset.completionCallback = nil
         end
     else
-        print("Could not fetch asset " .. name .. " (" .. state ")")
+        asset.data = nil
+        if asset.completionCallback then 
+            asset.completionCallback(name, nil)
+            asset.completionCallback = nil
+        end
+        print("Could not fetch asset " .. name .. " (" .. state .. ")")
     end
     self:_finishedLoading(name, asset)
 end

@@ -19,7 +19,11 @@ function Asset.__eq(a, b)
 end
 
 function Asset:__tostring()
-    return self._name .. "<" .. self:id() .. ">"
+    if self:id() then 
+        return self._name .. "<" .. self:id() .. ">"
+    else
+        return "Empty " .. self._name
+    end
 end
 
 ---
