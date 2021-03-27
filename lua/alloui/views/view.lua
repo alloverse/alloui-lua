@@ -52,6 +52,23 @@ function View:isAwake()
   return self.entity ~= nil
 end
 
+--- If this is set to true, user can grab and move this view using the grip button.
+function View:setGrabbable(grabbable)
+    self.grabbable = grabbable
+    if self:isAwake() then
+        self:updateComponents(self:specification())
+    end
+end
+
+--- If this is set to true, the user's cursor can land on this view, and you can
+-- receive pointer events. (See `onPointerChanged` and friends)
+function View:setPointable(pointable)
+    self.hasCollider = pointable
+    if self:isAwake() then
+        self:updateComponents(self:specification())
+    end
+end
+
 function View:_poseWithTransform()
     return mat4.mul(mat4.identity(), self.transform, self.bounds.pose.transform)
 end

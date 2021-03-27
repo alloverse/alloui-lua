@@ -40,6 +40,7 @@ function Button:_init(bounds)
     self.selected = false
     self.highlighted = false
     self.onActivated = nil
+    self:setPointable(true)
 
     self.label = Label(Bounds(0, 0, bounds.size.depth/2+0.01,   bounds.size.width*0.9, bounds.size.height*0.7, 0.01))
     self.color = {0.9, 0.4, 0.3, 1.0}
@@ -67,10 +68,6 @@ function Button:specification()
             },
         },
         material = {
-        },
-        collider= {
-            type= "box",
-            width= s.width, height= s.height, depth= s.depth
         }
     })
 
