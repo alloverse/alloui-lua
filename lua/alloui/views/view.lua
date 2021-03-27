@@ -338,9 +338,13 @@ end
 function View:grabEnded(hand)
 end
 
---- Callback for when a hand is interacting with a view. This is a catch-all
--- callback; there is also onPointerEntered, onPointerMoved, onPointerExited,
--- onTouchDown and onTouchUp if you want to react only to specific events.
+--- Callback for when a hand is interacting with a view. 
+-- NOTE: You must set view:setPointable(true), or the user's cursor will just
+-- fall right through this view!
+--
+-- This is a catch-all callback; there is also
+-- onPointerEntered, onPointerMoved, onPointerExited, onTouchDown and onTouchUp
+-- if you want to react only to specific events.
 -- @tparam table pointer A table with keys:
 --  * `hand`: The hand entity that is doing the pointing
 --  * `state`: "hovering", "outside" or "touching"
