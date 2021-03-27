@@ -96,9 +96,9 @@ function Label:setColor(color)
 end
 
 --- Sets the Label's fitToWidth attribute
--- @tparam boolean fitToWidth If true, the Label's text size is automatically decreased so as to never exceed the Label's width
-function Label:setFitToWidth(fitToWidth)
-  self.fitToWidth = fitToWidth
+-- @tparam number desiredWidth The desired width with which to constrain the label text.
+function Label:setFitToWidth(desiredWidth)
+  self.fitToWidth = desiredWidth
   if self:isAwake() then
       self:updateComponents(self:specification())
   end

@@ -240,6 +240,10 @@ function View:removeFromSuperview()
     self.superview = nil
 end
 
+--- Finds and returns a subview of the given view ID.
+--
+-- @tparam string vid The viewId of the View to be searched for.
+-- @treturn [View](view) The subview corresponding to the view ID. If no view was found, `nil` is returned.
 function View:findView(vid)
     if self.viewId == vid then
         return self

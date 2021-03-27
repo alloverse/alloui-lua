@@ -49,7 +49,7 @@ end
 
 --- Makes a copy of a given Bounds object
 --  
---@treturn [Bounds](bounds) A copy of the given Bounds
+--@treturn [Bounds](bounds) A copy of the given Bounds.
 function Bounds:copy()
     return Bounds{
         pose=self.pose:copy(),
@@ -58,30 +58,49 @@ function Bounds:copy()
 end
 
 --- Sets the Bounds' [Pose](pose) component to {0, 0, 0}
--- @treturn [Bounds](bounds) The updated Bounds object
+-- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:moveToOrigin()
     self.pose:identity()
     return self
 end
 
---- Rotates the Bounds
--- @tparam number angle The angle
--- @treturn [Bounds](bounds) The updated Bounds object
+--- Rotates the Bounds around an axis.
+-- @tparam number angle The amount to rotate the coordinate system by, in radians.
+-- @tparam number x The x component of the axis of rotation.
+-- @tparam number y The y component of the axis of rotation.
+-- @tparam number z The z component of the axis of rotation.
+-- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:rotate(angle, x, y, z)
     self.pose:rotate(angle, x, y, z)
     return self
 end
 
+--- Moves the Bounds.
+-- @tparam number x The movement along the x axis.
+-- @tparam number y The movement along the y axis.
+-- @tparam number z The movement along the z axis.
+-- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:move(x, y, z)
     self.pose:move(x, y, z)
     return self
 end
 
+--- Scales the Bounds.
+-- @tparam number x The scaling along the x axis.
+-- @tparam number y The scaling along the y axis.
+-- @tparam number z The scaling along the z axis.
+-- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:scale(x, y, z)
     self.pose:scale(x, y, z)
     return self
 end
 
+--- Shrinks the Bounds by the given parameters.
+-- 
+-- @tparam number w The reduction of the component's width.
+-- @tparam number h The reduction of the component's height.
+-- @tparam number d The reduction of the component's depth.
+-- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:inset(w, h, d)
     self.size:inset(w, h, d)
     return self

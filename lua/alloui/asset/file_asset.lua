@@ -13,8 +13,8 @@ FileAsset = class.FileAsset(Asset)
 --~~~
 --
 -- @tparam string path The path to the file
--- @tparam boolean load ???
--- @treturn FileAsset The generated FileAsset
+-- @tparam boolean load If `true`, the file is loaded into memory immediately. Otherwise the file is read whenever data is needed.
+-- @treturn FileAsset The generated FileAsset.
 function FileAsset:_init(path, load)
     self._path = path
     self._file = assert(io.open(path, "r+b"))
@@ -29,18 +29,18 @@ end
 -- path = FileAsset:path()
 --~~~
 --
--- @treturn string The path to the FileAsset
+-- @treturn string The path to the FileAsset.
 function FileAsset:path()
     return self._path
 end
 
---- Get the size of a FileAsset
+--- Get the size (in bytes) of a FileAsset.
 --
 --~~~ lua
 -- path = FileAsset:size()
 --~~~
 --
--- @treturn string The size, in bytes, of the FileAsset
+-- @treturn string The size, in bytes, of the FileAsset.
 function FileAsset:size()
     if self._size == nil then
         self._size = self._file:seek("end")

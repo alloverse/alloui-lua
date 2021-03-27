@@ -15,7 +15,7 @@ AssetManager = class.AssetManager()
 -- assetManager = AssetManager(client)
 --~~~
 --
--- @tparam Client client ???
+-- @tparam Client client The lua wrapper around allonet.create.
 function AssetManager:_init(client)
     assert(client, "AssetManager needs the client")
     self.client = client
@@ -122,7 +122,7 @@ function AssetManager:add(asset, manage)
     end
 end
 
---- Adds an Asset to the AssetManager
+--- Removes an Asset from the AssetManager
 --
 --~~~ lua
 -- AssetManager:remove(asset)
@@ -143,7 +143,7 @@ function AssetManager:remove(asset)
 end
 
 
---- Get an Asset with the corresponding name. Returns `false` if no matching Asset is found.
+--- Get an Asset with the corresponding name. Returns `nil` if no matching Asset is found.
 --
 --~~~ lua
 -- AssetManager:get(name)
@@ -179,7 +179,7 @@ function AssetManager:count()
 end
 
 
---- ???
+--- Start to load an asset. Callback will be called with the Asset when loading is complete, or with `nil` if failed.
 --
 --~~~ lua
 -- AssetManager:load(name, callback)

@@ -14,7 +14,7 @@ AssetView = class.AssetView(View)
 --~~~
 --
 -- @tparam [Asset](Asset) asset An asset representing a 3d model.
--- @tparam [Bounds](Bounds) The bounds of the Asset that is to be displayed in the world.
+-- @tparam [Bounds](Bounds) bounds The bounds of the Asset that is to be displayed in the world.
 function AssetView:_init(asset, bounds)
     self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset

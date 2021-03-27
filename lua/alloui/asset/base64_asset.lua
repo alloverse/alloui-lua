@@ -1,4 +1,4 @@
---- An Asset created from a Base64-encoded string
+--- An Asset created from a Base64-encoded string.
 -- @classmod Base64Asset
 
 local class = require('pl.class')
@@ -13,7 +13,6 @@ Base64Asset = class.Base64Asset(Asset)
 --~~~
 --
 -- @tparam string base64 A Base64-encoded string representation of an asset
--- @treturn [Asset](Asset) The generated Asset
 function Base64Asset:_init(base64)
     local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
     base64 = string.gsub(base64, '[^'..b..'=]', '')
