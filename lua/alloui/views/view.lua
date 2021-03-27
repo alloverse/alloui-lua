@@ -34,6 +34,7 @@ function View:_init(bounds)
     self.customSpecAttributes = {}
     --- A list of file extensions the view might accept as drop target. 
     self.acceptedFileExtensions = nil
+    self._pointers = {}
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -311,13 +312,62 @@ end
 -- The server will then update self.entity.components.transform to match
 -- where the user wants to move it continuously. There is no callback for
 -- when the entity is moved.
--- @tparam Entity The hand entity that started the grab
+-- @tparam Entity hand The hand entity that started the grab
 function View:grabStarted(hand)
 end
 
 --- Callback called when a user lets go of and no longer wants to move it.
--- @tparam Entity The hand entity that released the grab.
+-- @tparam Entity hand The hand entity that released the grab.
 function View:grabEnded(hand)
+end
+
+--- Callback for when a hand is interacting with a view. This is a catch-all
+-- callback; there is also onPointerEntered, onPointerMoved, onPointerExited,
+-- onTouchDown and onTouchUp if you want to react only to specific events.
+-- @tparam table pointer A table with keys:
+--  * `hand`: The hand entity that is doing the pointing
+--  * `state`: "hovering", "outside" or "touching"
+--  * `touching`: bool, whether the hand is currently doing a poke on this view
+--  *`pointedFrom`: a vec3 in world coordinate space with the coordinates 
+--                  of the finger tip of the hand pointing at this view.
+--  * `pointedTo`: the point on this view that is being pointed at
+--                 (again, in world coordinates).
+function View:onPointerChanged(pointer)
+end
+
+--- Callback for when a hand's pointer ray entered this view.
+--  The `state` in pointer is now "hovering"
+-- @tparam table pointer see onPointerChanged.
+function View:onPointerEntered(pointer)
+end
+
+--- Callback for when a hand's pointer moved within this view.
+--  The pointedFrom and pointedTo in pointer now likely have new values.
+-- @tparam table pointer see onPointerChanged.
+function View:onPointerMoved(pointer)
+end
+
+--- Callback for when the hand's pointer is no longer pointing within this view.
+--  The `state` in pointer is now "outside"
+-- @tparam table pointer see onPointerChanged.
+function View:onPointerExited(pointer)
+end
+
+--- Callback for when the hand's pointer is poking/touching this view
+--  The `state` in pointer is now "touching"
+-- @tparam table pointer see onPointerChanged.
+function View:onTouchDown(pointer)
+end
+
+--- Callback for when the hand's pointer stopped poking/touching this view.
+--  This is a great time to invoke an action based on the touch.
+--  For example, if you're implementing a button, this is where you'd 
+--  trigger whatever you're trying to trigger.
+--  NOTE: If pointer.state is now "outside", the user released
+--  the trigger button outside of this view, and you should NOT
+--  perform an action, but cancel it instead.
+-- @tparam table pointer see onPointerChanged.
+function View:onTouchUp(pointer)
 end
 
 --- an interaction message was sent to this specific view.
@@ -338,7 +388,57 @@ function View:onInteraction(inter, body, sender)
         else
             self:grabEnded(sender)
         end
+    elseif body[1] == "point" then
+        self:_routePointing(body, sender)
+    elseif body[1] == "point-exit" then
+        self:_routeEndPointing(body, sender)
+    elseif body[1] == "poke" then
+        self:_routePoking(body, sender)
     end
+end
+
+function View:_routePointing(body, sender)
+    local pointer = self._pointers[sender.id]
+    if pointer == nil then
+        pointer = {
+            hand= sender,
+            state= nil,
+            touching= false,
+        }
+        self._pointers[sender.id] = pointer
+    end
+    pointer.pointedFrom = vec3(unpack(body[2]))
+    pointer.pointedTo = vec3(unpack(body[3]))
+
+    if pointer.state == nil then
+        pointer.state = "hovering"
+        self:onPointerEntered(pointer)
+    else
+        self:onPointerMoved(pointer)
+    end
+    self:onPointerChanged(pointer)
+end
+function View:_routeEndPointing(body, sender)
+    local pointer = self._pointers[sender.id]
+    pointer.state = "outside"
+    pointer.pointedFrom = nil
+    pointer.pointedTo = nil
+    self:onPointerExited(pointer)
+    self:onPointerChanged(pointer)
+    self._pointers[sender.id] = nil
+end
+function View:_routePoking(body, sender)
+    local pointer = self._pointers[sender.id]
+    if body[2] then
+        pointer.touching = true
+        pointer.state = "touching"
+        self:onTouchDown(pointer)
+    else
+        pointer.touching = false
+        pointer.state = pointer.pointedFrom and "hovering" or "outside"
+        self:onTouchUp(pointer)
+    end
+    self:onPointerChanged(pointer)
 end
 
 --- Callback called when a file is dropped on the view
