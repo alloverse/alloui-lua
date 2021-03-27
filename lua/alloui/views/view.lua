@@ -303,6 +303,19 @@ function View:defocus()
     })
 end
 
+--- Callback called when a user grabs this view in order to move it.
+-- The server will then update self.entity.components.transform to match
+-- where the user wants to move it continuously. There is no callback for
+-- when the entity is moved.
+-- @tparam Entity The hand entity that started the grab
+function View:grabStarted(hand)
+end
+
+--- Callback called when a user lets go of and no longer wants to move it.
+-- @tparam Entity The hand entity that released the grab.
+function View:grabEnded(hand)
+end
+
 --- an interaction message was sent to this specific view.
 -- See [Interactions](/protocol-reference/interactions)
 function View:onInteraction(inter, body, sender)
@@ -315,6 +328,12 @@ function View:onInteraction(inter, body, sender)
         end
     elseif body[1] == "accept-file" and body[2] and body[3] then 
         self:onFileDropped(body[2], body[3])
+    elseif body[1] == "grabbing" then
+        if body[2] then
+            self:grabStarted(sender)
+        else
+            self:grabEnded(sender)
+        end
     end
 end
 
