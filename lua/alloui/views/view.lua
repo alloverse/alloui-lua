@@ -420,6 +420,7 @@ function View:_routePointing(body, sender)
 end
 function View:_routeEndPointing(body, sender)
     local pointer = self._pointers[sender.id]
+    if not pointer then return end
     pointer.state = "outside"
     pointer.pointedFrom = nil
     pointer.pointedTo = nil
@@ -429,6 +430,7 @@ function View:_routeEndPointing(body, sender)
 end
 function View:_routePoking(body, sender)
     local pointer = self._pointers[sender.id]
+    if not pointer then return end
     if body[2] then
         pointer.touching = true
         pointer.state = "touching"
