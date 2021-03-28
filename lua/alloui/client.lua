@@ -169,11 +169,7 @@ function Client:updateState(newState)
     end
   
     -- Run callbacks
-    if self.connected == false then
-      self.connected = true
-      self.delegates.onConnected()
-    end
-
+    
     self.delegates.onStateChanged()
     tablex.map(function(x) 
         self.delegates.onEntityAdded(x) 
@@ -182,9 +178,7 @@ function Client:updateState(newState)
     tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
     tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
     tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
-    tablex.map(function(x) 
-      self:_respondToEquery(x)
-  end, newEntities)
+    tablex.map(function(x) self:_respondToEquery(x) end, newEntities)
 end
 
 function Client:getEntity(eid, cb)
@@ -264,6 +258,8 @@ function Client:onInteraction(inter)
         self.avatar_id = body[2]
         self.placename = body[3]
         print("Welcome to",self.placename,", ",self.name,". Our avatar ID: " .. self.avatar_id)
+        self.connected = true
+        self.delegates.onConnected()
     end
 
     if inter.type == "request" then
