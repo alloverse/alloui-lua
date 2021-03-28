@@ -160,7 +160,7 @@ function App:findView(vid)
 end
 
 function App:onInteraction(inter, body, receiver, sender) 
-    if receiver == nil then return end
+    if receiver == nil or receiver.components.ui == nil then return end
     local vid = receiver.components.ui.view_id
     local view = self:findView(vid)
     if view then
