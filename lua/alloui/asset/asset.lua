@@ -44,7 +44,9 @@ end
 -- @treturn string the requested data
 function Asset:read(offset, length)
     if self.data == nil then return nil end
-    return string.sub(self.data, offset, offset + length - 1)
+    if not offset then offset = 1 end
+    if not length then length = self:size() - (offset - 1) end
+    return self.data:sub(offset, offset + length - 1)
 end
 
 --- Write a part of the data

@@ -50,6 +50,8 @@ end
 
 -- callback: function(data)
 function FileAsset:read(offset, length)
+    if not offset then offset = 1 end
+    if not length then length = self:size() - (offset - 1) end
     self._file:seek("set", offset - 1) -- offset is 1-based but seek is 0-based
     local contents = assert(self._file:read(length))
     return contents
