@@ -17,6 +17,7 @@ LovrFileAsset = class.LovrFileAsset(Asset)
 -- @tparam string path The path to the file
 -- @treturn LovrFileAsset The generated LovrFileAsset
 function LovrFileAsset:_init(path)
+    assert(lovr.filesystem.isFile(path), path .. " does not exist")
     self._path = path
 end
 

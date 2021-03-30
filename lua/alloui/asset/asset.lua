@@ -73,7 +73,7 @@ end
 -- @tparam boolean refresh By default a cached hash is returned, if one is available. Send `refresh` to true to recompute the id
 function Asset:id(refresh)
     if self._id == nil or refresh then
-        local data = self.data or self:read(1, self:size())
+        local data = self.data or self:read()
         if data == nil then return nil end
         self._id = allonet.asset_generate_identifier(data)
     end
