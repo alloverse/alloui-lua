@@ -5,6 +5,9 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local types = require ('pl.types')
 
+
+
+
 AssetManager = class.AssetManager()
 
 ---
@@ -20,56 +23,34 @@ function AssetManager:_init(client)
 
     self._assets = {
         loading = {}, -- Assets requested but not completed
-        cache = {}, -- All assets are put into a weak list and managed while in used
-        published = {}, -- Explicitly added assets are also in a strong list to remain in memory
+        cache = AssetCache(), -- May bet pruned when there are too many assets stored
+        disk = lovr and AssetDiskCache(),
+        published = AssetCache(), -- Explicitly added assets will not be pruned
 
         getTime = function ()
             return os.time()
         end,
         publish = function (self, asset, manage)
-            self.cache[asset:id()] = asset
-            if manage then 
-                self.published[asset:id()] = asset
-            end
+            print(self, self.cache)
+            self.cache:put(asset)
+            if self.disk then self.disk:put(asset) end
+            if manage then self.published[asset:id()] = asset end
         end,
         get = function (self, id)
-            local asset = self.cache[id]
-            if asset then 
-                asset.lru = self.getTime()
-            end
+            local asset = self.published[id] or self.cache:get(id) or (self.disk and self.disk:get(id))
             return asset
         end,
         put = function(self, asset)
-            asset.lru = self.getTime()
-            self.cache[asset:id()] = asset
-            self:prune()
+            self.cache:put(asset)
+            if self.disk then self.disk:put(asset) end
         end,
         remove = function (self, asset_or_id)
             local asset = asset_or_id.id and asset_or_id:id() or asset_or_id
-            self.cache[asset] = nil
+            self.cache:remove(asset)
+            if self.disk then self.disk:remove(asset) end
             self.published[asset] = nil
             self.loading[asset] = nil
         end,
-
-        prune = function(self)
-            local max_items = 100 -- what's a decent value?
-            if tablex.size(self.cache) > max_items then
-                local time = self.getTime()
-                local list = tablex.values(self.cache)
-                table.sort(list, function(a, b) 
-                    return a.lru < b.lru
-                end)
-
-                for _, asset in ipairs(list) do
-                    if time - asset.lru > 60 then -- force it to stay for a minute or so just to be nice
-                        self:remove(asset)
-                    end
-                    if tablex.size(self.cache) <= max_items then 
-                        return
-                    end
-                end
-            end
-        end
     }
 
     -- make the loaded table weak
@@ -95,7 +76,8 @@ function AssetManager:getStats()
     return {
         published = tablex.size(self._assets.published),
         loading = tablex.size(self._assets.loading),
-        cached = tablex.size(self._assets.cache),
+        cached = self._assets.cache:count(),
+        disk = self._assets.disk and self._assets.disk:count() or 0,
     }
 end
 
