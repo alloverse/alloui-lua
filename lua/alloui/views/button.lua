@@ -44,7 +44,14 @@ function Button:_init(bounds)
 
     self.label = Label(Bounds(0, 0, bounds.size.depth/2+0.01,   bounds.size.width*0.9, bounds.size.height*0.7, 0.01))
     self.color = {0.9, 0.4, 0.3, 1.0}
+
     self:addSubview(self.label)
+end
+
+function Button:awake()
+  View.awake(self)
+  self._downSound = self.app:_getInternalAsset("sounds/soft-down.ogg")
+  self._upSound = self.app:_getInternalAsset("sounds/soft-up.ogg")
 end
 
 function Button:specification()
@@ -68,7 +75,7 @@ function Button:specification()
             },
         },
         material = {
-        }
+        },
     })
 
     if self.texture then
@@ -87,9 +94,14 @@ function Button:onInteraction(inter, body, sender)
     elseif body[1] == "point-exit" then
         self:setHighlighted(false)
     elseif body[1] == "poke" then
-        self:setSelected(body[2])
+        local newSelected = body[2]
+        if newSelected and not self.selected then
+          self:playSound(self._downSound)
+        end
+        self:setSelected(newSelected)
 
-        if self.selected == false and self.highlighted == true then
+        if newSelected == false and self.highlighted == true then
+            self:playSound(self._upSound)
             self:activate(sender)
         end
     end
