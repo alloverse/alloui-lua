@@ -35,6 +35,7 @@ function View:_init(bounds)
     --- A list of file extensions the view might accept as drop target. 
     self.acceptedFileExtensions = nil
     self._pointers = {}
+    self._currentSound = nil
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -158,6 +159,10 @@ function View:specification()
             mySpec.material = {}
         end
         mySpec.material.hasTransparency = self.hasTransparency
+    end
+
+    if self._currentSound then
+        mySpec.sound_effect = self._currentSound
     end
 
     merge(mySpec, self.customSpecAttributes)
@@ -289,6 +294,25 @@ function View:registerAssets()
     while mt do
         self.app.assetManager:add(mt.assets or {})
         mt = mt._base
+    end
+end
+
+--- Plays the given sound asset ASAP.
+-- You can use playOptions to set things like `loop_count`, `volume`, `length`, `offset` etc...
+-- @tparam Asset asset The asset to play
+-- @tparam table playOptions A table with valid keys for the "sound_effect" component
+function View:playSound(asset, playOptions)
+    self._currentSound = playOptions or {}
+    if self._currentSound.finish_if_orphaned == nil then
+        self._currentSound.finish_if_orphaned = true
+    end
+    self._currentSound.asset = asset:id()
+    self._currentSound.starts_at = self.app:_timeForPlayingSoundNow()
+    if self:isAwake() then
+        local spec = self:specification()
+        self:updateComponents({
+            sound_effect= spec.sound_effect
+        })
     end
 end
 

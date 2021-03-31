@@ -136,6 +136,7 @@ function App:quit()
 end
 
 function App:runOnce(timeout)
+  self.latestTimeout = timeout
   local nextAction = self.scheduledActions[1]
   local now = self.client.client:get_time()
   if nextAction and nextAction.when < now then
@@ -192,4 +193,9 @@ function App:_getInternalAsset(name)
     end
     return self._internalAssets[name]
 end
+
+function App:_timeForPlayingSoundNow()
+    return self.client.client:get_time() + (self.latestTimeout or 0.05)
+end
+
 return App
