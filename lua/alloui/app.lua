@@ -7,7 +7,7 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local util = require(modules .."util")
-
+local Asset = require(modules .. "asset.init")
 
 class.ScheduledAction()
 
@@ -181,4 +181,15 @@ function App:onComponentAdded(cname, comp)
     end
 end
 
+function App:_getInternalAsset(name)
+    if not self._internalAssets then self._internalAssets = {} end
+    if not self._internalAssets[name] then
+        if lovr then
+            self._internalAssets[name] = self.assetManager:add(Asset.LovrFile("lib/alloui/assets/"..name))
+        else
+            self._internalAssets[name] = self.assetManager:add(Asset.File("./allo/deps/alloui/assets/"..name))
+        end
+    end
+    return self._internalAssets[name]
+end
 return App

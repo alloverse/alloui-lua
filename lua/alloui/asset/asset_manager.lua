@@ -100,6 +100,7 @@ function AssetManager:add(asset, manage)
     else 
         error("not an asset")
     end
+    return asset
 end
 
 --- Removes an Asset from the AssetManager
