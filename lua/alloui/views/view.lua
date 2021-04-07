@@ -49,6 +49,11 @@ function View:awake()
     end
 end
 
+--- sleep() is called when the entity no longer exists
+function View:sleep()
+
+end
+
 function View:isAwake()
   return self.entity ~= nil
 end
@@ -258,6 +263,7 @@ function View:removeFromSuperview()
             }
         }, function()
             self.entity = nil
+            self:sleep()
         end)
     end
     self.superview = nil
