@@ -18,6 +18,7 @@ AssetView = class.AssetView(View)
 function AssetView:_init(asset, bounds)
     self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset
+    self.color = {1, 1, 1, 1}
 end
 function AssetView:specification()
     local spec = View.specification(self)
@@ -27,6 +28,10 @@ function AssetView:specification()
             name = self.asset:id(),
         }
     end
+    spec.material = {
+        color = self.color
+    }
+    
     return spec
 end
 Asset.View = AssetView
