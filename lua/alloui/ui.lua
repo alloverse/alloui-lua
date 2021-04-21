@@ -12,6 +12,7 @@ return {
     GrabHandle = require(modules.."views.grab_handle"),
     ResizeHandle = require(modules.."views.resize_handle"),
     Speaker = require(modules.."views.speaker"),
+    GridView = require(modules.."views.gridview"),
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),
