@@ -109,10 +109,12 @@ end
 function Bounds:insetEdges(left, right, top, bottom, front, back)
     self.size:inset(left+right, top+bottom, front+back)
     self.pose:move(left/2-right/2, top/2-bottom/2, front/2-back/2)
+    return self
 end
 
 function Bounds:extendEdges(left, right, top, bottom, front, back)
     self:insetEdges(-left, -right, -top, -bottom, -front, -back)
+    return self
 end
 
 return Bounds
