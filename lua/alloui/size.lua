@@ -51,4 +51,17 @@ function Size:inset(byWidth, byHeight, byDepth)
     return self
 end
 
+function Size:getEdge(vertical, horizontal, depthwise)
+    if not vertical then vertical = "center" end
+    if not horizontal then horizontal = "center" end
+    if not depthwise then depthwise = "center" end
+    local w2 = self.width/2
+    local h2 = self.height/2
+    local d2 = self.depth/2
+    local x = (horizontal == "left") and -w2 or ((horizontal == "right") and w2 or 0)
+    local y = (vertical == "top") and h2 or ((vertical == "bottom") and -h2 or 0)
+    local z = (depthwise == "front") and d2 or ((depthwise == "back") and -d2 or 0)
+    return x, y, z
+end
+
 return Size
