@@ -368,12 +368,12 @@ end
 -- where the user wants to move it continuously. There is no callback for
 -- when the entity is moved.
 -- @tparam Entity hand The hand entity that started the grab
-function View:grabStarted(hand)
+function View:onGrabStarted(hand)
 end
 
 --- Callback called when a user lets go of and no longer wants to move it.
 -- @tparam Entity hand The hand entity that released the grab.
-function View:grabEnded(hand)
+function View:onGrabEnded(hand)
 end
 
 --- Callback for when a hand is interacting with a view. 
@@ -443,9 +443,9 @@ function View:onInteraction(inter, body, sender)
         self:onFileDropped(body[2], body[3])
     elseif body[1] == "grabbing" then
         if body[2] then
-            self:grabStarted(sender)
+            self:onGrabStarted(sender)
         else
-            self:grabEnded(sender)
+            self:onGrabEnded(sender)
         end
     elseif body[1] == "point" then
         self:_routePointing(body, sender)
