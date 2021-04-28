@@ -47,7 +47,8 @@ function Cube:specification()
             },
         },
         material = {
-            color = self.color
+            color = self.color,
+            hasTransparency = (self.color[4] == 2) and false or true
         },
     })
 
