@@ -30,6 +30,7 @@ function View:_init(bounds)
     self.entity = nil
     self.app = nil
     self.grabbable = false
+    self.grabOptions = {}
     self.hasCollider = false
     self.customSpecAttributes = {}
     --- A list of file extensions the view might accept as drop target. 
@@ -59,8 +60,11 @@ function View:isAwake()
 end
 
 --- If this is set to true, user can grab and move this view using the grip button.
-function View:setGrabbable(grabbable)
+function View:setGrabbable(grabbable, grabOptions)
     self.grabbable = grabbable
+    if grabOptions then
+        self.grabOptions = grabOptions
+    end
     if self:isAwake() then
         self:updateComponents(self:specification())
     end
@@ -143,6 +147,10 @@ function View:specification()
     if self.grabbable then
         local s = self.bounds.size
         mySpec.grabbable = {grabbable= true}
+        for k, v in pairs(self.grabOptions) do
+            if v._m then v._m = nil end
+            mySpec.grabbable[k] = v
+        end
     end
 
     if self.grabbable or self.hasCollider then
