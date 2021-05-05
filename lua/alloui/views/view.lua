@@ -88,19 +88,14 @@ function View:transformFromParent()
 end
 
 function View:transformFromWorld()
-  if self:isAwake() then
-    local transformFromLocal = self:transformFromParent()
-    if self.superview ~= nil then
-        return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
+    local transformFromLocal = self:isAwake() and self:transformFromParent() or self:_poseWithTransform()
+    if self.superview then
+        return self.superview:transformFromWorld() * transformFromLocal
     else
         return transformFromLocal
     end
-  else
-    local transformFromLocal = self:_poseWithTransform()
-    if self.superview ~= nil then
-        return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
-    else
-        return transformFromLocal
+end
+
 
 --- Converts `point` from `other` view to this view
 -- If `other` is nil then the point is assumed to be in world space
