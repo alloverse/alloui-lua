@@ -13,7 +13,7 @@ local Slider = class.Slider(View)
 
 
 function Slider:_init(bounds)
-    bounds = bounds or Bounds(0,0,0, 0.5, 0.2, 0.1)
+    bounds = bounds or Bounds(0,0,0, 0.8, 0.13, 0.1)
     self:super(bounds)
     self._minValue = 0.0
     self._maxValue = 1.0
