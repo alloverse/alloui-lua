@@ -31,7 +31,7 @@ function Cube:specification()
     local w2 = s.width / 2.0
     local h2 = s.height / 2.0
     local d2 = s.depth / 2.0
-    local mySpec = tablex.union(View.specification(self), {
+    local mySpec = table.merge(View.specification(self), {
         geometry = {
             type = "inline",
                   --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr

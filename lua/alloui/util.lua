@@ -20,7 +20,23 @@ function table.bininsert(t, value, fcomp)
     return (iMid+iState)
 end
 
-
+function table.merge(t, u)
+    if u == nil then return t end
+    for key, _ in pairs(u) do
+        local left = t[key]
+        local right = u[key]
+        if type(left) == "table" and type(right) == "table" then
+            table.merge(left, right)
+        else
+            if type(u[key]) == "table" then 
+                t[key] = tablex.deepcopy(u[key])
+            else
+                t[key] = u[key]
+            end
+        end
+    end
+    return t
+end
 
 local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
 -- encoding
@@ -36,8 +52,6 @@ function base64_encode(data)
         return b:sub(c+1,c+1)
     end)..({ '', '==', '=' })[#data%3+1])
 end
-
-
 
 return {
     getTime= getTime,

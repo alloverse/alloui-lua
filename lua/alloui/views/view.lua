@@ -116,23 +116,6 @@ function _arrayFromMat4(x)
   return x
 end
 
-local function merge(t, u)
-    if t == nil or u == nil then return end
-    for key, _ in pairs(u) do
-        local left = t[key]
-        local right = u[key]
-        if type(left) == "table" and type(right) == "table" then
-            merge(left, right)
-        else
-            if type(u[key]) == "table" then 
-                t[key] = tablex.deepcopy(u[key])
-            else
-                t[key] = u[key]
-            end
-        end
-    end
-end
-
 --- The specification is used to describe the entity tree.  
 -- It is required to represent this view inside the Alloverse.
 -- In a subclass, call this implementation and then add/modify your own components.
@@ -184,7 +167,7 @@ function View:specification()
         mySpec.sound_effect = self._currentSound
     end
 
-    merge(mySpec, self.customSpecAttributes)
+    table.merge(mySpec, self.customSpecAttributes)
     return mySpec
 end
 
@@ -193,6 +176,7 @@ end
 -- @tparam table changes A table with the desired changes, for example: {transform={...}, collider={...}}
 function View:updateComponents(changes)
     if self.app == nil or self.entity == nil then return end
+    changes = changes or self:specification()
     
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
