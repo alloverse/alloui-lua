@@ -39,7 +39,7 @@ function Slider:layout()
     self.track.bounds.size.depth = self.bounds.size.depth / 2.0
 
     self.knob.bounds.size = self.bounds.size:copy()
-    self.knob.bounds.size.width = self.knob.bounds.size.height
+    self.knob.bounds.size.width = self.knob.bounds.size.height/2
 
     local fraction = (self._currentValue - self._minValue) / (self._maxValue - self._minValue)
     local x = fraction * self.bounds.size.width - self.bounds.size.width / 2
