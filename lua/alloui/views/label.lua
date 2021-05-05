@@ -23,12 +23,12 @@ class.Label(View)
 function Label:_init(o)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)
-    self.text = o.text and o.text or ""
-    self.lineheight = o.lineheight and o.lineheight or bounds.size.height
-    self.wrap = o.wrap and o.wrap or bounds.size.width
-    self.halign = o.halign and o.halign or "center"
-    self.color = o.color and o.color or {1,1,1,1}
-    self.fitToWidth = o.fitToWidth and o.fitToWidth or 0
+    self.text = o.text or ""
+    self.lineheight = o.lineheight or bounds.size.height
+    self.wrap = o.wrap or bounds.size.width
+    self.halign = o.halign or "center"
+    self.color = o.color or {1,1,1,1}
+    self.fitToWidth = o.fitToWidth or 0
 end
 
 function Label:specification()
