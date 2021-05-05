@@ -7,6 +7,7 @@ return {
     Cube = require(modules.."views.cube"),
     NavStack = require(modules.."views.navstack"),
     Button = require(modules.."views.button"),
+    Slider = require(modules.."views.slider"),
     Label = require(modules.."views.label"),
     TextField = require(modules.."views.text_field"),
     GrabHandle = require(modules.."views.grab_handle"),
