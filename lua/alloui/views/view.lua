@@ -200,6 +200,22 @@ function View:updateComponents(changes)
     })
 end
 
+--- Mark one or more Components as needing to have their server-side value updated ASAP
+-- @tparam string|{string} components either a string with one component to update, or a list if string components
+function View:markAsDirty(components)
+    if not self:isAwake() then 
+        -- Everyone is dirty before they wake up
+        return
+    end
+    if type(components) == "string" then components = {components} end
+    local spec = self:specification()
+    local comps = {}
+    for i, component in ipairs(components) do
+        comps[component] = spec[component]
+    end
+    self:updateComponents(comps)
+end
+
 function View:setTransform(transform)
     self.transform = transform
     if self:isAwake() then
