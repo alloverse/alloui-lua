@@ -36,13 +36,14 @@ class.Button(View)
 --~~~
 -- @tparam [Bounds](bounds) bounds The button's initial bounds.
 function Button:_init(bounds)
+    bounds = bounds or Bounds(0,0,0, 0.5, 0.25, 0.1)
     self:super(bounds)
     self.selected = false
     self.highlighted = false
     self.onActivated = nil
     self:setPointable(true)
 
-    self.label = Label(Bounds(0, 0, bounds.size.depth/2+0.01,   bounds.size.width*0.9, bounds.size.height*0.7, 0.01))
+    self.label = Label(Bounds(0, 0, self.bounds.size.depth/2+0.01,   self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.01))
     self.color = {0.9, 0.4, 0.3, 1.0}
 
     self:addSubview(self.label)
