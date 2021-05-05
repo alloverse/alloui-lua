@@ -101,8 +101,19 @@ function View:transformFromWorld()
         return mat4.mul(mat4.identity(), self.superview:transformFromWorld(), transformFromLocal)
     else
         return transformFromLocal
+
+--- Converts `point` from `other` view to this view
+-- If `other` is nil then the point is assumed to be in world space
+-- @tparam Point point A point in the coordinate system of `other`
+-- @tparam View other The view to convert the point from
+function View:convertPointFromView(point, other)
+    if other then
+        -- move point from other view to world
+        point = other:transformFromWorld() * point
     end
-  end
+    -- move point to local by taking away our transform
+    point = -self:transformFromWorld() * point
+    return point
 end
 
 function _arrayFromMat4(x)
