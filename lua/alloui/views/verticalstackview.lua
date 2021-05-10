@@ -34,6 +34,9 @@ function VerticalStackView:layout()
         pen:move(0, -v.bounds.size.height/2, 0)
         v.bounds.pose = pen:copy()
         v.bounds.size.width = width
+        if v.layout then 
+            v:layout()
+        end
         v:updateComponents()
         pen:move(0, -v.bounds.size.height/2 - self._margin, 0)
     end
