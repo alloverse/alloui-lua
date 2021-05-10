@@ -4,7 +4,7 @@ local tablex = require('pl.tablex')
 AssetCache = class.AssetCache()
 function AssetCache:_init()
     self.store = {}
-    self.maxCount = 5 --100
+    self.maxCount = 100
 end
 function AssetCache:get(name)
     local asset = self.store[name]
