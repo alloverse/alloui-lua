@@ -55,6 +55,11 @@ function Button:awake()
   self._upSound = self.app:_getInternalAsset("sounds/soft-up.ogg")
 end
 
+function Button:layout()
+  self.label.bounds = Bounds(0, 0, self.bounds.size.depth/2+0.01,   self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.01)
+  self.label:updateComponents()
+end
+
 function Button:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0
