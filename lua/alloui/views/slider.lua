@@ -103,3 +103,5 @@ function Slider:valueChanged(sender)
         self.onValueChanged(sender, self._currentValue)
     end
 end
+
+return Slider
