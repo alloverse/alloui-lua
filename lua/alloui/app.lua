@@ -65,7 +65,7 @@ end
 function App:connect()
     if App.initialLocation then
         print("Setting main view's location to", App.initialLocation)
-        self.mainView.bounds:moveToOrigin():move(App.initialLocation)
+        self.mainView.bounds.pose.transform = App.initialLocation
     end
 
     local mainSpec = self.mainView:specification()
