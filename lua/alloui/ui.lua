@@ -15,6 +15,7 @@ return {
     Speaker = require(modules.."views.speaker"),
     GridView = require(modules.."views.gridview"),
     VerticalStackView = require(modules.."views.verticalstackview"),
+    ModelView = require(modules.."views.modelview"),
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),

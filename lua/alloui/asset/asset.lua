@@ -4,7 +4,6 @@
 -- @see AssetManager
 -- @see FileAsset
 -- @see Base64Asset
--- @see AssetView
 -- @classmod Asset
 
 local class = require('pl.class')
