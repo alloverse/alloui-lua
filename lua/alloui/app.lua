@@ -63,6 +63,11 @@ function App:_init(client)
 end
 
 function App:connect()
+    if App.initialLocation then
+        print("Setting main view's location to", App.initialLocation)
+        self.mainView.bounds:moveToOrigin():move(App.initialLocation)
+    end
+
     local mainSpec = self.mainView:specification()
     table.insert(self.rootViews, self.mainView)
     local ret = self.client:connect(mainSpec)
