@@ -14,11 +14,9 @@ class.VerticalStackView(Surface)
 function VerticalStackView:_init(bounds, axis)
     self:super(bounds)
     self._margin = 0.05
-    self.color = {1, 0, 0, 1}
     if axis and axis:sub(1, 1) == "h" then
         self.onAxis = vec3(1, 0, 0)
         self.offAxis = vec3(0, 1, 0)
-        self.color = {0, 1, 0, 1}
     else
         self.onAxis = vec3(0, 1, 0)
         self.offAxis = vec3(1, 0, 0)
