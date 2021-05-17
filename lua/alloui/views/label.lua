@@ -7,7 +7,7 @@ local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
 
 
-class.Label(View)
+class.Label(Surface)
 
 ---
 --
@@ -21,6 +21,7 @@ class.Label(View)
 --
 -- @tparam table o A table including *at least* a Bounds component. It may also include a number of other optional properties: text, lineheight, wrap, halign, color and fitToWidth.
 function Label:_init(o)
+    o = o or Bounds(0,0,0,1,0.1, 0.001)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)
     self.text = o.text or ""
@@ -32,7 +33,7 @@ function Label:_init(o)
 end
 
 function Label:specification()
-    local mySpec = tablex.union(View.specification(self), {
+    local mySpec = table.merge(View.specification(self), {
         text = {
             string = self.text,
             height = self.lineheight,
