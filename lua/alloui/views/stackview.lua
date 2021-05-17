@@ -10,8 +10,8 @@ local Pose = require(modules .."pose")
 local View = require(modules .."views.view")
 
 
-class.VerticalStackView(Surface)
-function VerticalStackView:_init(bounds, axis)
+class.StackView(View)
+function StackView:_init(bounds, axis)
     self:super(bounds)
     self._margin = 0.05
     if axis and axis:sub(1, 1) == "h" then
@@ -23,7 +23,7 @@ function VerticalStackView:_init(bounds, axis)
     end
 end
 
-function VerticalStackView:margin(newValue)
+function StackView:margin(newValue)
     if newValue then
         self._margin = newValue
         self:layout()
@@ -31,7 +31,7 @@ function VerticalStackView:margin(newValue)
     return self._margin
 end
 
-function VerticalStackView:layout(guard)
+function StackView:layout(guard)
     if #self.subviews == 0 then return end
     local onAxis = self.onAxis
     local offAxis = self.offAxis
@@ -74,4 +74,4 @@ function VerticalStackView:layout(guard)
     self:updateComponents()
 end
 
-return VerticalStackView
+return StackView
