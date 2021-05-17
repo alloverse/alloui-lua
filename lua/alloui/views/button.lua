@@ -54,7 +54,7 @@ function Button:_init(bounds)
     self.label = Label()
 
     self:addSubview(self.cube)
-    self:addSubview(self.label)
+    self.cube:addSubview(self.label)
 
     self:layout()
     self:_updateLooks()
@@ -72,8 +72,8 @@ function Button:layout()
         self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
     )
     self.label.bounds = Bounds(
-        0, 0, self.bounds.size.depth / 2 + self.cube.bounds.size.depth / 2,
-        self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.01
+        0, 0, self.cube.bounds.size.depth / 2,
+        self.cube.bounds.size.width*0.9, self.cube.bounds.size.height*0.7, 0.001
     )
 end
 
@@ -121,7 +121,7 @@ function Button:_updateLooks()
         self.cube.bounds = Bounds(
             0, 0, 0,
             self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
-        ):move(0,0, - self.bounds.size.depth / 1.5)
+        ):move(0,0, - self.bounds.size.depth / 3)
     else
         self.cube.bounds = Bounds(
             0, 0, 0,
