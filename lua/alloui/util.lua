@@ -1,3 +1,5 @@
+local tablex = require("pl.tablex")
+
 -- http://lua-users.org/files/wiki_insecure/users/chill/table.binsearch-0.3.lua
 local fcomp_default = function( a,b ) return a < b end
 function table.bininsert(t, value, fcomp)
