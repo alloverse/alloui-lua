@@ -23,14 +23,19 @@ end
 function AssetView:specification()
     local spec = View.specification(self)
     if self.asset then 
-        spec.geometry = {
-            type = "asset",
-            name = self.asset:id(),
-        }
+        table.merge(spec, {
+            geometry = {
+                type = "asset",
+                name = self.asset:id(),
+            }
+        })
     end
-    spec.material = {
-        color = self.color
-    }
+
+    table.merge(spec, {
+        material = {
+            color = self.color
+        }
+    })
     
     return spec
 end
@@ -40,7 +45,7 @@ Asset.View = AssetView
 -- @tparam [Bounds](Bounds) bounds The AssetView's bounds 
 -- @treturn AssetView The AssetView
 function Asset:makeView(bounds)
-    return AssetView(self, bounds)
+    return AssetView(self, bounds or Bounds(0,0,0,1,1,1))
 end
 
 if package.loaded['cairo'] then 
