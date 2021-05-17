@@ -36,7 +36,7 @@ class.Button(View)
 --~~~
 -- @tparam [Bounds](bounds) bounds The button's initial bounds.
 function Button:_init(bounds)
-    bounds = bounds or Bounds(0,0,-0.1, 0.5, 0.25, 0.1)
+    bounds = bounds or Bounds(0,0,0, 0.5, 0.25, 0.1)
     self:super(bounds)
     self.selected = false
     self.highlighted = false
@@ -68,8 +68,8 @@ end
 
 function Button:layout()
     self.cube.bounds = Bounds(
-        0, 0, self.bounds.size.depth / 2,
-        self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth / 2
+        0, 0, 0,
+        self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
     )
     self.label.bounds = Bounds(
         0, 0, self.bounds.size.depth / 2 + self.cube.bounds.size.depth / 2,
@@ -117,7 +117,18 @@ end
 
 function Button:_updateLooks()
     -- compress button when pressed
-    mat4.scale(self.transform, mat4.identity(), vec3(1, 1, (self.selected and self.highlighted) and 0.01 or 1.0))
+    if self.selected then 
+        self.cube.bounds = Bounds(
+            0, 0, 0,
+            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+        ):move(0,0, - self.bounds.size.depth / 1.5)
+    else
+        self.cube.bounds = Bounds(
+            0, 0, 0,
+            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+        )
+    end
+    self.cube:updateComponents()
 
     if self.selected and self.highlighted then
         if self.activatedTexture then self.cube.texture = self.activatedTexture end
