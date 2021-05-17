@@ -22,8 +22,15 @@ class.Cube(View)
 -- @tparam [Bounds](bounds) bounds The Cube's initial bounds.
 function Cube:_init(bounds)
     self:super(bounds)
-
+    self.texture = nil
     self.color = {0.9, 0.4, 0.3, 1.0}
+
+    self.material = {
+        roughness = 1,
+        metalness = 0,
+        texture = nil,
+        color = {0.9, 0.4, 0.3, 1.0},
+    }
 end
 
 function Cube:specification()
@@ -31,7 +38,11 @@ function Cube:specification()
     local w2 = s.width / 2.0
     local h2 = s.height / 2.0
     local d2 = s.depth / 2.0
-    local mySpec = table.merge(View.specification(self), {
+
+    self.material.color = self.color
+    self.material.texture = self.texture and (self.texture.id and self.texture:id()) or self.texture
+
+    local mySpec = {
         geometry = {
             type = "inline",
                   --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr
@@ -46,13 +57,10 @@ function Cube:specification()
               {4, 6, 5}, {5, 6, 7}, -- read
             },
         },
-        material = {
-            color = self.color,
-            hasTransparency = (self.color[4] == 1) and false or true
-        },
-    })
+        material = self.material
+    }
 
-    return mySpec
+    return table.merge(View.specification(self), mySpec)
 end
 
 --- Sets the Cube's color

@@ -21,18 +21,24 @@ function ModelView:_init(bounds, asset)
     self.asset = asset
     self.color = {1, 1, 1, 1}
 end
+
 function ModelView:specification()
     local spec = View.specification(self)
-    if self.asset then 
-        spec.geometry = {
-            type = "asset",
-            name = self.asset:id(),
-        }
+    if self.asset then
+        table.merge(spec, {
+            geometry = {
+                type = "asset",
+                name = self.asset:id(),
+            }
+        })
     end
-    spec.material = {
-        color = self.color
-    }
-    
+
+    table.merge(spec, {
+        material = {
+            color = self.color
+        }
+    })
+
     return spec
 end
 

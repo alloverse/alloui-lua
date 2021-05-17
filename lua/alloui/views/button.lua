@@ -43,54 +43,44 @@ function Button:_init(bounds)
     self.onActivated = nil
     self:setPointable(true)
 
-    self.label = Label(Bounds(0, 0, self.bounds.size.depth/2+0.01,   self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.01))
     self.color = {0.9, 0.4, 0.3, 1.0}
+    self.defaultTexture = nil
+    self.activatedTexture = nil
+    self.highlightTexture = nil
 
-    self:addSubview(self.label)
+    self.cube = Cube()
+    self.cube.color = self.color
+
+    self.label = Label()
+
+    self:addSubview(self.cube)
+    self.cube:addSubview(self.label)
+
+    self:layout()
+    self:_updateLooks()
 end
 
 function Button:awake()
-  View.awake(self)
-  self._downSound = self.app:_getInternalAsset("sounds/soft-down.ogg")
-  self._upSound = self.app:_getInternalAsset("sounds/soft-up.ogg")
+    View.awake(self)
+    self._downSound = self.app:_getInternalAsset("sounds/soft-down.ogg")
+    self._upSound = self.app:_getInternalAsset("sounds/soft-up.ogg")
 end
 
 function Button:layout()
-  self.label.bounds = Bounds(0, 0, self.bounds.size.depth/2+0.01,   self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.01)
-  self.label:updateComponents()
+    self.cube.bounds = Bounds(
+        0, 0, 0,
+        self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+    )
+    self.label.bounds = Bounds(
+        0, 0, self.cube.bounds.size.depth / 2,
+        self.cube.bounds.size.width*0.9, self.cube.bounds.size.height*0.7, 0.001
+    )
 end
 
-function Button:specification()
-    local s = self.bounds.size
-    local w2 = s.width / 2.0
-    local h2 = s.height / 2.0
-    local d2 = s.depth / 2.0
-    local mySpec = tablex.union(View.specification(self), {
-        geometry = {
-            type = "inline",
-                  --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr
-            vertices= {{-w2, -h2, d2},     {w2, -h2, d2},     {-w2, h2, d2},      {w2, h2, d2},    {-w2, -h2, -d2},      {w2, -h2, -d2},      {-w2, h2, -d2},       {w2, h2, -d2}},
-            uvs=      {{0.0, 0.0},         {1.0, 0.0},        {0.0, 1.0},         {1.0, 1.0},      {0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}   },
-            triangles= {
-              {0, 1, 2}, {1, 3, 2}, -- front
-              {2, 3, 6}, {3, 7, 6}, -- top
-              {1, 7, 3}, {5, 7, 1}, -- right
-              {5, 1, 0}, {4, 5, 0}, -- bottom
-              {4, 0, 2}, {4, 2, 6}, -- left
-              {1, 0, 2}, {1, 2, 3}, -- rear
-            },
-        },
-        material = {
-        },
-    })
-
-    if self.texture then
-      mySpec.material.texture = self.texture:id()
-    end
-    if self.color then
-      mySpec.material.color = self:_effectiveColor()
-    end
-    return mySpec
+function Button:updateComponents()
+    View.updateComponents(self)
+    self.label:updateComponents()
+    self.cube:updateComponents()
 end
 
 function Button:onInteraction(inter, body, sender)
@@ -102,7 +92,7 @@ function Button:onInteraction(inter, body, sender)
     elseif body[1] == "poke" then
         local newSelected = body[2]
         if newSelected and not self.selected then
-          self:playSound(self._downSound)
+            self:playSound(self._downSound)
         end
         self:setSelected(newSelected)
 
@@ -126,34 +116,40 @@ function Button:setSelected(selected)
 end
 
 function Button:_updateLooks()
-  -- compress button when pressed
-  mat4.scale(self.transform, mat4.identity(), vec3(1, 1, (self.selected and self.highlighted) and 0.01 or 1.0))
+    -- compress button when pressed
+    if self.selected then 
+        self.cube.bounds = Bounds(
+            0, 0, 0,
+            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+        ):move(0,0, - self.bounds.size.depth / 3)
+    else
+        self.cube.bounds = Bounds(
+            0, 0, 0,
+            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+        )
+    end
+    self.cube:updateComponents()
 
-  if self.selected and self.highlighted then
-    if self.activatedTexture then self.texture = self.activatedTexture end
-  elseif self.highlighted then
-      if self.highlightTexture then self.texture = self.highlightTexture end
-  else
-      if self.defaultTexture then self.texture = self.defaultTexture end
-  end
+    if self.selected and self.highlighted then
+        if self.activatedTexture then self.cube.texture = self.activatedTexture end
+    elseif self.highlighted then
+        if self.highlightTexture then self.cube.texture = self.highlightTexture end
+    else
+        if self.defaultTexture then self.cube.texture = self.defaultTexture end
+    end
 
-  if self:isAwake() then
-    local spec = self:specification()
-    self:updateComponents({
-      material=spec.material,
-      transform=spec.transform
-    })
-  end
+    self.cube.color = self:_effectiveColor()
+    self:updateComponents()
 end
 
 function Button:_effectiveColor()
-  if self.color == nil then return nil end
-  if self.selected then
-    return {self.color[1]*0.6, self.color[2]*0.6, self.color[3]*0.6, 1.0}
-  elseif self.highlighted then
-    return {self.color[1]*0.8, self.color[2]*0.8, self.color[3]*0.8, 1.0}
-  end
-  return self.color
+    if self.color == nil then return nil end
+    if self.selected then
+        return {self.color[1]*0.6, self.color[2]*0.6, self.color[3]*0.6, 1.0}
+    elseif self.highlighted then
+        return {self.color[1]*0.8, self.color[2]*0.8, self.color[3]*0.8, 1.0}
+    end
+    return self.color
 end
 
 function Button:activate(byEntity)
@@ -163,30 +159,25 @@ function Button:activate(byEntity)
 end
 
 function Button:setDefaultTexture(t)
-  self.defaultTexture = t
-  self:setTexture(t)
+    self.defaultTexture = t
+    self:setTexture(t)
 end
 
 function Button:setHighlightTexture(t)
-  self.highlightTexture = t
+    self.highlightTexture = t
 end
 
 function Button:setActivatedTexture(t)
-  self.activatedTexture = t
+    self.activatedTexture = t
 end
 
 --- Sets the texture of the button
 -- Set to nil to remove the attribute.
 -- @tparam [Asset](Asset) asset The texture asset
 function Button:setTexture(asset)
-    self.texture = asset
+    self.defaultTexture = asset
     self.color = {1, 1, 1, 1}
-    if self:isAwake() then
-      local mat = self:specification().material
-      self:updateComponents({
-          material= mat
-      })
-    end
+    self:_updateLooks()
 end
 
 --- Sets the color of the button
@@ -194,12 +185,7 @@ end
 -- @tparam table rgba A table with the desired color's r, g, b and alpha values between 0-1, e.g. `{0.8, 0.4, 0.8, 0.5}`
 function Button:setColor(rgba)
     self.color = rgba
-    if self:isAwake() then
-      local mat = self:specification().material
-      self:updateComponents({
-          material= mat
-      })
-    end
+    self:_updateLooks()
 end
 
 return Button
