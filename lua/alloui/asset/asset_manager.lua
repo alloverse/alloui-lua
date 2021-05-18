@@ -31,7 +31,6 @@ function AssetManager:_init(client)
             return os.time()
         end,
         publish = function (self, asset, manage)
-            print(self, self.cache)
             self.cache:put(asset)
             if self.disk then self.disk:put(asset) end
             if manage then self.published[asset:id()] = asset end
@@ -91,14 +90,13 @@ end
 -- @tparam bool manage If set to `true`, the AssetManager will hold on to the asset for you. If set to `false`, it will only serve the asset as long as you keep a reference to it.
 function AssetManager:add(asset, manage)
     if asset.id then
-        print("Adding " .. tostring(asset))
         self._assets:publish(asset, manage)
     elseif types.is_iterable(asset) or types.is_indexable(asset) then
         tablex.foreach(asset, function(asset) self:add(asset, manage) end)
     elseif types.is_indexable(asset) then 
         tablex.foreachi(asset, function(asset) self:add(asset, manage) end)
     else 
-        error("not an asset")
+        error("not an asset, list or table")
     end
     return asset
 end

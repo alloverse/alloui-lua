@@ -34,7 +34,6 @@ function AssetCache:allNames()
     return tablex.keys(self.store)
 end
 function AssetCache:prune()
-    print("Pruning ", self.maxCount)
     if self:count() > self.maxCount then
         local time = os.time()
         local list = self:allNames()
@@ -43,7 +42,6 @@ function AssetCache:prune()
         end)
 
         for _, name in ipairs(list) do
-            print("Removing " .. name)
             if true or time - self:lastUsed(name) > 60 then -- force it to stay for a minute or so just to be nice
                 self:remove(name)
             end
