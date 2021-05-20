@@ -198,6 +198,7 @@ function View:markAsDirty(components)
     end
     if type(components) == "string" then components = {components} end
     local spec = self:specification()
+    if components == nil then components = tablex.keys(spec) end
     local comps = {}
     for i, component in ipairs(components) do
         comps[component] = spec[component]
