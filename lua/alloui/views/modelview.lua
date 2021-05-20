@@ -5,6 +5,7 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
+local Bounds = require(modules.."bounds")
 
 class.ModelView(View)
 
@@ -17,9 +18,14 @@ class.ModelView(View)
 -- @tparam [Bounds](Bounds) bounds The bounds of the model that is to be displayed in the world.
 -- @tparam [Asset](Asset) asset An asset representing a 3d model.
 function ModelView:_init(bounds, asset)
-    self:super(bounds or ui.Bounds(0, 0, 0,   1, 1, 1))
+    self:super(bounds or Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset
     self.color = {1, 1, 1, 1}
+end
+
+function ModelView:setAsset(asset)
+    self.asset = asset
+    self:markAsDirty("geometry")
 end
 
 function ModelView:specification()
