@@ -134,7 +134,6 @@ function View:specification()
         }
     end
     if self.grabbable then
-        local s = self.bounds.size
         mySpec.grabbable = {grabbable= true}
         for k, v in pairs(self.grabOptions) do
             if v._m then v._m = nil end
