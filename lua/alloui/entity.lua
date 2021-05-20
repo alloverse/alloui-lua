@@ -16,6 +16,11 @@ function Entity:getParent()
 end
 
 -- Implemented as a field override in Client:updateState
+function Entity:getChildren()
+    return self.children
+end
+
+-- Implemented as a field override in Client:updateState
 function Entity:getSibling(eid)
   return nil
 end

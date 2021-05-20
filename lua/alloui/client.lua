@@ -104,6 +104,7 @@ function Client:updateState(newState)
         entity = newEntity
         setmetatable(entity, Entity)
         entity.getSibling = getSibling
+        entity.children = {}
         table.insert(newEntities, entity)
         self.state.entities[eid] = newEntity
       end
@@ -165,6 +166,33 @@ function Client:updateState(newState)
         table.insert(deletedEntities, oldEntity)
         tablex.insertvalues(deletedComponents, tablex.values(oldEntity.components))
         self.state.entities[eid] = nil
+      end
+    end
+
+    -- update 'children'
+    for _, comp in ipairs(newComponents) do
+      if comp.key == "relationships" and comp.parent then
+        table.insert(self.state.entities[comp.parent].children, comp:getEntity())
+      end
+    end
+    for _, change in ipairs(updatedComponents) do
+      if change.new.key == "relationships" then
+        if change.old.parent then
+          local idx = table.find(self.state.entities[change.old.parent].children, change.old:getEntity())
+          table.remove(self.state.entities[change.old.parent].children, idx)
+        end
+        if change.new.parent then
+          table.insert(self.state.entities[change.new.parent].children, change.new:getEntity())
+        end
+      end
+    end
+    for _, comp in ipairs(deletedComponents) do
+      if comp.key == "relationships" and comp.parent then
+        local parent = self.state.entities[comp.parent]
+        if parent then
+          local idx = tablex.find(parent.children, comp:getEntity())
+          table.remove(parent.children, idx)
+        end
       end
     end
   
