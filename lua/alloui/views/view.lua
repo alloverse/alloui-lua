@@ -60,6 +60,8 @@ function View:isAwake()
 end
 
 --- If this is set to true, user can grab and move this view using the grip button.
+-- @tparam Boolean grabbable Set to `true` to enable the View to be grabbed.
+-- @tparam table grabOptions A table of options for the grabbable component. See [Components > grabbable](/components#grabbable)
 function View:setGrabbable(grabbable, grabOptions)
     self.grabbable = grabbable
     if grabOptions then
@@ -72,6 +74,7 @@ end
 
 --- If this is set to true, the user's cursor can land on this view, and you can
 -- receive pointer events. (See `onPointerChanged` and friends)
+-- @tparam Boolean pointable Set to `true` to enable the View to receive pointer events.
 function View:setPointable(pointable)
     self.hasCollider = pointable
     if self:isAwake() then
@@ -257,6 +260,8 @@ function View:spawn()
     })
 end
 
+--- Detaches the View from its parent
+--
 function View:removeFromSuperview()
     if self.superview then
         local idx = tablex.find(self.superview.subviews, self)
@@ -389,37 +394,38 @@ end
 -- This is a catch-all callback; there is also
 -- onPointerEntered, onPointerMoved, onPointerExited, onTouchDown and onTouchUp
 -- if you want to react only to specific events.
--- @tparam table pointer A table with keys:
+-- @tparam table pointer A table with keys (see below).
+--
+-- The `pointer` table's keys are as follows:
 --  * `hand`: The hand entity that is doing the pointing
 --  * `state`: "hovering", "outside" or "touching"
 --  * `touching`: bool, whether the hand is currently doing a poke on this view
---  *`pointedFrom`: a vec3 in world coordinate space with the coordinates 
---                  of the finger tip of the hand pointing at this view.
---  * `pointedTo`: the point on this view that is being pointed at
---                 (again, in world coordinates).
+--  * `pointedFrom`: a vec3 in world coordinate space with the coordinates of the finger tip of the hand pointing at this view.
+--  * `pointedTo`: the point on this view that is being pointed at (again, in world coordinates).
+--
 function View:onPointerChanged(pointer)
 end
 
 --- Callback for when a hand's pointer ray entered this view.
---  The `state` in pointer is now "hovering"
+--  The `state` in `pointer` is now "hovering"
 -- @tparam table pointer see onPointerChanged.
 function View:onPointerEntered(pointer)
 end
 
 --- Callback for when a hand's pointer moved within this view.
---  The pointedFrom and pointedTo in pointer now likely have new values.
+--  The `pointedFrom` and `pointedTo` in `pointer` now likely have new values.
 -- @tparam table pointer see onPointerChanged.
 function View:onPointerMoved(pointer)
 end
 
 --- Callback for when the hand's pointer is no longer pointing within this view.
---  The `state` in pointer is now "outside"
+--  The `state` in `pointer` is now "outside"
 -- @tparam table pointer see onPointerChanged.
 function View:onPointerExited(pointer)
 end
 
 --- Callback for when the hand's pointer is poking/touching this view
---  The `state` in pointer is now "touching"
+--  The `state` in `pointer` is now "touching"
 -- @tparam table pointer see onPointerChanged.
 function View:onTouchDown(pointer)
 end
@@ -428,6 +434,7 @@ end
 --  This is a great time to invoke an action based on the touch.
 --  For example, if you're implementing a button, this is where you'd 
 --  trigger whatever you're trying to trigger.
+--
 --  NOTE: If pointer.state is now "outside", the user released
 --  the trigger button outside of this view, and you should NOT
 --  perform an action, but cancel it instead.
