@@ -19,27 +19,31 @@ class.Label(Surface)
 -- local l = Label{bounds=Bounds(0, 0, 0, 1.0, 0.1, 0.001), color={1.0,0.2,0.4,1}, text="Hello!", halign="left"}
 --~~~
 --
--- @tparam table o A table including *at least* a Bounds component. It may also include a number of other optional properties: text, lineheight, wrap, halign, color and fitToWidth.
+-- Note: The font size of the text is, by default, derived from the height of the Label.
+-- 
+-- @tparam table o A table including *at least* a Bounds component. It may also include a number of other optional properties: text, wrap, halign, color and fitToWidth.
 function Label:_init(o)
     o = o or Bounds(0,0,0,1,0.1, 0.001)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)
     self.text = o.text or ""
-    self.lineheight = o.lineheight or bounds.size.height
-    self.wrap = o.wrap or bounds.size.width
+    self.width = bounds.size.width
+    self.height = bounds.size.height
+    self.wrap = o.wrap or false
     self.halign = o.halign or "center"
     self.color = o.color or {1,1,1,1}
-    self.fitToWidth = o.fitToWidth or 0
+    self.fitToWidth = o.fitToWidth or false
 end
 
 function Label:specification()
     local mySpec = table.merge(View.specification(self), {
         text = {
             string = self.text,
-            height = self.lineheight,
             wrap = self.wrap,
             halign = self.halign,
-            fitToWidth = self.fitToWidth
+            fitToWidth = self.fitToWidth,
+            width = self.width,
+            height = self.height
         },
         material = {
           color = self.color
@@ -58,15 +62,6 @@ function Label:setText(text)
     if self:isAwake() then
         self:updateComponents(self:specification())
     end
-end
-
---- Sets the Label's line height
--- @tparam number lineheight The Label's line height (in meters)
-function Label:setLineheight(lineheight)
-  self.lineheight = lineheight
-  if self:isAwake() then
-      self:updateComponents(self:specification())
-  end
 end
 
 --- Sets the Label's horizontal wrap attribute
@@ -97,9 +92,10 @@ function Label:setColor(color)
 end
 
 --- Sets the Label's fitToWidth attribute
+-- Note: If true, the `wrap` attribute is made irrelevant.
 -- @tparam number desiredWidth The desired width with which to constrain the label text.
-function Label:setFitToWidth(desiredWidth)
-  self.fitToWidth = desiredWidth
+function Label:setFitToWidth(fitToWidth)
+  self.fitToWidth = fitToWidth
   if self:isAwake() then
       self:updateComponents(self:specification())
   end
