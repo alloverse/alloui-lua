@@ -75,7 +75,7 @@ function Bounds:rotate(angle, x, y, z)
     return self
 end
 
---- Moves the Bounds.
+--- Moves the Bounds. May be used in conjunction with [Size:getEdge()](Size#getEdge) to move the Bounds relative to its parent.
 -- @tparam number x The movement along the x axis.
 -- @tparam number y The movement along the y axis.
 -- @tparam number z The movement along the z axis.

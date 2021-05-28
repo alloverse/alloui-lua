@@ -51,6 +51,22 @@ function Size:inset(byWidth, byHeight, byDepth)
     return self
 end
 
+
+--- Returns the position relative to the object's edge(s).
+--
+-- Very useful for laying out information, such as positioning a Label in the top center of `my_container`:
+--~~~ lua
+-- local my_label = ui.Label{
+--   bounds = ui.Bounds{size=ui.Size(1, 0.15, 0.1)}:move (
+--     my_container.bounds.size:getEdge("top", "center")
+--   )
+-- }
+--~~~
+-- 
+-- @tparam String vertical "top", "center" (default) or "bottom". 
+-- @tparam String horizontal "left", "center" (default) or "right". 
+-- @tparam String depthwise "front", "center" (default) or "back". 
+-- @treturn vector A vector (x, y, z) with coordinates corresponding to the requested position of the given `Size` object.
 function Size:getEdge(vertical, horizontal, depthwise)
     if not vertical then vertical = "center" end
     if not horizontal then horizontal = "center" end
