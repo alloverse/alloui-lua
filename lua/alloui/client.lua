@@ -47,6 +47,9 @@ function Client:_init(url, name, client, updateStateAutomatically)
     self.client:set_audio_callback(function(track_id, audio)
         self.delegates.onAudio(track_id, audio)
     end)
+    self.client:set_video_callback(function(track_id, wide, high, pixels)
+        self.delegates.onVideo(track_id, wide, high, pixels)
+    end)
     self.avatar_id = ""
 
     self.delegates = {
@@ -60,6 +63,7 @@ function Client:_init(url, name, client, updateStateAutomatically)
         onConnected = function () end,
         onDisconnected = function(code, message) end,
         onAudio = function(track_id, audio) end,
+        onVideo = function(track_id, pixels, wide, high) end,
     }
     self.connected = false
 
