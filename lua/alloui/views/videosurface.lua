@@ -17,7 +17,7 @@ local Surface = require(modules.."views.surface")
 
 local VideoSurface = class.VideoSurface(Surface)
 function VideoSurface:_init(bounds, resolution)
-    self.super(bounds)
+    self:super(bounds)
     self.resolution = resolution or {256, 256}
 end
 
