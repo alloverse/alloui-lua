@@ -21,7 +21,20 @@ function VideoSurface:_init(bounds, resolution)
     self.resolution = resolution or {256, 256}
 end
 
+function VideoSurface:setResolution(width, height)
+    self.resolution = {width, height}
+    if self:isAwake() then
+        self:takedownVideo()
+        self:setupVideo()
+    end
+end
+
 function VideoSurface:awake()
+    View.awake(self)
+    self:setupVideo()
+end
+
+function VideoSurface:setupVideo()
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
@@ -41,6 +54,10 @@ function VideoSurface:awake()
             print("VideoSurface failed track allocation: ", pretty.write(body))
         end
     end)
+end
+
+function VideoSurface:takedownVideo()
+    -- TODO: What to do?
 end
 
 return VideoSurface
