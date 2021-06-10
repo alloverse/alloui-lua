@@ -41,6 +41,7 @@ function App:_init(client)
     self.rootViews = {}
     self.running = true
     self.connected = false
+    self.videoSurfaces = {}
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -67,7 +68,7 @@ function App:connect()
         print("Setting main view's location to", App.initialLocation)
         self.mainView.bounds.pose.transform = App.initialLocation
     end
-
+    
     local mainSpec = self.mainView:specification()
     table.insert(self.rootViews, self.mainView)
     local ret = self.client:connect(mainSpec)
@@ -185,6 +186,34 @@ function App:onComponentAdded(cname, comp)
             view:awake()
         end
     end
+
+    if cname == "visor" then 
+        local name = comp.display_name
+        local eid = comp.getEntity().id
+        pretty.dump(comp.getEntity())
+        print("Player connected:", eid, name)
+        self:onVisorConnected(comp.getEntity())
+
+        -- ask all videos to send the recent frame so the new player gets it
+        for _, video in ipairs(self.videoSurfaces) do
+            video:sendLastFrame()
+        end
+    end
+end
+
+function App:onComponentRemoved(cname, comp)
+    if cname == "visor" then
+        local eid = comp.getEntity().id
+        self:onVisorDisconnected(eid)
+    end
+end
+
+function App:onVisorConnected(entity, name)
+
+end
+
+function App:onVisorDisconnected(eid)
+
 end
 
 function App:_getInternalAsset(name)
@@ -201,6 +230,10 @@ end
 
 function App:_timeForPlayingSoundNow()
     return self.client.client:get_time() + (self.latestTimeout or 0.05)
+end
+
+function App:addVideoSurface(surface)
+    table.insert(self.videoSurfaces, surface)
 end
 
 return App
