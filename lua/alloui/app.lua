@@ -190,8 +190,6 @@ function App:onComponentAdded(cname, comp)
     if cname == "visor" then 
         local name = comp.display_name
         local eid = comp.getEntity().id
-        pretty.dump(comp.getEntity())
-        print("Player connected:", eid, name)
         self:onVisorConnected(comp.getEntity())
 
         -- ask all videos to send the recent frame so the new player gets it

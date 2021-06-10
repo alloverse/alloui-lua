@@ -38,7 +38,7 @@ function VideoSurface:awake()
 end
 
 function VideoSurface:onComponentAdded(key, component)
-    print("joined", key)
+    
 end
 
 function VideoSurface:setupVideo()
