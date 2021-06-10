@@ -442,6 +442,13 @@ end
 function View:onTouchUp(pointer)
 end
 
+function View:onCapturedButtonPressed(hand, handName, buttonName)
+end
+function View:onCapturedButtonReleased(hand, handName, buttonName)
+end
+function View:onCapturedAxis(hand, handName, axisName, data)
+end
+
 --- an interaction message was sent to this specific view.
 -- See [Interactions](/protocol-reference/interactions)
 function View:onInteraction(inter, body, sender)
@@ -466,6 +473,12 @@ function View:onInteraction(inter, body, sender)
         self:_routeEndPointing(body, sender)
     elseif body[1] == "poke" then
         self:_routePoking(body, sender)
+    elseif body[1] == "captured_button_pressed" then
+        self:onCapturedButtonPressed(sender, body[2], body[3])
+    elseif body[1] == "captured_button_released" then
+        self:onCapturedButtonReleased(sender, body[2], body[3])
+    elseif body[1] == "captured_axis" then
+        self:onCapturedAxis(sender, body[2], body[3], body[4])
     end
 end
 
