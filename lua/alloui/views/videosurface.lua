@@ -60,4 +60,17 @@ function VideoSurface:takedownVideo()
     -- TODO: What to do?
 end
 
+--- Send a video frame to the server
+-- @tparam pixels string String with pixel data according to format and stride
+-- @tparam int width The number of pixels in width
+-- @tparam int height The number of pixels in height
+-- @tparam string format The pixel format. For example "bgrx8". Default: "rgba"
+-- @tparam int stride The number of bytes for each row of pixels. Default: width*bpp
+function VideoSurface:sendFrame(pixels, width, height, format, stride)
+    assert(pixels)
+    assert(width)
+    assert(height)
+    self.app.client.client:send_video(self.trackId, pixels, width, height, format, stride)
+end
+
 return VideoSurface
