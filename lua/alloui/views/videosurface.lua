@@ -84,8 +84,10 @@ function VideoSurface:sendFrame(pixels, width, height, format, stride)
 end
 
 function VideoSurface:sendLastFrame()
-    local track, data, width, height, format, stride = table.unpack(self.lastFrame)
-    self:sendFrame(data, width, height, format, stride)
+    if self.lastFrame then
+        local track, data, width, height, format, stride = table.unpack(self.lastFrame)
+        self:sendFrame(data, width, height, format, stride)
+    end
 end
 
 return VideoSurface
