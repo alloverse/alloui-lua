@@ -75,6 +75,9 @@ function App:connect()
     if not ret then
         error("Failed to connect")
     end
+    self:onConnectionEstablished()
+end
+function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
         v:setApp(self)
         if v ~= self.mainView then
