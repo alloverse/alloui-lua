@@ -72,7 +72,7 @@ function Button:layout()
         self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
     )
     self.label.bounds = Bounds(
-        0, 0, self.cube.bounds.size.depth / 2,
+        0, 0, self.cube.bounds.size.depth / 2 -0.008,
         self.cube.bounds.size.width*0.9, self.cube.bounds.size.height*0.7, 0.001
     )
 end
