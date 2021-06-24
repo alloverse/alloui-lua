@@ -27,8 +27,6 @@ function Label:_init(o)
     local bounds = o.bounds and o.bounds or o
     self:super(bounds)
     self.text = o.text or ""
-    self.width = bounds.size.width
-    self.height = bounds.size.height
     self.wrap = o.wrap or false
     self.halign = o.halign or "center"
     self.color = o.color or {1,1,1,1}
@@ -42,8 +40,8 @@ function Label:specification()
             wrap = self.wrap,
             halign = self.halign,
             fitToWidth = self.fitToWidth,
-            width = self.width,
-            height = self.height
+            width = self.bounds.size.width,
+            height = self.bounds.size.height
         },
         material = {
           color = self.color
