@@ -534,4 +534,29 @@ end
 function View:onFileDropped(filename, asset_id)
 end
 
+--- Add an animation of a property of a component to this view
+-- For example, you might want to add a one-second animation of `transform.matrix.rotation.x`
+-- from 0 to 6.28, repeating. 
+-- @tparam PropertyAnimation anim The animation to add to this view.
+function View:addPropertyAnimation(anim)
+    self.app.client:sendInteraction({
+        sender_entity_id = self.entity.id,
+        receiver_entity_id = "place",
+        body = {
+            "add_property_animation",
+            tablex.copy(anim)
+        }
+    }, function(response, body)
+        if body[2] ~= "ok" then
+            local errorMessage = body[3]
+            print("Failed to add animation for "..anim.path.." on "..self.entity.id..": "..errorMessage)
+            return
+        end
+
+        local animationId = body[2]
+        anim.id = animationId 
+    end)
+    return anim
+end
+
 return View
