@@ -37,6 +37,7 @@ function View:_init(bounds)
     self.acceptedFileExtensions = nil
     self._pointers = {}
     self._currentSound = nil
+    self._tasksForAwakening = {}
 end
 
 -- awake() is called when entity exists and is bound to this view.
@@ -48,6 +49,9 @@ function View:awake()
         self:askToFocus(self.focusOnAwake)
         self.focusOnAwake = nil
     end
+    for _, task in ipairs(self._tasksForAwakening) do
+        task()
+    end
 end
 
 --- sleep() is called when the entity no longer exists
@@ -57,6 +61,14 @@ end
 
 function View:isAwake()
   return self.entity ~= nil
+end
+
+function View:doWhenAwake(todo)
+    if self:isAwake() then
+        todo()
+    else
+        table.insert(self._tasksForAwakening, todo)
+    end
 end
 
 --- If this is set to true, user can grab and move this view using the grip button.
