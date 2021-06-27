@@ -551,6 +551,9 @@ end
 -- from 0 to 6.28, repeating. 
 -- @tparam PropertyAnimation anim The animation to add to this view.
 function View:addPropertyAnimation(anim)
+    if anim.start_at == 0 then
+        anim.start_at = self.app:now()
+    end
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
