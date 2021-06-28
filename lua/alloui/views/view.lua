@@ -40,7 +40,7 @@ function View:_init(bounds)
     self._tasksForAwakening = {}
 end
 
--- awake() is called when entity exists and is bound to this view.
+--- awake() is called when entity exists and is bound to this view.
 function View:awake()
     for _, subview in ipairs(self.subviews) do
         subview:spawn()
@@ -54,15 +54,18 @@ function View:awake()
     end
 end
 
---- sleep() is called when the entity no longer exists
+--- sleep() is called when the entity for the view stops existing
 function View:sleep()
 
 end
 
+--- does the entity for this view exist and is bound to this view?
 function View:isAwake()
   return self.entity ~= nil
 end
 
+--- schedule something to do once the entity exists for this view. If it does, do the thing immediately.
+-- @tparam function todo The function to run
 function View:doWhenAwake(todo)
     if self:isAwake() then
         todo()
@@ -98,10 +101,14 @@ function View:_poseWithTransform()
     return mat4.mul(mat4.identity(), self.transform, self.bounds.pose.transform)
 end
 
+--- The mat4 describing the transform from the parent view's location to this view's location, i e
+-- the location in the local coordinate system of the parent view.
 function View:transformFromParent()
     return mat4.new(self.entity.components.transform.matrix)
 end
 
+--- The mat4 describing the transform in world coordinates, i e exactly where the view
+-- is in the world instead of where it is relative to its parent.
 function View:transformFromWorld()
     local transformFromLocal = self:isAwake() and self:transformFromParent() or self:_poseWithTransform()
     if self.superview then
@@ -353,6 +360,8 @@ function View:playSound(asset, playOptions)
     end
 end
 
+--- Ask the client that uses the given avatar to focus this view to take text input.
+-- In other words: display the keyboard for that avatar.
 function View:askToFocus(avatar)
     if not self:isAwake() then 
         self.focusOnAwake = avatar
@@ -376,6 +385,7 @@ function View:onFocus(by)
     return true
 end
 
+--- Dismiss the keyboard for the user that has currently keyboard-focused this view.
 function View:defocus()
     self.app.client:sendInteraction({
         sender = self.entity,
@@ -549,7 +559,7 @@ end
 --- Add an animation of a property of a component to this view
 -- For example, you might want to add a one-second animation of `transform.matrix.rotation.x`
 -- from 0 to 6.28, repeating. 
--- @tparam PropertyAnimation anim The animation to add to this view.
+-- @tparam [PropertyAnimation](PropertyAnimation) anim The animation to add to this view.
 function View:addPropertyAnimation(anim)
     if anim.start_at == 0 then
         anim.start_at = self.app:now()
