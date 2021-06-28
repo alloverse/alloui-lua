@@ -117,16 +117,28 @@ end
 
 function Button:_updateLooks()
     -- compress button when pressed
-    if self.selected then 
-        self.cube.bounds = Bounds(
-            0, 0, 0,
-            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
-        ):move(0,0, - self.bounds.size.depth / 3)
+    if self.selected and self.highlighted then
+        self.decompressionAnimation = nil
+        if self.compressionAnimation == nil and self:isAwake() then
+            self.compressionAnimation = self:addPropertyAnimation(PropertyAnimation{
+                path= "transform.matrix.scale",
+                from= {1,1,1},
+                to=   {1.1,1.1,0.3},
+                duration = 0.5,
+                easing= "expOut",
+            })
+        end
     else
-        self.cube.bounds = Bounds(
-            0, 0, 0,
-            self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
-        )
+        if self.compressionAnimation ~= nil and self.decompressionAnimation == nil and self:isAwake() then
+            self.decompressionAnimation = self:addPropertyAnimation(PropertyAnimation{
+                path= "transform.matrix.scale",
+                from= {1.1,1.1,0.3},
+                to=   {1,1,1},
+                duration = 0.5,
+                easing= "expOut",
+            })
+        end
+        self.compressionAnimation = nil
     end
     self.cube:updateComponents()
 
