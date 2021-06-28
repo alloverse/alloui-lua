@@ -17,6 +17,7 @@ function PropertyAnimation:_init(props)
     self.duration = props.duration or 1.0
     self.easing = props.easing or "linear"
     self.repeats = props.repeats or false
+    self.autoreverses = props.autoreverses or false
 end
 
 return PropertyAnimation
