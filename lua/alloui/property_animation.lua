@@ -140,4 +140,29 @@ function PropertyAnimation:setAutoreverses(autoreverses)
     self.autoreverses = autoreverses
 end
 
+--- Asks server to stop the animation and remove it 
+function PropertyAnimation:removeFromView(callback)
+    if self.id == nil or self.view == nil then
+        print("Not removing animation", self, "because it isn't assigned to a view")
+        return
+    end
+    self.view.app.client:sendInteraction({
+        sender_entity_id = self.view.entity.id,
+        receiver_entity_id = "place",
+        body = {
+            "remove_property_animation",
+            self.id
+        }
+    }, function(response, body)
+        if body[2] ~= "ok" then
+            local errorMessage = body[3]
+            print("Failed to remove animation for "..self.path.." on "..self.view.entity.id..": "..errorMessage)
+            return
+        end
+        self.id = nil
+        self.view = nil
+        if callback then callback() end
+    end)
+end
+
 return PropertyAnimation

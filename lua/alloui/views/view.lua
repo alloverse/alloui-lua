@@ -564,6 +564,7 @@ function View:addPropertyAnimation(anim)
     if anim.start_at == 0 then
         anim.start_at = self.app:now()
     end
+    assert(anim.id == nil)
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
@@ -578,8 +579,9 @@ function View:addPropertyAnimation(anim)
             return
         end
 
-        local animationId = body[2]
-        anim.id = animationId 
+        local animationId = body[3]
+        anim.id = animationId
+        anim.view = self
     end)
     return anim
 end
