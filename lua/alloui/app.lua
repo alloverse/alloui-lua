@@ -76,6 +76,7 @@ function App:connect()
         error("Failed to connect")
     end
     self:onConnectionEstablished()
+    return ret
 end
 function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
