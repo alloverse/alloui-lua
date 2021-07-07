@@ -21,7 +21,7 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
     self.callback = callback
-    self.when = self:now() + delay
+    self.when = client.client:get_time() + delay
 end
 
 class.App()
