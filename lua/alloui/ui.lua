@@ -17,6 +17,7 @@ return {
     GridView = require(modules.."views.gridview"),
     ModelView = require(modules.."views.modelview"),
     StackView = require(modules.."views.stackview"),
+    ProxyIconView = require(modules.."views.proxy_icon"),
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),
