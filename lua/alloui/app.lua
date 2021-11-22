@@ -21,7 +21,7 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
     self.callback = callback
-    self.when = client.client:get_time() + delay
+    self.when = client.client:get_server_time() + delay
 end
 
 class.App()
@@ -231,7 +231,7 @@ function App:_getInternalAsset(name)
 end
 
 function App:now()
-    return self.client.client:get_time()
+    return self.client.client:get_server_time()
 end
 
 function App:_timeForPlayingSoundNow()
