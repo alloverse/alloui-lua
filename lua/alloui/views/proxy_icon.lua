@@ -63,8 +63,9 @@ function ProxyIconView:makeIcon()
     end
     self.icon.onGrabEnded = function(oldIcon)
         local m_at = oldIcon.entity.components.transform:transformFromWorld()
-        self:onIconDropped(m_at)
-        oldIcon:removeFromSuperview()
+        if self:onIconDropped(m_at, oldIcon) then
+            oldIcon:removeFromSuperview()
+        end
     end
     self.icon.onPointerEntered = function()
         -- disable because it keeps getting triggered without a corresponding onPointerEnded (which is a bug in alloui or visor)
