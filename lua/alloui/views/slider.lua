@@ -19,7 +19,7 @@ function Slider:_init(bounds)
     self._maxValue = 1.0
     self._currentValue = 0.5
 
-    self.color = {1, 0, 0, 1}
+    
 
     self.track = Cube()
     self.knob = Cube()
@@ -27,6 +27,7 @@ function Slider:_init(bounds)
     self:addSubview(self.track)
     self:addSubview(self.knob)
 
+    self.track.color = {1, 0, 0, 1}
     self.knob.color = {0.5, 0, 0.4, 1}
     self:setPointable(true)
     self:layout()
