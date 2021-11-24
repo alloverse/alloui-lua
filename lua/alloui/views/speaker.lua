@@ -22,11 +22,12 @@ function Speaker:awake()
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
         body = {
-            "allocate_track",
-            "audio",
-            48000,
-            1,
-            "opus"
+            "allocate_track", "audio", "opus",
+            {
+                sample_rate= 48000,
+                channel_count= 1,
+                channel_layout= "mono"
+            }
         }
     }, function(response, body)
         if body[1] == "allocate_track" and body[2] == "ok" then
