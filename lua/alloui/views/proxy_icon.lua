@@ -12,6 +12,7 @@ local vec3 = require("modules.vec3")
 local mat4 = require("modules.mat4")
 local Bounds = require(modules .."bounds")
 local Size = require(modules .."size")
+local Color = require(modules .."color")
 local View = require(modules .."views.view")
 local ModelView = require(modules .."views.modelview")
 
@@ -34,7 +35,8 @@ function ProxyIconView:_init(bounds, title, icon)
         :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
         :move(0, 0, -0.05)
     ))
-    self.brick.color = {0.9, 0.4, 0.3, 0.3}
+    self.brick.color = Color.alloDarkBlue()
+    self.brick.color[4] = 0.2
     self.label = self:addSubview(
         ui.Label{
             bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.04, 0.01)
@@ -55,7 +57,7 @@ function ProxyIconView:makeIcon()
         self.iconAsset
     ))
 
-    self.iconModel.color = {0.5, 0.2, 0.5, 1.0}
+    self.iconModel.color = Color.alloDarkGray()
     self.icon:setPointable(true)
     self.icon:setGrabbable(true, {target_hand_transform= mat4.identity()})
     self.icon.onGrabStarted = function()
