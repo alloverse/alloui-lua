@@ -10,6 +10,7 @@ local mat4 = require("modules.mat4")
 
 local View = require(modules.."views.view")
 local Bounds = require(modules.."bounds")
+local Bounds = require(modules.."color")
 
 class.Cube(View)
 
@@ -23,13 +24,13 @@ class.Cube(View)
 function Cube:_init(bounds)
     self:super(bounds)
     self.texture = nil
-    self.color = {0.9, 0.4, 0.3, 1.0}
+    self.color = Color.alloDarkPink()
 
     self.material = {
         roughness = 1,
         metalness = 0,
         texture = nil,
-        color = {0.9, 0.4, 0.3, 1.0},
+        color = self.color,
     }
 end
 

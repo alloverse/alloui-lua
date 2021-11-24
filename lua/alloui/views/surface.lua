@@ -6,6 +6,7 @@ local class = require('pl.class')
 local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
+local Color = require(modules.."color")
 
 class.Surface(View)
 ---
@@ -35,15 +36,16 @@ function Surface:specification()
         },
     })
 
-    if (self.texture or self.color) and mySpec.material == nil then
-        mySpec.material = {}
-    end
+    mySpec.material = {}
 
     if self.texture then
       mySpec.material.texture = self.texture:id()
     end
     if self.color then
       mySpec.material.color = self.color
+    end
+    if not self.texture and not self.color then
+      mySpec.material.color = Color.alloWhite()
     end
     return mySpec
 end

@@ -21,6 +21,7 @@ return {
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),
+    Color = require(modules.."color"),
     Size = require(modules.."size"),
     util = require(modules.."util"),
     Asset = require(modules.."asset.init"),

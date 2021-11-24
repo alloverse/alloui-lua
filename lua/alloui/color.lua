@@ -29,7 +29,7 @@ function Color.alloLightPink()
     return Color("E7AADAFF")
 end
 function Color.alloDarkPink()
-    return Color("D488C6FF")
+    return Color("B98FDAFF")
 end
 function Color.alloLightGray()
     return Color("C8D0E0FF")
@@ -41,9 +41,9 @@ function Color.alloLightBlue()
     return Color("CDEBFAFF")
 end
 function Color.alloDarkBlue()
-    return Color("B98FDAFF")
+    return Color("9ACCF1FF")
 end
-function Color.alloLight()
+function Color.alloWhite()
     return Color("FAFFFAFF")
 end
 function Color.alloDark()

@@ -53,7 +53,7 @@ function Button:_init(bounds)
     self.cube.color = self.color
 
     self.label = Label()
-    self.label.color = Color.alloLight()
+    self.label.color = Color.alloWhite()
 
     self:addSubview(self.cube)
     self.cube:addSubview(self.label)
