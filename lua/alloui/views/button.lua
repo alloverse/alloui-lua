@@ -44,7 +44,7 @@ function Button:_init(bounds)
     self.onActivated = nil
     self:setPointable(true)
 
-    self.color = Color.alloDarkBlue()
+    self.color = Color.alloDarkPink()
     self.defaultTexture = nil
     self.activatedTexture = nil
     self.highlightTexture = nil
