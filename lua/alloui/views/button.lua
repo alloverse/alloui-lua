@@ -27,6 +27,7 @@ local mat4 = require("modules.mat4")
 local View = require(modules.."views.view")
 local Label = require(modules.."views.label")
 local Bounds = require(modules.."bounds")
+local Color = require(modules.."color")
 
 class.Button(View)
 
@@ -43,7 +44,7 @@ function Button:_init(bounds)
     self.onActivated = nil
     self:setPointable(true)
 
-    self.color = {0.9, 0.4, 0.3, 1.0}
+    self.color = Color.alloDarkBlue()
     self.defaultTexture = nil
     self.activatedTexture = nil
     self.highlightTexture = nil
@@ -52,6 +53,7 @@ function Button:_init(bounds)
     self.cube.color = self.color
 
     self.label = Label()
+    self.label.color = Color.alloLight()
 
     self:addSubview(self.cube)
     self.cube:addSubview(self.label)
