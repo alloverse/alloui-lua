@@ -21,7 +21,7 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
     self.callback = callback
-    self.when = client.client:get_server_time() + delay
+    self.when = client.client:get_time() + delay
 end
 
 class.App()
@@ -148,7 +148,7 @@ end
 function App:runOnce(timeout)
   self.latestTimeout = timeout
   local nextAction = self.scheduledActions[1]
-  local now = self:now()
+  local now = self:clientTime()
   if nextAction and nextAction.when < now then
       table.remove(self.scheduledActions, 1)
       nextAction.callback()
@@ -230,12 +230,17 @@ function App:_getInternalAsset(name)
     return self._internalAssets[name]
 end
 
-function App:now()
+--- Current client time. This is monotonically increasing.
+function App:clientTime()
+    return self.client.client:get_time()
+end
+--- Current server time. Might jump around a little to compensate for lag.
+function App:serverTime()
     return self.client.client:get_server_time()
 end
 
 function App:_timeForPlayingSoundNow()
-    return self:now() + (self.latestTimeout or 0.05)
+    return self:serverTime() + (self.latestTimeout or 0.05)
 end
 
 function App:addVideoSurface(surface)

@@ -562,7 +562,7 @@ end
 -- @tparam [PropertyAnimation](PropertyAnimation) anim The animation to add to this view.
 function View:addPropertyAnimation(anim)
     if anim.start_at == 0 then
-        anim.start_at = self.app:now()
+        anim.start_at = self.app:serverTime()
     end
     assert(anim.id == nil)
     self.app.client:sendInteraction({

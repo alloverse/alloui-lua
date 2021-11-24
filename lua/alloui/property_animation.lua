@@ -9,7 +9,7 @@
 -- ~~~ lua
 --       self.logo:addPropertyAnimation(ui.PropertyAnimation{
 --          path= "transform.matrix.rotation.y",
---          start_at = self.app:now() + 1.0,
+--          start_at = self.app:serverTime() + 1.0,
 --          from= -0.2,
 --          to=   0.2,
 --          duration = 2.0,
@@ -71,8 +71,8 @@ function PropertyAnimation:setTo(to)
     self.to = to
 end
 
---- The time at which to start the animation. Use App:now() to get the current time, and use offsets
--- from that time to get time in the future. To start an animation in four seconds, use `myview.app:now()+4`.
+--- The time at which to start the animation. Use App:serverTime() to get the current time, and use offsets
+-- from that time to get time in the future. To start an animation in four seconds, use `myview.app:serverTime()+4`.
 --@tparam number start_at Server time at which to start the animation
 function PropertyAnimation:setStartAt(start_at)
     self.start_at = start_at
