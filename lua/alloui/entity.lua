@@ -15,6 +15,16 @@ function Entity:getParent()
     return nil
 end
 
+--- Gets the topmost parent of a given Entity. E g, if given a user's hand,
+-- gets the root avatar for that user.
+function Entity:getAncestor()
+    local current = self
+    while current:getParent() ~= nil do
+        current = current:getParent()
+    end
+    return current
+end
+
 -- Implemented as a field override in Client:updateState
 function Entity:getChildren()
     return self.children
