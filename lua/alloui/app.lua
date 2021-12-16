@@ -94,7 +94,7 @@ function App:addRootView(view, cb)
         view:setApp(self)
         self.client:spawnEntity(view:specification(), function(entityOrFalse)
             if cb then
-                cb(entityOrFalse and view or false)
+                cb(entityOrFalse and view or false, entityOrFalse)
             end
         end)
     end

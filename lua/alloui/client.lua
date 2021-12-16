@@ -254,6 +254,11 @@ function Client:spawnEntity(spec, cb)
   end)
 end
 
+--- Send an RPC message (aka "interaction") to another entity.
+-- If you're sending a "request" interaction (default), you should really
+-- listen to the callback to make sure your call succeeded.
+-- @tparam interaction Interaction a populated Interaction struct
+-- @tparam callback Function(interaction, body) a callback that takes the response interaction and the parsed response body.
 function Client:sendInteraction(interaction, callback)
     if interaction.sender then
       interaction.sender_entity_id = interaction.sender.id
