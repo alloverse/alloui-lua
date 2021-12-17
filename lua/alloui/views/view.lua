@@ -228,6 +228,8 @@ function View:markAsDirty(components)
     self:updateComponents(comps)
 end
 
+--- Give this view an extra transform on top of the bounds. This is useful for things like
+-- adding a scale effect.
 function View:setTransform(transform)
     self.transform = transform
     if self:isAwake() then
