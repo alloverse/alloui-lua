@@ -56,4 +56,23 @@ function standard_animations.addFailureAnimation(view, width)
     })
 end
 
+function standard_animations.addSpawnAnimation(view)
+    local a1 = view:addPropertyAnimation(ui.PropertyAnimation{
+        path= "transform.matrix.scale",
+        from= {2, 0.01, 1},
+        to=   {0.6, 1.5, 1},
+        duration= 0.2,
+        easing="quatOut" 
+    })
+    local a2 = view:addPropertyAnimation(ui.PropertyAnimation{
+        path= "transform.matrix.scale",
+        from= {0.6, 1.5, 1},
+        to=   {1, 1, 1},
+        duration= 0.2,
+        start_at= view.app:serverTime() + a1.duration,
+        easing="quatIn" 
+    })
+end
+
+
 return standard_animations
