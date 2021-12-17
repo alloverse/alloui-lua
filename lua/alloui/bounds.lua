@@ -29,6 +29,10 @@ class.Bounds()
 -- @tparam number h The View's height
 -- @tparam number d The View's depth
 function Bounds:_init(a, b, z, w, h, d)
+    if w == nil then w = 0 end
+    if h == nil then h = 0 end
+    if d == nil then d = 0.01 end
+
     if type(a) == "table" then
         if type(b) == table then
             self.pose = a
