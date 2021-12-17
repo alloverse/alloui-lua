@@ -121,6 +121,43 @@ function App:openPopupNearHand(popup, hand, distance, cb)
     return popup
 end
 
+--- Add a widget to the user's left wrist, and arrange it to fit with the other
+-- widgets already present. Use this to provide some portable UI to the user,
+-- such as a remote control.
+-- @tparam Entity avatarOrHand The avatar of the user to add the widget to. Can also be any
+--                             child entity to the avatar, such as a hand, and the avatar will
+--                             be looked up for you.
+-- @tparam ui.View widget The widget to add. Must be at most 3cm wide. You can make it a button
+--                        or something that opens more UI nearby if you need more space.
+-- @tparam Callback(bool) callback Callback for when adding widget finishes. Its argument is true
+--                                 if successful. 
+function App:addWristWidget(avatarOrHand, widget, callback)
+    self:addRootView(widget, function(widgetView, widgetEnt)
+        if widgetView == nil then
+            if callback then callback(false) end
+            return
+        end
+        local avatar = avatarOrHand:getAncestor()
+        self.client:sendInteraction({
+            receiver_entity_id = avatar.id,
+            body = {
+                "add_wrist_widget",
+                widgetEnt.id
+            }
+        }, function(resp, body)
+            if body[2] ~= "ok" then
+                widget:removeFromSuperview()
+                if callback then callback(false) end
+                return
+            else
+                -- because avatar will move widget
+                widget:resetPoseFromServer()
+                if callback then callback(true) end
+            end
+        end)
+    end)
+end
+
 function compareActions(a, b)
     return a.when < b.when
 end
