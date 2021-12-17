@@ -100,6 +100,17 @@ function App:addRootView(view, cb)
     end
 end
 
+--- Open a ui.View as a popup near a hand. Call from e g a button handler to
+-- display it right where the user could easily interact with it. You can use this
+-- to open a "new item" or a "settings" UI near a user. Since apps are multi-user,
+-- sometimes it's nice to give a user some personal UI that they can do input in,
+-- so that they don't have to fight over control of input with another user.
+-- @tparam ui.View popup The view to show to the user. It will be instantiated in
+--                       the world at the appropriate location.
+-- @tparam Entity hand   The hand entity that the popup should be shown near.
+--                       In a button handler, this is the first argument to the callback.
+-- @tparam number distance The distance in meters from the hand to show. Default 0.6
+-- @tparam Callback(view, entity) cb The callback to call when the popup is present in-world 
 function App:openPopupNearHand(popup, hand, distance, cb)
     if distance == nil then distance = 0.6 end
 
