@@ -239,6 +239,15 @@ function View:setTransform(transform)
     end
 end
 
+--- If the entity backing this view has moved (e g grabbed by a user, or moved
+-- by an animation), this won't automatically update the Pose in this view.
+-- To make sure your local state reflects what is set in-world, you can call
+-- this method to update your Pose to match whatever transform is set on
+-- the entity in the world.
+function View:resetPoseFromServer()
+    self.bounds.pose = Pose(mat4.new(self.entity.components.transform.matrix))
+end
+
 --- Sets the View's bounds (pose and size) in the world.
 -- Note that simply changing a View's Bounds won't affect its size or position in the world until this method is run.
 -- @tparam [Bounds](bounds) bounds the Bounds with which to define the Size and Pose of the parent View in the world.
