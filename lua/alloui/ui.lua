@@ -25,5 +25,6 @@ return {
     Size = require(modules.."size"),
     util = require(modules.."util"),
     Asset = require(modules.."asset.init"),
-    PropertyAnimation = require(modules.."property_animation")
+    PropertyAnimation = require(modules.."property_animation"),
+    StandardAnimations = require(modules.."standard_animations")
 }
