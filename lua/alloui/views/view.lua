@@ -576,6 +576,8 @@ function View:addPropertyAnimation(anim)
         anim.start_at = self.app:serverTime()
     end
     assert(anim.id == nil)
+    if anim.from._m then anim.from._m = nil end
+    if anim.to._m then anim.to._m = nil end
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
