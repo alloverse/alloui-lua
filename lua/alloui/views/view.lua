@@ -230,7 +230,7 @@ end
 
 --- Give this view an extra transform on top of the bounds. This is useful for things like
 -- adding a scale effect.
--- @tparam transform
+-- @tparam [Pose](pose) transform The transformation matrix to set
 function View:setTransform(transform)
     self.transform = transform
     if self:isAwake() then
