@@ -35,6 +35,7 @@ function ResizeHandle:_init(bounds, translationConstraint, rotationConstraint)
   self.selected = false
   self.isHover = false
   self.onActivated = nil
+  self.active = false -- is grabbed and doing resizing
   self.translationConstraint = translationConstraint
   self.rotationConstraint = rotationConstraint
   self.hasTransparency = true
@@ -116,4 +117,15 @@ end
 --   self.activatedTexture = t
 -- end
 
+-- View override
+function ResizeHandle:onGrabStarted(sender)
+  if self.active then return end
+  self.active = true
+end
+
+-- View override
+function ResizeHandle:onGrabEnded(sender)
+  if not self.active then return end
+  self.active = false
+end
 return ResizeHandle
