@@ -295,4 +295,8 @@ function App:addVideoSurface(surface)
     table.insert(self.videoSurfaces, surface)
 end
 
+function App:removeVideoSurface(surface)
+    table.insert(self.videoSurfaces, surface)
+end
+
 return App
