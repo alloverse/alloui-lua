@@ -176,7 +176,12 @@ function Client:updateState(newState)
     -- update 'children'
     for _, comp in ipairs(newComponents) do
       if comp.key == "relationships" and comp.parent then
-        table.insert(self.state.entities[comp.parent].children, comp:getEntity())
+        -- it's a programmer error for an entity to have a relationship to a non-existing
+        -- entity, but it might still happen...
+        local parentEnt = self.state.entities[comp.parent]
+        if parentEnt then
+          table.insert(parentEnt.children, comp:getEntity())
+        end
       end
     end
     for _, change in ipairs(updatedComponents) do
