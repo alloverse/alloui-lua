@@ -16,6 +16,7 @@ local pretty = require('pl.pretty')
 local Surface = require(modules.."views.surface")
 
 local VideoSurface = class.VideoSurface(Surface)
+VideoSurface.libavAvailable = false
 
 --- Initiate a video surface. 
 -- A video track will be allocated for the surface. The resolution can not be changed later. 
@@ -25,7 +26,7 @@ function VideoSurface:_init(bounds, resolution)
     self:super(bounds)
     self.resolution = resolution or {256, 256}
     self.lastFrame = nil
-    self.encoderFormat = "mjpeg" -- TODO: detect availability and default to h264 with fallback to mjpeg
+    self.encoderFormat = VideoSurface.libavAvailable and "h264" or "mjpeg"
     self.isReady = false -- ready to send frames?
 end
 
@@ -40,6 +41,10 @@ end
 --- Set the output video encoder format. Default "mjpeg" which is slow but compatible.
 --  You can also set it to "h264" if you provide liballonet-av, libavcodec etc.
 function VideoSurface:setVideoFormat(fmt)
+    if fmt == "h264" and VideoSurface.libavAvailable == false then
+        print("WARNING: h264 requested but libavcodec not available; falling back to mjpeg which will be slow")
+        fmt = "mjpeg"
+    end
     if self:isAwake() then
         error("You can't change the format of an allocated video track")
     end
