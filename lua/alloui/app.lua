@@ -48,6 +48,9 @@ function App:_init(client)
     client.delegates.onComponentAdded = function(cname, comp)
         self:onComponentAdded(cname, comp)
     end
+    client.delegates.onComponentRemoved = function(cname, comp)
+        self:onComponentRemoved(cname, comp)
+    end
     client.delegates.onDisconnected = function(code, message)
         self.connected = false
         print("DISCONNECTED", code, message)
@@ -237,29 +240,34 @@ function App:onComponentAdded(cname, comp)
             view.entity = comp:getEntity()
             view:awake()
         end
-    end
-
-    if cname == "visor" then 
+    elseif cname == "visor" then 
         local name = comp.display_name
         local eid = comp.getEntity().id
-        self:onVisorConnected(comp.getEntity())
-
-        -- ask all videos to send the recent frame so the new player gets it
-        for _, video in ipairs(self.videoSurfaces) do
-            video:sendLastFrame()
-        end
+        self:onVisorConnected(comp.getEntity(), name)
     end
 end
 
 function App:onComponentRemoved(cname, comp)
-    if cname == "visor" then
+    if cname == "ui" then
+        local vid = comp.view_id
+        local view = self:findView(vid)
+        if view then
+            print("Lost view", vid, "because its entity", comp.getEntity().id, "was removed from server state")
+            view.entity = nil
+            view:removeFromSuperview()
+            view:sleep()
+        end
+    elseif cname == "visor" then
         local eid = comp.getEntity().id
         self:onVisorDisconnected(eid)
     end
 end
 
 function App:onVisorConnected(entity, name)
-
+    -- ask all videos to send the recent frame so the new player gets it
+    for _, video in ipairs(self.videoSurfaces) do
+        video:sendLastFrame()
+    end
 end
 
 function App:onVisorDisconnected(eid)

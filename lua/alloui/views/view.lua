@@ -312,8 +312,9 @@ function View:removeFromSuperview()
                 self.entity.id
             }
         }, function()
+            local oldEntity = self.entity
             self.entity = nil
-            self:sleep()
+            self:sleep(oldEntity)
         end)
     end
     self.superview = nil
