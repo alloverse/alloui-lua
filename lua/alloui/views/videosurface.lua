@@ -25,13 +25,25 @@ function VideoSurface:_init(bounds, resolution)
     self:super(bounds)
     self.resolution = resolution or {256, 256}
     self.lastFrame = nil
-    self.encoder = "h264" -- TODO: detect availability and fallback to "mjpeg"
+    self.encoderFormat = "mjpeg" -- TODO: detect availability and default to h264 with fallback to mjpeg
     self.isReady = false -- ready to send frames?
 end
 
---- DEPRECATED: DOES NOT WORK
+--- Set the input video resolution. Must be called before awakened.
 function VideoSurface:setResolution(width, height)
-    assert(false, "removed: You can not change the resolution of a video track")
+    if self:isAwake() then
+        error("You can't change the resolution of an allocated video track")
+    end
+    self.resolution = {width, height}
+end
+
+--- Set the output video encoder format. Default "mjpeg" which is slow but compatible.
+--  You can also set it to "h264" if you provide liballonet-av, libavcodec etc.
+function VideoSurface:setVideoFormat(fmt)
+    if self:isAwake() then
+        error("You can't change the format of an allocated video track")
+    end
+    self.encoderFormat = fmt
 end
 
 function VideoSurface:awake()
@@ -51,15 +63,14 @@ function VideoSurface:onComponentAdded(key, component)
 end
 
 function VideoSurface:setupVideo()
-    print("Allocating track")
-    print("SETUP width ".. self.resolution[1] .. " height " .. self.resolution[2])
+    print("Allocating video track with width ".. self.resolution[1] .. " height " .. self.resolution[2])
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
         body = {
             "allocate_track",
             "video",
-            self.encoder,
+            self.encoderFormat,
             {
                 width = self.resolution[1],
                 height = self.resolution[2],
