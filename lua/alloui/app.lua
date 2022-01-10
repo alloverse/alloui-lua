@@ -296,7 +296,9 @@ function App:addVideoSurface(surface)
 end
 
 function App:removeVideoSurface(surface)
-    table.insert(self.videoSurfaces, surface)
+    for i,v in ipairs(self.videoSurfaces) do
+        if v == surface then table.remove(self.videoSurfaces, i) end
+    end
 end
 
 return App
