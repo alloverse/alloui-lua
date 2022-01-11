@@ -202,9 +202,9 @@ function App:runOnce(timeout)
   local now = self:clientTime()
   if nextAction and nextAction.when < now then
       table.remove(self.scheduledActions, 1)
+      nextAction.when = nextAction.when + nextAction.delay
       nextAction.callback()
       if nextAction.repeats then
-          nextAction.when = nextAction.when + nextAction.delay
           table.bininsert(self.scheduledActions, nextAction, compareActions)
       end
   end
