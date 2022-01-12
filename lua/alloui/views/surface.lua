@@ -47,6 +47,7 @@ function Surface:specification()
     if not self.texture and not self.color then
       mySpec.material.color = Color.alloWhite()
     end
+    table.merge(mySpec, self.customSpecAttributes)
     return mySpec
 end
 
