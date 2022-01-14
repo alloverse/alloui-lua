@@ -38,6 +38,7 @@ function View:_init(bounds)
     self._pointers = {}
     self._currentSound = nil
     self._tasksForAwakening = {}
+    self._isSpawned = false
 end
 
 --- awake() is called when entity exists and is bound to this view.
@@ -281,6 +282,7 @@ end
 
 function View:spawn()
     assert(self.superview and self.superview:isAwake())
+    if self._isSpawned then return end
     self.app.client:sendInteraction({
         sender_entity_id = self.superview.entity.id,
         receiver_entity_id = "place",
@@ -288,7 +290,26 @@ function View:spawn()
             "spawn_entity",
             self:specification()
         }
-    })
+    }, function ()
+        self._isSpawned = true
+    end)
+end
+
+function View:despawn()
+    if not self._isSpawned then return end
+    self._isSpawned = false
+    self.app.client:sendInteraction({
+        sender_entity_id = self.entity.id,
+        receiver_entity_id = "place",
+        body = {
+            "remove_entity",
+            self.entity.id
+        }
+    }, function()
+        local oldEntity = self.entity
+        self.entity = nil
+        self:sleep(oldEntity)
+    end)
 end
 
 --- Detaches the View from its parent
@@ -304,18 +325,7 @@ function View:removeFromSuperview()
         table.remove(self.app.rootViews, idx)
     end
     if self:isAwake() then
-        self.app.client:sendInteraction({
-            sender_entity_id = self.entity.id,
-            receiver_entity_id = "place",
-            body = {
-                "remove_entity",
-                self.entity.id
-            }
-        }, function()
-            local oldEntity = self.entity
-            self.entity = nil
-            self:sleep(oldEntity)
-        end)
+        self:despawn()
     end
     self.superview = nil
 end

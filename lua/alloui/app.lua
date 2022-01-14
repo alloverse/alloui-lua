@@ -83,6 +83,7 @@ function App:connect()
 end
 function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
+        v._isSpawned = true
         v:setApp(self)
         if v ~= self.mainView then
             self.client:spawnEntity(v:specification())
@@ -248,8 +249,20 @@ function App:onComponentAdded(cname, comp)
         local vid = comp.view_id
         local view = self:findView(vid)
         if view then 
-            view.entity = comp:getEntity()
-            view:awake()
+            if view._isSpawned then 
+                view.entity = comp:getEntity()
+                view:awake()
+            else 
+                local ent = comp:getEntity()
+                self.client:sendInteraction({
+                    sender_entity_id = ent.id,
+                    receiver_entity_id = "place",
+                    body = {
+                        "remove_entity",
+                        ent.id
+                    }
+                })
+            end
         end
     elseif cname == "visor" then 
         local name = comp.display_name
