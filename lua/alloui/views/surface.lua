@@ -20,18 +20,22 @@ function Surface:_init(bounds)
     self:super(bounds)
     self.texture = nil
     self.color = nil
+    self.uvw = 1.0
+    self.uvh = 1.0
 end
 
 function Surface:specification()
     local s = self.bounds.size
     local w2 = s.width / 2.0
     local h2 = s.height / 2.0
+    local uvw = self.uvw
+    local uvh = self.uvh
     local mySpec = tablex.union(View.specification(self), {
         geometry = {
             type = "inline",
                   --   #bl                   #br                  #tl                   #tr
             vertices= {{-w2, -h2, 0.0},      {w2, -h2, 0.0},      {-w2, h2, 0.0},       {w2, h2, 0.0}},
-            uvs=      {{0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}},
+            uvs=      {{0.0, 0.0},           {uvw, 0.0},          {0.0, uvh},           {uvw, uvh}},
             triangles= {{0, 1, 3}, {0, 3, 2}, {1, 0, 2}, {1, 2, 3}},
         },
     })
@@ -97,7 +101,12 @@ function Surface:setBounds(bounds)
         geometry= geom
     })
   end
+end
 
+function Surface:setCropDimensions(w, h)
+  self.uvw = w
+  self.uvh = h
+  self:markAsDirty("geometry")
 end
 
 return Surface
