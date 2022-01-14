@@ -173,6 +173,17 @@ end
 function App:scheduleAction(delay, repeats, callback)
     local action = ScheduledAction(self.client, delay, repeats, callback)
     table.bininsert(self.scheduledActions, action, compareActions)
+    return {
+        cancel = function ()
+            action.repeats = false
+            for k,v in ipairs(self.scheduledActions) do
+                if self.scheduledActions[k] == action then 
+                    table.remove(self.scheduledActions, k)
+                    return
+                end
+            end
+        end
+    }
 end
 
 function App:run(hz)
