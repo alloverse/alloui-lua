@@ -45,6 +45,14 @@ function ModelView:specification()
         }
     })
 
+    if self.texture then 
+        table.merge(spec, {
+            material = {
+                texture = (self.texture.id and self.texture:id()) or self.texture
+            }
+        })
+    end  
+
     return spec
 end
 
