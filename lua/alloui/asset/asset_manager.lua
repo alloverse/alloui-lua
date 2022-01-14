@@ -201,6 +201,8 @@ function AssetManager:_loading(name)
 end
 
 function AssetManager:_beganLoading(name, asset)
+    assert(name, "name missing")
+    assert(asset, "asset missing")
     self._assets.loading[name] = asset
 end
 
