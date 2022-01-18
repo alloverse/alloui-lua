@@ -310,6 +310,9 @@ function View:despawn()
         self.entity = nil
         self:sleep(oldEntity)
     end)
+    for i, v in ipairs(self.subviews) do
+        v:despawn()
+    end
 end
 
 --- Detaches the View from its parent
