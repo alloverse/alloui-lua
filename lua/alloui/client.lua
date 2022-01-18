@@ -187,7 +187,7 @@ function Client:updateState(newState)
     for _, change in ipairs(updatedComponents) do
       if change.new.key == "relationships" then
         if change.old.parent then
-          local idx = table.find(self.state.entities[change.old.parent].children, change.old:getEntity())
+          local idx = tablex.find(self.state.entities[change.old.parent].children, change.old:getEntity())
           table.remove(self.state.entities[change.old.parent].children, idx)
         end
         if change.new.parent then
