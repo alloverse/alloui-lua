@@ -29,6 +29,7 @@ function Label:_init(o)
     self.text = o.text or ""
     self.wrap = o.wrap or false
     self.halign = o.halign or "center"
+    self.valign = o.valign or "middle"
     self.color = o.color or {1,1,1,1}
     self.fitToWidth = o.fitToWidth or false
 end
@@ -39,6 +40,7 @@ function Label:specification()
             string = self.text,
             wrap = self.wrap,
             halign = self.halign,
+            valign = self.valign,
             fitToWidth = self.fitToWidth,
             width = self.bounds.size.width,
             height = self.bounds.size.height
