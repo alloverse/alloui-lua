@@ -15,6 +15,7 @@ return {
     ResizeHandle = require(modules.."views.resize_handle"),
     Speaker = require(modules.."views.speaker"),
     GridView = require(modules.."views.gridview"),
+    TabView = require(modules.."views.tabview"),
     ModelView = require(modules.."views.modelview"),
     StackView = require(modules.."views.stackview"),
     ProxyIconView = require(modules.."views.proxy_icon"),
