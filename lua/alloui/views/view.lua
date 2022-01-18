@@ -287,7 +287,7 @@ end
 
 function View:spawn()
     assert(self.superview and self.superview:isAwake())
-    if self._isSpawned then return end
+    if self._wantsSpawn then return end
     self._wantsSpawn = true
     self.app.client:sendInteraction({
         sender_entity_id = self.superview.entity.id,
@@ -302,8 +302,7 @@ function View:spawn()
 end
 
 function View:despawn()
-    if not self._isSpawned then return end
-    self._isSpawned = false
+    if not (self._wantsSpawn and self._isSpawned) then return end
     self._wantsSpawn = false
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
@@ -315,6 +314,7 @@ function View:despawn()
     }, function()
         local oldEntity = self.entity
         self.entity = nil
+        self._isSpawned = false
         self:sleep(oldEntity)
     end)
     for i, v in ipairs(self.subviews) do
@@ -337,6 +337,7 @@ function View:removeFromSuperview()
     if self:isAwake() then
         self:despawn()
     end
+    self._wantsSpawn = false
     self.superview = nil
 end
 
