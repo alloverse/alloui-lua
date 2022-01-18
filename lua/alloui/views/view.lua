@@ -209,7 +209,12 @@ function View:updateComponents(changes)
             "add_or_change", changes,
             "remove", {}
         }
-    })
+    }, function(resp, respbody)
+        local ok = respbody[2]
+        if ok ~= "ok" then
+            print("Warning: Failed to ",self,":updateComponents(",pretty.write(changes),")")
+        end
+    end)
 end
 
 --- Mark one or more Components as needing to have their server-side value updated ASAP
