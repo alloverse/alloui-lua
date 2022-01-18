@@ -115,7 +115,7 @@ function Bounds:insetEdges(left, right, top, bottom, front, back)
         right = left; top = left; bottom = left; front = left; back = left
     end
     self.size:inset(left+right, top+bottom, front+back)
-    self.pose:move(left/2-right/2, top/2-bottom/2, front/2-back/2)
+    self.pose:move(left/2-right/2, bottom/2-top/2, back/2-front/2)
     return self
 end
 
