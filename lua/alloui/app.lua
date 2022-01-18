@@ -83,6 +83,7 @@ function App:connect()
 end
 function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
+        v._wantsSpawn = true
         v._isSpawned = true
         v:setApp(self)
         if v ~= self.mainView then
@@ -94,9 +95,11 @@ end
 
 function App:addRootView(view, cb)
     table.insert(self.rootViews, view)
+    view._wantsSpawn = true
     if self.connected then
         view:setApp(self)
         self.client:spawnEntity(view:specification(), function(entityOrFalse)
+            view._isSpawned = true
             if cb then
                 cb(entityOrFalse and view or false, entityOrFalse)
             end
@@ -249,10 +252,11 @@ function App:onComponentAdded(cname, comp)
         local vid = comp.view_id
         local view = self:findView(vid)
         if view then 
-            if view._isSpawned then 
+            if view._wantsSpawn then 
                 view.entity = comp:getEntity()
                 view:awake()
-            else 
+            else
+                print("Entity", comp:getEntity().id, "was added for view", vid, "that was already removed from superview: deleting entity")
                 local ent = comp:getEntity()
                 self.client:sendInteraction({
                     sender_entity_id = ent.id,

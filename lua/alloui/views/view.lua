@@ -288,6 +288,7 @@ end
 function View:spawn()
     assert(self.superview and self.superview:isAwake())
     if self._isSpawned then return end
+    self._wantsSpawn = true
     self.app.client:sendInteraction({
         sender_entity_id = self.superview.entity.id,
         receiver_entity_id = "place",
@@ -303,6 +304,7 @@ end
 function View:despawn()
     if not self._isSpawned then return end
     self._isSpawned = false
+    self._wantsSpawn = false
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
