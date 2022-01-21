@@ -39,6 +39,7 @@ function View:_init(bounds)
     self._currentSound = nil
     self._tasksForAwakening = {}
     self._isSpawned = false
+    self.material = {}
 end
 
 --- awake() is called when entity exists and is bound to this view.
@@ -176,6 +177,17 @@ function View:specification()
         mySpec.acceptsfile = {
             extensions = self.acceptedFileExtensions
         }
+    end
+
+    if #tablex.keys(self.material) > 0 then
+        mySpec.material = self.material
+        if mySpec.material.texture and mySpec.material.texture.id then 
+        mySpec.material.texture = mySpec.material.texture:id()
+        end
+
+        if not mySpec.material.texture and not mySpec.material.color then
+        mySpec.material.color = ui.Color.alloWhite()
+        end
     end
 
     if self.hasTransparency then
@@ -620,6 +632,34 @@ function View:addPropertyAnimation(anim)
         anim.view = self
     end)
     return anim
+end
+
+
+--- Set the Surface's texture using an Asset.
+-- The `asset` parameter can be either an [Asset](asset) instance or a raw string hash
+--
+--~~~ lua
+-- Surface:setTexture(asset)
+--~~~
+--
+-- @tparam [Asset](asset) asset An instance of an Asset
+function View:setTexture(asset)
+    self.material.texture = asset
+    self:markAsDirty("material")
+end
+
+
+--- Set the color of a Surface using a set of rgba values between 0 and 1.
+-- E.g. to set the surface to be red and 50% transparent, set this value to `{1, 0, 0, 0.5}`
+--
+--~~~ lua
+-- Surface:setColor(rgba)
+--~~~
+--
+-- @tparam table rgba A table defining a color value with alpha between 0-1.
+function View:setColor(rgba)
+    self.material.color = rgba
+    self:markAsDirty("material")
 end
 
 return View
