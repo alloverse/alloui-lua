@@ -131,6 +131,7 @@ function Client:updateState(newState)
           -- copy these over so old and new aren't considered different just 'cause getEntity is another closure
           newComponent.key = oldComponent.key
           newComponent.getEntity = oldComponent.getEntity
+          newComponent.diffuseTexture = oldComponent.diffuseTexture
           if tablex.deepcompare(oldComponent, newComponent, false) == false then
             -- it's a changed component
             local oldCopy = tablex.deepcopy(oldComponent)
