@@ -3,10 +3,6 @@ local Entity, componentClasses = unpack(require(modules.."entity"))
 local tablex = require("pl.tablex")
 local pretty = require("pl.pretty")
 
-local function isProtectedKey(k)
-  return k == "getEntity" or k == "key"
-end
-
 function Client:updateState(newState, diff)
   local oldEntities = tablex.copy(self.state.entities)
 
@@ -26,7 +22,8 @@ function Client:updateState(newState, diff)
   for i, eid in ipairs(diff.newEntities) do
     local newEntity = {
       id= eid,
-      components= {}
+      components= {},
+      raw_components= {},
     }
     self.entityCount = self.entityCount + 1
     
@@ -54,12 +51,13 @@ function Client:updateState(newState, diff)
   for i, cspec in ipairs(diff.newComponents) do
     local eid, cname, cdata = unpack(cspec)
     local entity = self.state.entities[eid]
+    -- store raw component before adding metatable etc, so we can know exactly what we had before
+    entity.raw_components[cname] = tablex.deepcopy(cdata)
     
     cdata.getEntity = function() return entity end
     local klass = componentClasses[cname]
     setmetatable(cdata, klass)
     cdata.key = cname
-    -- if you add more things to cdata here, make sure to add to isProtectedKey too
 
     entity.components[cname] = cdata
     table.insert(newComponents, cdata)
@@ -73,10 +71,13 @@ function Client:updateState(newState, diff)
     local entity = self.state.entities[eid]
     local comp = entity.components[cname]
     local oldComponent = tablex.deepcopy(comp)
+    local oldRawComponent = entity.raw_components[cname]
+
+    entity.raw_components[cname] = tablex.deepcopy(cdata)
 
     -- remove things no longer present in component
-    for k, v in pairs(comp) do
-      if cdata[k] == nil and not isProtectedKey(k) then
+    for k, _ in pairs(oldRawComponent) do
+      if cdata[k] == nil then
         comp[k] = nil
       end
     end
@@ -100,6 +101,7 @@ function Client:updateState(newState, diff)
     local comp = entity.components[cname]
     local oldComponent = entity.components[cname]
     entity.components[cname] = nil
+    entity.raw_components[cname] = nil
     table.insert(deletedComponents, oldComponent)
   end
 
