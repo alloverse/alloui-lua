@@ -5,12 +5,12 @@
 local modules = (...):gsub('%.[^%.]+$', '') .. "."
 local json = require(modules.."json")
 local tablex = require("pl.tablex")
-local Entity, componentClasses = unpack(require(modules.."entity"))
 local class = require("pl.class")
 local pretty = require("pl.pretty")
 require(modules.."random_string")
 
 class.Client()
+require(modules.."client_updateState")
 
 ---
 --
@@ -29,6 +29,7 @@ function Client:_init(url, name, client, updateStateAutomatically)
     self.name = name
     self.outstanding_response_callbacks = {}
     self.outstanding_entity_callbacks = {}
+    self.entityCount = 0
     self.state = {
         entities = {}
     }
@@ -40,9 +41,9 @@ function Client:_init(url, name, client, updateStateAutomatically)
         self:onInteraction(inter)
     end)
     if updateStateAutomatically == nil or updateStateAutomatically == true then
-        self.client:set_state_callback(function(state)
-            self:updateState(state)
-        end)
+        self.client:set_state_callback(function(state, diff)
+            self:updateState(state, diff)
+        end, false)
     end
     self.client:set_audio_callback(function(track_id, audio)
         self.delegates.onAudio(track_id, audio)
@@ -76,147 +77,6 @@ function Client:connect(avatar_spec)
         json.encode({display_name = self.name}),
         json.encode(avatar_spec)
     )
-end
-
-function Client:updateState(newState)
-    if newState == nil then
-        newState = self.client:get_state()
-    end
-
-    local oldEntities = tablex.copy(self.state.entities)
-
-    -- Compare existing state to the new incoming state, and apply appropriate functions when we're done.
-    local newEntities = {}
-    local deletedEntities = {}
-    local newComponents = {}
-    local updatedComponents = {}
-    local deletedComponents = {}
-    self.entityCount = 0
-
-    -- While at it, also make Entities and their Components classes so they get convenience methods from entity.lua
-  
-    -- Entity:getSibling(eid) to get any entity from an entity.
-    local getSibling = function(this, id) return self.state.entities[id] end
-  
-    for eid, newEntity in pairs(newState.entities) do
-      local existingEntity = oldEntities[eid]
-      local entity = existingEntity
-      self.entityCount = self.entityCount + 1
-      
-      -- Check for new entity
-      if entity == nil then
-        entity = newEntity
-        setmetatable(entity, Entity)
-        entity.getSibling = getSibling
-        entity.children = {}
-        table.insert(newEntities, entity)
-        self.state.entities[eid] = newEntity
-      end
-      
-      -- Component:getEntity()
-      local getEntity = function() return entity end
-  
-      -- Check for new or updated components
-      for cname, newComponent in pairs(newEntity.components) do
-        local oldComponent = existingEntity and existingEntity.components[cname]
-        if oldComponent == nil then
-          -- it's a new component
-          local klass = componentClasses[cname]
-          setmetatable(newComponent, klass)
-          newComponent.getEntity = getEntity
-          newComponent.key = cname
-          entity.components[cname] = newComponent
-          table.insert(newComponents, newComponent)
-        else
-          -- copy these over so old and new aren't considered different just 'cause getEntity is another closure
-          newComponent.key = oldComponent.key
-          newComponent.getEntity = oldComponent.getEntity
-          newComponent.diffuseTexture = oldComponent.diffuseTexture
-          if tablex.deepcompare(oldComponent, newComponent, false) == false then
-            -- it's a changed component
-            local oldCopy = tablex.deepcopy(oldComponent)
-            table.insert(updatedComponents, {
-              old=oldCopy,
-              new=oldComponent -- will be new after copy
-            })
-            -- copy over new values...
-            for key, value in pairs(newComponent) do
-              oldComponent[key] = value
-            end
-            -- and remove now-removed values...
-            for key, _ in pairs(oldComponent) do
-              if newComponent[key] == nil then
-                oldComponent[key] = nil
-              end
-            end
-          end
-        end
-      end
-      -- Check for deleted components
-      if existingEntity ~= nil then
-        for cname, oldComponent in pairs(existingEntity.components) do
-          local newComponent = newEntity.components[cname]
-          if newComponent == nil then
-            table.insert(deletedComponents, oldComponent)
-            entity.components[cname] = nil
-          end
-        end
-      end
-    end
-  
-    -- check for deleted entities
-    for eid, oldEntity in pairs(oldEntities) do
-      local newEntity = newState.entities[eid]
-      if newEntity == nil then      
-        table.insert(deletedEntities, oldEntity)
-        tablex.insertvalues(deletedComponents, tablex.values(oldEntity.components))
-        self.state.entities[eid] = nil
-      end
-    end
-
-    -- update 'children'
-    for _, comp in ipairs(newComponents) do
-      if comp.key == "relationships" and comp.parent then
-        -- it's a programmer error for an entity to have a relationship to a non-existing
-        -- entity, but it might still happen...
-        local parentEnt = self.state.entities[comp.parent]
-        if parentEnt then
-          table.insert(parentEnt.children, comp:getEntity())
-        end
-      end
-    end
-    for _, change in ipairs(updatedComponents) do
-      if change.new.key == "relationships" then
-        if change.old.parent then
-          local idx = tablex.find(self.state.entities[change.old.parent].children, change.old:getEntity())
-          table.remove(self.state.entities[change.old.parent].children, idx)
-        end
-        if change.new.parent then
-          table.insert(self.state.entities[change.new.parent].children, change.new:getEntity())
-        end
-      end
-    end
-    for _, comp in ipairs(deletedComponents) do
-      if comp.key == "relationships" and comp.parent then
-        local parent = self.state.entities[comp.parent]
-        if parent then
-          local idx = tablex.find(parent.children, comp:getEntity())
-          table.remove(parent.children, idx)
-        end
-      end
-    end
-  
-    -- Run callbacks
-    
-    self.delegates.onStateChanged()
-    tablex.map(function(x) 
-        self.delegates.onEntityAdded(x) 
-    end, newEntities)
-    tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
-    tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
-    tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
-    tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
-    tablex.map(function(x) self:_respondToEquery(x) end, newEntities)
 end
 
 function Client:getEntity(eid, cb)
