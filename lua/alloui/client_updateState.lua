@@ -49,7 +49,7 @@ function Client:updateState(newState, diff)
   ---------------
   
   for i, cspec in ipairs(diff.newComponents) do
-    local eid, cname, cdata = unpack(cspec)
+    local eid, cname, _, cdata  = unpack(cspec)
     local entity = self.state.entities[eid]
     -- store raw component before adding metatable etc, so we can know exactly what we had before
     entity.raw_components[cname] = tablex.deepcopy(cdata)
@@ -67,7 +67,7 @@ function Client:updateState(newState, diff)
   -- UPDATED COMPONENTS
   ---------------
   for i, cspec in ipairs(diff.updatedComponents) do
-    local eid, cname, cdata = unpack(cspec)
+    local eid, cname, _, cdata = unpack(cspec)
     local entity = self.state.entities[eid]
     local comp = entity.components[cname]
     local oldComponent = tablex.deepcopy(comp)
@@ -96,7 +96,7 @@ function Client:updateState(newState, diff)
   -- DELETED COMPONENTS
   ---------------
   for i, cspec in ipairs(diff.deletedComponents) do
-    local eid, cname, cdata = unpack(cspec)
+    local eid, cname, cdata, _ = unpack(cspec)
     local entity = oldEntities[eid]
     local comp = entity.components[cname]
     local oldComponent = entity.components[cname]
