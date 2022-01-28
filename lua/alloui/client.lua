@@ -158,6 +158,13 @@ end
 function Client:onInteraction(inter)
     local body = json.decode(inter.body)
     if body[1] == "announce" then
+        if body[2] == "error" then
+          local code = body[3]
+          local errstr = body[3]
+          print("Place did not accept our announce:", code, errstr)
+          -- allonet will now disconnect us
+          return
+        end
         self.avatar_id = body[2]
         self.placename = body[3]
         print("Welcome to",self.placename,", ",self.name,". Our avatar ID: " .. self.avatar_id)
