@@ -31,6 +31,11 @@ function Pose:_init(a, b, c, d)
     end
 end
 
+function Pose:pos()
+    local pos = self.transform * vec3()
+    return pos
+end
+
 function Pose:__tostring()
     local pos = self.transform * vec3()
     return string.format("<Pose %0.3f, %0.3f, %0.3f>", pos.x, pos.y, pos.z)

@@ -127,4 +127,20 @@ function Bounds:extendEdges(left, right, top, bottom, front, back)
     return self
 end
 
+function Bounds:getEdge(name)
+    if name == "left" then
+        return self.pose:pos().x - self.size.width/2
+    elseif name == "right" then
+        return self.pose:pos().x + self.size.width/2
+    elseif name == "top" then
+        return self.pose:pos().y + self.size.height/2
+    elseif name == "bottom" then
+        return self.pose:pos().x - self.size.height/2
+    elseif name == "front" then
+        return self.pose:pos().z - self.size.depth/2
+    elseif name == "back" then
+        return self.pose:pos().z + self.size.depth/2
+    end
+end
+
 return Bounds
