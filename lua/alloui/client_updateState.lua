@@ -4,6 +4,7 @@ local tablex = require("pl.tablex")
 local pretty = require("pl.pretty")
 
 function Client:updateState(newState, diff)
+  local revision = diff.revision
   local oldEntities = tablex.copy(self.state.entities)
 
   -- Compare existing state to the new incoming state, and apply appropriate functions when we're done.
@@ -86,6 +87,7 @@ function Client:updateState(newState, diff)
     for k, v in pairs(cdata) do
       comp[k] = v
     end
+    
     table.insert(updatedComponents, {
       old= oldComponent,
       new= comp
@@ -118,8 +120,14 @@ function Client:updateState(newState, diff)
   self.delegates.onStateChanged()
   tablex.map(function(x) self.delegates.onEntityAdded(x) end, newEntities)
   tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
-  tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
-  tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
+  tablex.map(function(x)
+    if x._wasCreated then x:_wasCreated() end
+    self.delegates.onComponentAdded(x.key, x)
+  end, newComponents)
+  tablex.map(function(x)
+    if x.new._wasUpdated then x.new:_wasUpdated(x.old) end
+    self.delegates.onComponentChanged(x.new.key, x.new, x.old)
+  end, updatedComponents)
   tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
   tablex.map(function(x) self:_respondToEquery(x) end, newEntities)
 end
