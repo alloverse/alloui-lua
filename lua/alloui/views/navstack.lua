@@ -38,6 +38,17 @@ function NavStack:_init(bounds)
     end
     
     self.backButton:setDefaultTexture(NavStack.assets.back)
+
+    self.showsBackButton = true
+end
+
+function NavStack:setShowsBackButton(show)
+    self.showsBackButton = show
+    if not show and self.backButton.superview then
+        self.backButton:removeFromSuperview()
+    elseif show and #self.stack > 1 and self.backButton.superview == nil then
+        self:addSubview(self.backButton)
+    end
 end
 
 --- Returns the item at the bottom of the stack.  
@@ -69,7 +80,7 @@ function NavStack:push(view)
     end
     self:addSubview(view)
 
-    if #self.stack > 1 and self.backButton.superview == nil then
+    if #self.stack > 1 and self.backButton.superview == nil and self.showsBackButton then
         self:addSubview(self.backButton)
     end
     
