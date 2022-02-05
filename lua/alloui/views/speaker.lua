@@ -29,6 +29,7 @@ function Speaker:_init(bounds, effect)
         self.effect = effect
         self.loopCount = 99999999999999
         self.volume = 0.5
+        self.startsAt = 0 -- todo, set to now somehow
     end
 end
 
@@ -59,13 +60,13 @@ end
 
 function Speaker:specification()
     if not self.effect then return View.specification(self) end
-
+    print("Starts at", self.startsAt)
     return tablex.union(View.specification(self), {
         sound_effect= {
             asset= self.effect:id(),
             loop_count= self.loopCount,
             volume= self.volume,
-            starts_at= 0 -- todo, set to now somehow
+            starts_at= self.startsAt
         }
     })
 end
