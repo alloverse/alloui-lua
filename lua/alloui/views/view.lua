@@ -323,7 +323,12 @@ function View:despawn()
             "remove_entity",
             self.entity.id
         }
-    }, function()
+    }, function(resp, body)
+        local status = body[2]
+        if status ~= "ok" then
+            print("Failed to despawn", self.entity.id, "//", self.viewId)
+        end
+
         local oldEntity = self.entity
         self.entity = nil
         self._isSpawned = false

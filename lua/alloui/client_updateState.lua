@@ -30,7 +30,7 @@ function Client:updateState(newState, diff)
     setmetatable(newEntity, Entity)
     newEntity.getSibling = getSibling
     newEntity.children = {}
-    table.insert(newEntities, entity)
+    table.insert(newEntities, newEntity)
     self.state.entities[eid] = newEntity
   end
 
