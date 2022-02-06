@@ -25,6 +25,23 @@ function Entity:getAncestor()
     return current
 end
 
+--- Finds the first descendant of self where calling predicate with each
+-- descendant returns true.
+-- @tparam Callback(entity):Bool The predicate callback to run for each descendant
+-- @treturn Entity|nil the found entity, or nil if non found
+function Entity:getMatchingDescendant(predicate)
+    for _, child in ipairs(self:getChildren()) do
+        if predicate(child) then
+            return child
+        end
+        local match = child:getMatchingDescendant(predicate)
+        if match then
+            return match
+        end
+    end
+    return nil
+end
+
 -- Implemented as a field override in Client:updateState
 function Entity:getChildren()
     return self.children
