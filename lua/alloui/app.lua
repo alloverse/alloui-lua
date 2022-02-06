@@ -105,6 +105,7 @@ function App:addRootView(view, cb)
             end
         end)
     end
+    return view
 end
 
 --- Open a ui.View as a popup near a hand. Call from e g a button handler to
