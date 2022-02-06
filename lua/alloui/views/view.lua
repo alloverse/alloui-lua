@@ -326,7 +326,7 @@ function View:despawn()
     }, function(resp, body)
         local status = body[2]
         if status ~= "ok" then
-            print("Failed to despawn", self.entity.id, "//", self.viewId)
+            --print("Failed to despawn", self.entity.id, "//", self.viewId)
         end
 
         local oldEntity = self.entity
