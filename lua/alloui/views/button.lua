@@ -37,8 +37,7 @@ class.Button(View)
 --~~~
 -- @tparam [Bounds](bounds) bounds The button's initial bounds.
 function Button:_init(bounds)
-    bounds = bounds or Bounds(0,0,0, 0.5, 0.25, 0.1)
-    self:super(bounds)
+    self:super(bounds or Bounds(0,0,0, 0.5, 0.25, 0.1))
     self.selected = false
     self.highlighted = false
     self.onActivated = nil
@@ -49,7 +48,7 @@ function Button:_init(bounds)
     self.activatedTexture = nil
     self.highlightTexture = nil
 
-    self.cube = Cube()
+    self.cube = Cube(self.bounds)
     self.cube.color = self.color
 
     self.label = Label()
