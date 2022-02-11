@@ -11,6 +11,28 @@ local View = require(modules .."views.view")
 
 
 class.StackView(View)
+
+---
+-- A view that stacks its subviews either vertical (default) or horizontally.
+-- 
+-- The StackView will adjust its size on the (specified) main axis
+-- while preserving the size given for the other axis.
+-- It will also adjust the size of each subview to fill the other axis while
+-- preserving the subview size on the main axis.
+-- 
+-- You can put StackViews into Stackviews to create rows and columns
+--~~~ lua
+-- rows = StackView(nil, "v")
+-- rows:addSubview(Label{text="Example"})
+-- cols = rows:addSubview(StackView(nil, "h"))
+-- cols:addSubview(Label{text="Col1"})
+-- cols:addSubview(Label{text="Col2"})
+-- rows:addSubview(Label{text="The End"})
+-- self:addSubview(rows)
+-- rows:layout()
+--~~~
+--@tparam [Bounds](bounds) bounds The StackView's Bounds component
+--@tparam string axis The main axis to layout subviews on. "v" (default) or "h"
 function StackView:_init(bounds, axis)
     self:super(bounds)
     self._margin = 0.05
@@ -23,6 +45,9 @@ function StackView:_init(bounds, axis)
     end
 end
 
+---Set the spacing between items
+---@tparam newValue number The space between subviews. nil to just return the current value.
+---@treturn number The current value
 function StackView:margin(newValue)
     if newValue then
         self._margin = newValue
@@ -31,7 +56,8 @@ function StackView:margin(newValue)
     return self._margin
 end
 
-function StackView:layout(guard)
+---Layout the subviews
+function StackView:layout()
     if #self.subviews == 0 then return end
     local onAxis = self.onAxis
     local offAxis = self.offAxis
@@ -67,11 +93,11 @@ function StackView:layout(guard)
         v.bounds.size.height = size.y
         if v.layout then
             v:layout()
-            v:updateComponents()
+            v:markAsDirty()
         end
         pen:move(offset.x - margin.x, offset.y - margin.y, 0)
     end
-    self:updateComponents()
+    self:markAsDirty()
 end
 
 return StackView
