@@ -142,7 +142,6 @@ function Button:_updateLooks()
         end
         self.compressionAnimation = nil
     end
-    self.cube:updateComponents()
 
     if self.selected and self.highlighted then
         if self.activatedTexture then self.cube.texture = self.activatedTexture end
@@ -153,7 +152,8 @@ function Button:_updateLooks()
     end
 
     self.cube.color = self:_effectiveColor()
-    self:updateComponents()
+    self.cube:markAsDirty()
+    self:markAsDirty()
 end
 
 function Button:_effectiveColor()
