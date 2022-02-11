@@ -667,4 +667,10 @@ function View:setColor(rgba)
     self:markAsDirty("material")
 end
 
+function View:layout()
+    for i,v in ipairs(self.subviews) do
+        v:layout()
+    end
+end
+
 return View
