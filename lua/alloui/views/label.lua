@@ -32,6 +32,7 @@ function Label:_init(o)
     self.valign = o.valign or "middle"
     self.color = o.color or {1,1,1,1}
     self.fitToWidth = o.fitToWidth or false
+    self.lineHeight = o.lineHeight -- if not set, uses bounds' height
 end
 
 function Label:specification()
@@ -43,7 +44,7 @@ function Label:specification()
             valign = self.valign,
             fitToWidth = self.fitToWidth,
             width = self.bounds.size.width,
-            height = self.bounds.size.height
+            height = self.lineHeight and self.lineHeight or self.bounds.size.height
         },
         material = {
           color = self.color
