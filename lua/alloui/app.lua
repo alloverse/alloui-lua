@@ -159,6 +159,11 @@ function App:addWristWidget(avatarOrHand, widget, callback)
                 return
             else
                 -- because avatar will move widget
+                -- late addition to protocol: response has the position that the avatar moved the
+                -- widget to (since interaction response might be before we get statediff with new position)
+                if body[3] then
+                    widget.entity.components.transform.matrix = body[3]
+                end
                 widget:resetPoseFromServer()
                 if callback then callback(true) end
             end
