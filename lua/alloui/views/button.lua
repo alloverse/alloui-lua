@@ -48,7 +48,7 @@ function Button:_init(bounds)
     self.activatedTexture = nil
     self.highlightTexture = nil
 
-    self.cube = Cube(self.bounds)
+    self.cube = Cube(self.bounds:copy():moveToOrigin())
     self.cube.color = self.color
 
     self.label = Label()
