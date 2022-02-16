@@ -22,30 +22,42 @@ class.ProxyIconView(View)
 -- icon = ProxyIconView(bounds)
 --~~~
 --@tparam [Bounds](bounds) bounds The icon's bounds.
---@tparam [String](title) name for label under icon
---@tparam [FileAsset](icon) asset to be used as the icon for thix proxy view 
-function ProxyIconView:_init(bounds, title, icon)
+--@tparam [String](name) The asset's name
+--@tparam [String](author) The asset's author
+--@tparam [FileAsset](icon) asset to be used as the icon for this proxy view 
+function ProxyIconView:_init(bounds, name, author, icon)
     self:super(bounds)
-    self.title = title
+    self.name = name
     self.iconAsset = icon
     self:makeIcon()
 
     self.brick = self:addSubview(ui.Cube(
         ui.Bounds{size=bounds.size:copy()}
-        :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
+        -- :insetEdges(0.05, 0.05, 0.05, 0.05, 0.00, 0.05)
         :move(0, 0, -0.05)
     ))
     self.brick.color = Color.alloDarkBlue()
     self.brick.color[4] = 0.2
-    self.label = self:addSubview(
+    self.nameLabel = self:addSubview(
         ui.Label{
             bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.04, 0.01)
                 :move(0, -bounds.size.height/2 + 0.08, 0),
-            text= title,
+            text= name,
             color = {1, 1, 1, 1},
             fitToWidth = true
         }
     )
+    if author then
+      self.authorLabel = self:addSubview(
+          ui.Label{
+              bounds= ui.Bounds(0, 0, 0,   bounds.size.width, 0.03, 0.01)
+                  :move(0, -bounds.size.height/2 + 0.03, 0),
+              text= author,
+              color = {1, 1, 1, 1},
+              fitToWidth = true
+          }
+      )
+    end
 end
 
 function ProxyIconView:makeIcon()
