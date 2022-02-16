@@ -27,7 +27,10 @@ class.TabView(View)
 -- tabView = TabView(bounds)
 --~~~
 --@tparam [Bounds](bounds) bounds The TabView's bounds.
-function TabView:_init(bounds)
+--@tparam int tabSpacing The spacing between tabs
+--@tparam Color inactiveColor The color of an inactive tab
+--@tparam Color activeColor The color of an active tab
+function TabView:_init(bounds, tabSpacing, inactiveColor, activeColor)
     self:super(bounds)
     self.tabs = {} --TabViewItem
     self.currentTabIndex = 0
@@ -40,6 +43,21 @@ function TabView:_init(bounds)
     local barBounds = bounds:copy()
         :insetEdges(0, 0, 0, bounds.size.height - barHeight, 0, 0)
     self.tabBar = self:addSubview(ui.StackView(barBounds, "horizontal"))
+
+    if tabSpacing then
+      self.tabBar:margin(tabSpacing)
+    -- else -- Seems to me to make more sense to keep it at 0 since the tabs otherwise break out of its parents' bounds. But it's not backwards compatible...
+    --   self.tabBar:margin(0)
+    end
+
+    if inactiveColor then
+      self.inactiveColor = inactiveColor
+    end
+
+    if activeColor then
+      self.activeColor = activeColor
+    end
+
 end
 
 function TabView:addTab(name, view)
