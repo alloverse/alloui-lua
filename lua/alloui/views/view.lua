@@ -649,6 +649,7 @@ end
 --
 -- @tparam [Asset](asset) asset An instance of an Asset
 function View:setTexture(asset)
+    if self.material and self.material.texture == asset then return end
     self.material.texture = asset
     self:markAsDirty("material")
 end

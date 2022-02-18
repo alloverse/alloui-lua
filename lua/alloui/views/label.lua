@@ -59,6 +59,7 @@ end
 --- Sets the Label's text
 -- @tparam string text The text the Label should display
 function Label:setText(text)
+    if self.text == text then return end
     self.text = text
     if self:isAwake() then
         self:updateComponents(self:specification())
