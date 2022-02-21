@@ -11,9 +11,25 @@ local mat4 = require("modules.mat4")
 local View = require(modules.."views.view")
 local Bounds = require(modules.."bounds")
 local Bounds = require(modules.."color")
+local GeometryAsset = require(modules.."asset.geometry_asset")
 
-class.Cube(View)
+local Cube = class.Cube(View)
 
+Cube.assets = {
+    cube = GeometryAsset({
+        --   #fbl                #fbr               #ftl                #ftr             #rbl                  #rbr                 #rtl                  #rtr
+        vertices= {{-1, -1, 1},     {1, -1, 1},     {-1, 1, 1},      {1, 1, 1},    {-1, -1, -1},      {1, -1, -1},      {-1, 1, -1},       {1, 1, -1}},
+        uvs=      {{0.0, 0.0},         {1.0, 0.0},        {0.0, 1.0},         {1.0, 1.0},      {0.0, 0.0},           {1.0, 0.0},          {0.0, 1.0},           {1.0, 1.0}   },
+        triangles= {
+            {0, 1, 2}, {1, 3, 2}, -- front
+            {2, 3, 6}, {3, 7, 6}, -- top
+            {1, 7, 3}, {5, 7, 1}, -- right
+            {5, 1, 0}, {4, 5, 0}, -- bottom
+            {4, 0, 2}, {4, 2, 6}, -- left
+            {4, 6, 5}, {5, 6, 7}, -- read
+        },
+    })
+}
 ---
 --
 --~~~ lua

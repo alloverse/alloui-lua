@@ -8,5 +8,6 @@ if lovr then
 end
 Asset.Base64 = require 'alloui.asset.base64_asset'
 Asset.File = require 'alloui.asset.file_asset'
+Asset.Geometry = require 'alloui.asset.geometry_asset'
 
 return Asset
