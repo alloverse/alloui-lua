@@ -275,10 +275,7 @@ function View:setBounds(bounds)
   self.bounds = bounds
   if self:isAwake() then
     local c = self:specification()
-    self:updateComponents({
-        transform= c.transform,
-        collider= c.collider
-    })
+    self:markAsDirty({"transform", "collider"})
   end
 end
 
