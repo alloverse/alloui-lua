@@ -90,11 +90,15 @@ function Bounds:move(x, y, z)
 end
 
 --- Scales the Bounds.
--- @tparam number x The scaling along the x axis.
+-- @tparam number x The scaling along the x axis (or all axes, if y and z aren't provided).
 -- @tparam number y The scaling along the y axis.
 -- @tparam number z The scaling along the z axis.
 -- @treturn [Bounds](bounds) The updated Bounds object.
 function Bounds:scale(x, y, z)
+    if y == nil then 
+        y = x
+        z = x
+    end
     self.pose:scale(x, y, z)
     return self
 end

@@ -90,11 +90,15 @@ end
 
 --- Scales the Pose
 -- 
--- @tparam number x The x component of the scale to apply.
+-- @tparam number x The x component of the scale to apply (or all axes, if y and z aren't provided).
 -- @tparam number y The y component of the scale to apply.
 -- @tparam number z The z component of the scale to apply.
 -- @treturn [Pose](pose) The original Pose, post-scale.
 function Pose:scale(x, y, z)
+    if y ==  nil then
+        y = x
+        z = x
+    end
     self.transform = mat4.scale(self.transform, self.transform, vec3(x, y, z))
     return self
 end
