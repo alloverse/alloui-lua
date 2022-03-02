@@ -117,10 +117,10 @@ function Client:updateState(newState, diff)
 
   self.delegates.onStateChanged()
   tablex.map(function(x) self.delegates.onEntityAdded(x) end, newEntities)
-  tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
   tablex.map(function(x) self.delegates.onComponentAdded(x.key, x) end, newComponents)
   tablex.map(function(x) self.delegates.onComponentChanged(x.new.key, x.new, x.old) end, updatedComponents)
   tablex.map(function(x) self.delegates.onComponentRemoved(x.key, x) end, deletedComponents)
+  tablex.map(function(x) self.delegates.onEntityRemoved(x) end, deletedEntities)
   tablex.map(function(x) self:_respondToEquery(x) end, newEntities)
 end
 
