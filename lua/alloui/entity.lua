@@ -9,7 +9,7 @@ class.Entity()
 -- @treturn [Entity](Entity) The parent Entity, or nil if it has no parent.
 function Entity:getParent()
     local relationships = self.components.relationships
-    if relationships then
+    if relationships ~= nil then
         return relationships:getParent()
     end
     return nil
@@ -19,7 +19,7 @@ end
 -- gets the root avatar for that user.
 function Entity:getAncestor()
     local current = self
-    while current:getParent() do
+    while current:getParent() ~= nil do
         current = current:getParent()
     end
     return current
@@ -60,32 +60,26 @@ end
 
 class.TransformComponent(Component)
 function TransformComponent:transformFromParent()
-    if not self._localTransform then
-        if lovr then
-            self._localTransform = lovr.math.newMat4(unpack(self.matrix))
-        else
-            self._localTransform = mat4.new(self.matrix)
-        end
+    if lovr then
+        return lovr.math.mat4(unpack(self.matrix))
+    else
+        return mat4.new(self.matrix)
     end
-    return lovr.math.mat4(self._localTransform)
 end
 
 function TransformComponent:transformFromWorld()
-    if not self._worldTransform then
-        local parent = self:getEntity():getParent()
-        local myMatrix = self:transformFromParent()
-        if parent then
-            local parentMatrix = parent.components.transform:transformFromWorld()
-            if lovr then
-                self._worldTransform = lovr.math.newMat4(parentMatrix:mul(myMatrix))
-            else
-                self._worldTransform = mat4.mul(myMatrix, parentMatrix, myMatrix)
-            end
+    local parent = self:getEntity():getParent()
+    local myMatrix = self:transformFromParent()
+    if parent ~= nil then
+        local parentMatrix = parent.components.transform:transformFromWorld()
+        if lovr then
+            return parentMatrix:mul(myMatrix)
         else
-            return myMatrix
+            return mat4.mul(myMatrix, parentMatrix, myMatrix)
         end
+    else
+        return myMatrix
     end
-    return lovr.math.mat4(self._worldTransform)
 end
 
 function TransformComponent:getMatrix()
