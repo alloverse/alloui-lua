@@ -31,7 +31,7 @@ end
 function ModelView:specification()
     local spec = View.specification(self)
     if self.asset then
-        table.merge(spec, {
+        tablex.union(spec, {
             geometry = {
                 type = "asset",
                 name = self.asset:id(),
@@ -39,14 +39,14 @@ function ModelView:specification()
         })
     end
 
-    table.merge(spec, {
+    tablex.union(spec, {
         material = {
             color = self.color
         }
     })
 
     if self.texture then 
-        table.merge(spec, {
+        tablex.union(spec, {
             material = {
                 texture = (self.texture.id and self.texture:id()) or self.texture
             }

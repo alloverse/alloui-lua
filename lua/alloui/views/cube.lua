@@ -77,7 +77,7 @@ function Cube:specification()
         material = self.material
     }
 
-    return table.merge(View.specification(self), mySpec)
+    return tablex.union(View.specification(self), mySpec)
 end
 
 --- Sets the Cube's color

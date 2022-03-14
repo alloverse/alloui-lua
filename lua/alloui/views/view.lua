@@ -201,7 +201,7 @@ function View:specification()
         mySpec.sound_effect = self._currentSound
     end
 
-    table.merge(mySpec, self.customSpecAttributes)
+    tablex.union(mySpec, self.customSpecAttributes)
     return mySpec
 end
 

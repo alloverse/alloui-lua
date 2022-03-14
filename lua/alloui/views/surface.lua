@@ -38,7 +38,7 @@ function Surface:specification()
         },
     })
 
-    table.merge(mySpec, self.customSpecAttributes)
+    tablex.union(mySpec, self.customSpecAttributes)
     return mySpec
 end
 
