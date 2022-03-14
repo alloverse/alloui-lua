@@ -109,7 +109,7 @@ end
 
 function TextField:specification()
     local s = self.bounds.size
-    local mySpec = tablex.union(View.specification(self), {
+    local mySpec = table.merge(View.specification(self), {
         focus = {
             type= "key"
         },

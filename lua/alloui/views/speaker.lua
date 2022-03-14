@@ -61,7 +61,7 @@ end
 function Speaker:specification()
     if not self.effect then return View.specification(self) end
     print("Starts at", self.startsAt)
-    return tablex.union(View.specification(self), {
+    return table.merge(View.specification(self), {
         sound_effect= {
             asset= self.effect:id(),
             loop_count= self.loopCount,

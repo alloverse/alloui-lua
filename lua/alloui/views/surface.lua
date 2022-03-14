@@ -28,7 +28,7 @@ function Surface:specification()
     local h2 = s.height / 2.0
     local uvw = self.uvw
     local uvh = self.uvh
-    local mySpec = tablex.union(View.specification(self), {
+    local mySpec = table.merge(View.specification(self), {
         geometry = {
             type = "inline",
                   --   #bl                   #br                  #tl                   #tr
@@ -38,7 +38,7 @@ function Surface:specification()
         },
     })
 
-    tablex.union(mySpec, self.customSpecAttributes)
+    table.merge(mySpec, self.customSpecAttributes)
     return mySpec
 end
 

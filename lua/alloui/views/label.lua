@@ -36,7 +36,7 @@ function Label:_init(o)
 end
 
 function Label:specification()
-    local mySpec = tablex.union(View.specification(self), {
+    local mySpec = table.merge(View.specification(self), {
         text = {
             string = self.text,
             wrap = self.wrap,

@@ -22,6 +22,24 @@ function table.bininsert(t, value, fcomp)
     return (iMid+iState)
 end
 
+function table.merge(t, u)
+    if u == nil then return t end
+    for key, _ in pairs(u) do
+        local left = t[key]
+        local right = u[key]
+        if type(left) == "table" and type(right) == "table" and not left[1] and not right[1] then -- treat arrays as values
+            table.merge(left, right)
+        else
+            if type(right) == "table" then 
+                t[key] = tablex.deepcopy(right)
+            else
+                t[key] = right
+            end
+        end
+    end
+    return t
+end
+
 local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
 -- encoding
 function base64_encode(data)

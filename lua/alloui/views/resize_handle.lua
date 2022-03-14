@@ -45,7 +45,7 @@ function ResizeHandle:specification()
   local s = self.bounds.size
   local w2 = s.width / 2.0
   local h2 = s.depth / 2.0
-  local mySpec = tablex.union(Surface.specification(self), {
+  local mySpec = table.merge(Surface.specification(self), {
       collider= {
           type= "box",
           width= s.width, height= s.height, depth= s.depth
