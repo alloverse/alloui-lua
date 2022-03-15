@@ -7,10 +7,12 @@ local json = require(modules.."json")
 local tablex = require("pl.tablex")
 local class = require("pl.class")
 local pretty = require("pl.pretty")
+local ffi = require("ffi")
 require(modules.."random_string")
 
 class.Client()
 require(modules.."client_updateState")
+require(modules.."client_native")
 
 ---
 --
@@ -22,8 +24,10 @@ require(modules.."client_updateState")
 -- @tparam string name ...
 -- @tparam [Client](Client) client The AlloNet client.
 -- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
-function Client:_init(url, name, client, updateStateAutomatically)
-    self.client = client and client or allonet.create()
+function Client:_init(url, name, threaded, updateStateAutomatically)
+    self.handle = self:createNativeHandle()
+    self.client = self.handle.alloclient_create(threaded)
+
     self.url = url
     self.placename = "Untitled place"
     self.name = name
@@ -34,23 +38,24 @@ function Client:_init(url, name, client, updateStateAutomatically)
         entities = {}
     }
 
-    self.client:set_disconnected_callback(function(code, message)
+    self.client.disconnected_callback = function(_client, code, message)
         self.delegates.onDisconnected(code, message)
-    end)
-    self.client:set_interaction_callback(function(inter)
+    end
+    self.client.interaction_callback(function(_client, c_inter)
+        -- TODO: convert c_inter to a lua table
         self:onInteraction(inter)
     end)
     if updateStateAutomatically == nil or updateStateAutomatically == true then
-        self.client:set_state_callback(function(state, diff)
+        self.client.state_callback = function(_client, state, diff)
             self:updateState(state, diff)
-        end, false)
+        end
     end
-    self.client:set_audio_callback(function(track_id, audio)
-        self.delegates.onAudio(track_id, audio)
-    end)
-    self.client:set_video_callback(function(track_id, wide, high, pixels)
+    self.client.audio_callback = function(_client, track_id, pcm, sample_count)
+        self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
+    end
+    self.client.video_callback = function(_client, track_id, pixels, wide, high)
         self.delegates.onVideo(track_id, wide, high, pixels)
-    end)
+    end
     self.avatar_id = ""
 
     self.delegates = {
