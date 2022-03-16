@@ -2,8 +2,15 @@ local modules = (...):gsub('%.[^%.]+$', '') .. "."
 local Entity, componentClasses = unpack(require(modules.."entity"))
 local tablex = require("pl.tablex")
 local pretty = require("pl.pretty")
+local ffi = require("ffi")
+local json = require(modules.."json")
 
-function Client:updateState(newState, diff)
+function ffistring(cdata)
+    assert(cdata)
+    return cdata and ffi.string(cdata) or nil
+end
+
+function Client:updateState(_, diff)
   local oldEntities = tablex.copy(self.state.entities)
 
   -- Compare existing state to the new incoming state, and apply appropriate functions when we're done.
@@ -19,14 +26,14 @@ function Client:updateState(newState, diff)
   ---------------
   -- NEW ENTITIES
   ---------------
-  for i, eid in ipairs(diff.newEntities) do
+  for i = 0,tonumber(diff.new_entities.length)-1 do
+    local eid = ffistring(diff.new_entities.data[i])
     local newEntity = {
       id= eid,
       components= {},
       raw_components= {},
     }
     self.entityCount = self.entityCount + 1
-    
     setmetatable(newEntity, Entity)
     newEntity.getSibling = getSibling
     newEntity.children = {}
@@ -37,7 +44,8 @@ function Client:updateState(newState, diff)
   ---------------
   -- DELETED ENTITIES
   ---------------
-  for i, eid in ipairs(diff.deletedEntities) do
+  for i = 0,tonumber(diff.deleted_entities.length)-1 do
+    local eid = ffistring(diff.deleted_entities.data[i])
     local oldEntity = oldEntities[eid]
     table.insert(deletedEntities, oldEntity)
     self.state.entities[eid] = nil
@@ -47,9 +55,11 @@ function Client:updateState(newState, diff)
   ---------------
   -- NEW COMPONENTS
   ---------------
-  
-  for i, cspec in ipairs(diff.newComponents) do
-    local eid, cname, _, cdata  = unpack(cspec)
+  for i = 0, tonumber(diff.new_components.length)-1 do
+    local cspec = diff.new_components.data[i];
+    local eid = ffistring(cspec.eid)
+    local cname = ffistring(cspec.name)
+    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata)))
     local entity = self.state.entities[eid]
     -- store raw component before adding metatable etc, so we can know exactly what we had before
     entity.raw_components[cname] = tablex.deepcopy(cdata)
@@ -66,8 +76,11 @@ function Client:updateState(newState, diff)
   ---------------
   -- UPDATED COMPONENTS
   ---------------
-  for i, cspec in ipairs(diff.updatedComponents) do
-    local eid, cname, _, cdata = unpack(cspec)
+  for i = 0, tonumber(diff.updated_components.length)-1 do
+    local cspec = diff.updated_components.data[i];
+    local eid = ffistring(cspec.eid)
+    local cname = ffistring(cspec.name)
+    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata)))
     local entity = self.state.entities[eid]
     local comp = entity.components[cname]
     local oldComponent = tablex.deepcopy(comp)
@@ -95,10 +108,11 @@ function Client:updateState(newState, diff)
   ---------------
   -- DELETED COMPONENTS
   ---------------
-  for i, cspec in ipairs(diff.deletedComponents) do
-    local eid, cname, cdata, _ = unpack(cspec)
+  for i = 0, tonumber(diff.deleted_components.length)-1 do
+    local cspec = diff.deleted_components.data[i];
+    local eid = ffistring(cspec.eid)
+    local cname = ffistring(cspec.name)
     local entity = oldEntities[eid]
-    local comp = entity.components[cname]
     local oldComponent = entity.components[cname]
     entity.components[cname] = nil
     entity.raw_components[cname] = nil

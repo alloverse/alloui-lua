@@ -43,7 +43,14 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     end
     self._client.interaction_callback = function(_client, c_inter)
         -- TODO: convert c_inter to a lua table or add metatable to c_inter
-        self:onInteraction(inter)
+        self:onInteraction({
+            type = ffi.string(c_inter.type),
+            sender_entity_id = ffi.string(c_inter.sender_entity_id),
+            receiver_entity_id = ffi.string(c_inter.receiver_entity_id),
+            request_id = ffi.string(c_inter.request_id),
+            body = ffi.string(c_inter.body),
+        })
+        return true
     end
     if updateStateAutomatically == nil or updateStateAutomatically == true then
         self._client.state_callback = function(_client, state, diff)
@@ -228,6 +235,9 @@ end
 function Client:poll(timeout)
     return self.handle.alloclient_poll(self._client, timeout)
 end
+
+-- Can not call jit functions that in turn callback into lua functions
+jit.off(Client.poll)
 
 function Client:simulate()
     self.handle.alloclient_simulate(self._client)
