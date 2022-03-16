@@ -7,6 +7,98 @@ local C = ffi.os == 'Windows' and ffi.load('allonet') or ffi.C
 
 ffi.cdef [[
 
+    // cJSON.h
+    typedef struct cJSON
+    {
+        /* next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem */
+        struct cJSON *next;
+        struct cJSON *prev;
+        /* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
+        struct cJSON *child;
+
+        /* The type of the item, as above. */
+        int type;
+
+        /* The item's string, if type==cJSON_String  and type == cJSON_Raw */
+        char *valuestring;
+        /* writing to valueint is DEPRECATED, use cJSON_SetNumberValue instead */
+        int valueint;
+        /* The item's number, if type==cJSON_Number */
+        double valuedouble;
+
+        /* The item's name string, if this item is the child of, or is in the list of subitems of an object. */
+        char *string;
+    } cJSON;
+
+    cJSON * cJSON_Parse(const char *value);
+    char * cJSON_Print(const cJSON *item);
+    char * cJSON_PrintUnformatted(const cJSON *item);
+    void cJSON_Delete(cJSON *item);
+
+
+    // math.h
+    typedef union allo_vector
+    {
+        struct {
+            double x, y, z;
+        };
+        double v[3];
+    } allo_vector;
+    
+    extern allo_vector allo_vector_subtract(allo_vector l, allo_vector r);
+    extern allo_vector allo_vector_add(allo_vector l, allo_vector r);
+    extern allo_vector allo_vector_mul(allo_vector l, allo_vector r);
+    extern allo_vector allo_vector_scale(allo_vector l, double r);
+    extern allo_vector allo_vector_div(allo_vector l, allo_vector r);
+    extern allo_vector allo_vector_normalize(allo_vector l);
+    extern double allo_vector_dot(allo_vector l, allo_vector r);
+    extern double allo_vector_length(allo_vector l);
+    extern double allo_vector_angle(allo_vector l, allo_vector r);
+    extern char *allo_vec_string(allo_vector l);
+    
+    typedef struct allo_rotation
+    {
+        double angle;
+        allo_vector axis;
+    } allo_rotation;
+    
+    
+    // column major transformation matrix
+    typedef union allo_m4x4
+    {
+        struct {
+            double c1r1, c1r2, c1r3, c1r4, // 1st column
+                c2r1, c2r2, c2r3, c2r4, // 2nd column, etc
+                c3r1, c3r2, c3r3, c3r4,
+                c4r1, c4r2, c4r3, c4r4;
+        };
+        double v[16];
+    } allo_m4x4;
+    
+    extern allo_m4x4 allo_m4x4_identity();
+    extern bool allo_m4x4_is_identity(allo_m4x4 m);
+    extern allo_m4x4 allo_m4x4_translate(allo_vector translation);
+    extern allo_m4x4 allo_m4x4_rotate(double angle, allo_vector axis);
+    extern allo_m4x4 allo_m4x4_concat(allo_m4x4 l, allo_m4x4 r);
+    extern allo_m4x4 allo_m4x4_add(allo_m4x4 l, allo_m4x4 r);
+    extern allo_m4x4 allo_m4x4_scalar_multiply(allo_m4x4 l, double r);
+    extern allo_m4x4 allo_m4x4_interpolate(allo_m4x4 l, allo_m4x4 r, double fraction);
+    extern allo_m4x4 allo_m4x4_inverse(allo_m4x4 m);
+    extern allo_vector allo_m4x4_transform(allo_m4x4 l, allo_vector r, bool positional);
+    extern allo_vector allo_m4x4_get_position(allo_m4x4 l);
+    extern allo_rotation allo_m4x4_get_rotation(allo_m4x4 l);
+    extern bool allo_m4x4_equal(allo_m4x4 a, allo_m4x4 b, double sigma);
+    extern char *allo_m4x4_string(allo_m4x4 m);
+
+
+
+
+
+
+
+
+    
+
     // state.h
         
     typedef struct allo_client_pose_grab
@@ -15,11 +107,11 @@ ffi.cdef [[
         allo_m4x4 grabber_from_entity_transform;
     } allo_client_pose_grab;
 
-    #define ALLO_HAND_SKELETON_JOINT_COUNT 26
+    // #define ALLO_HAND_SKELETON_JOINT_COUNT 26
     typedef struct allo_client_hand_pose
     {
         allo_m4x4 matrix;
-        allo_m4x4 skeleton[ALLO_HAND_SKELETON_JOINT_COUNT];
+        allo_m4x4 skeleton[26];
         allo_client_pose_grab grab;
     } allo_client_hand_pose;
 
@@ -70,10 +162,13 @@ ffi.cdef [[
         // contained values
         cJSON *components;
 
-        LIST_ENTRY(allo_entity) pointers;
+        struct {
+            struct allo_entity *le_next;
+            struct allo_entity **le_prev;
+        } pointers;
     } allo_entity;
 
-    typedef arr_t(const char*) allo_entity_id_vec;
+    typedef struct { const char** data; size_t length, capacity; } allo_entity_id_vec;
 
     typedef struct allo_component_ref
     {
@@ -83,7 +178,7 @@ ffi.cdef [[
         const cJSON *newdata;
     } allo_component_ref;
 
-    typedef arr_t(allo_component_ref) allo_component_vec;
+    typedef struct { allo_component_ref* data; size_t length, capacity; } allo_component_vec;
 
     typedef struct allo_state_diff
     {
@@ -108,7 +203,9 @@ ffi.cdef [[
     typedef struct allo_state
     {
         uint64_t revision;
-        LIST_HEAD(allo_entity_list, allo_entity) entities;
+        struct allo_entity_list {
+	        struct allo_entity *lh_first;
+        } entities;
     } allo_state;
 
     typedef enum allo_removal_mode
@@ -179,7 +276,11 @@ ffi.cdef [[
 
 
 
-    
+
+
+
+
+
 
     // net.h
     typedef enum {
@@ -202,6 +303,10 @@ ffi.cdef [[
     extern const char *GetAllonetNumericVersion(); // 3.1.4
     extern const char *GetAllonetGitHash(); // g123abc
     extern int GetAllonetProtocolVersion(); // 3
+
+
+
+
 
 
 
