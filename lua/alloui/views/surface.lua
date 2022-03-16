@@ -33,8 +33,9 @@ function Surface:specification()
             type = "inline",
                   --   #bl                   #br                  #tl                   #tr
             vertices= {{-w2, -h2, 0.0},      {w2, -h2, 0.0},      {-w2, h2, 0.0},       {w2, h2, 0.0}},
+            normals = {{0, 0, 1}, {0, 0, 1}},
             uvs=      {{0.0, 0.0},           {uvw, 0.0},          {0.0, uvh},           {uvw, uvh}},
-            triangles= {{0, 1, 3}, {0, 3, 2}, {1, 0, 2}, {1, 2, 3}},
+            triangles= {{0, 1, 3}, {0, 3, 2}},
         },
     })
 
