@@ -10,7 +10,7 @@ local pretty = require("pl.pretty")
 local ffi = require("ffi")
 require(modules.."random_string")
 
-class.Client()
+local Client = class.Client()
 require(modules.."client_updateState")
 require(modules.."client_native")
 
@@ -26,7 +26,7 @@ require(modules.."client_native")
 -- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
 function Client:_init(url, name, threaded, updateStateAutomatically)
     self.handle = self:createNativeHandle()
-    self.client = self.handle.alloclient_create(threaded)
+    self._client = self.handle.alloclient_create(threaded)
 
     self.url = url
     self.placename = "Untitled place"
@@ -38,22 +38,22 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
         entities = {}
     }
 
-    self.client.disconnected_callback = function(_client, code, message)
+    self._client.disconnected_callback = function(_client, code, message)
         self.delegates.onDisconnected(code, message)
     end
-    self.client.interaction_callback(function(_client, c_inter)
+    self._client.interaction_callback(function(_client, c_inter)
         -- TODO: convert c_inter to a lua table
         self:onInteraction(inter)
     end)
     if updateStateAutomatically == nil or updateStateAutomatically == true then
-        self.client.state_callback = function(_client, state, diff)
+        self._client.state_callback = function(_client, state, diff)
             self:updateState(state, diff)
         end
     end
-    self.client.audio_callback = function(_client, track_id, pcm, sample_count)
+    self._client.audio_callback = function(_client, track_id, pcm, sample_count)
         self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
     end
-    self.client.video_callback = function(_client, track_id, pixels, wide, high)
+    self._client.video_callback = function(_client, track_id, pixels, wide, high)
         self.delegates.onVideo(track_id, wide, high, pixels)
     end
     self.avatar_id = ""
@@ -77,7 +77,7 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
 end
 
 function Client:connect(avatar_spec)
-    return self.client:connect(
+    return self.handle.alloclient_connect(self._client,
         self.url,
         json.encode({display_name = self.name}),
         json.encode(avatar_spec)
@@ -156,7 +156,16 @@ function Client:sendInteraction(interaction, callback)
         interaction.request_id = "" -- todo, fix this in allonet
     end
     interaction.body = json.encode(interaction.body)
-    self.client:send_interaction(interaction)
+
+    local cinter = self.handle.allo_interaction_create(
+        interaction.type,
+        interaction.sender_entity_id,
+        interaction.receiver_entity_id,
+        interaction.request_id,
+        interaction.body
+    )
+    self.handle.alloclient_send_interaction(self._client, cinter)
+    self.handle.allo_interaction_free(cinter)
     return interaction.request_id
 end
 
@@ -202,29 +211,44 @@ function Client:onInteraction(inter)
 end
 
 function Client:setIntent(intent)
-  self.client:set_intent(intent)
+    -- TODO: FFI-ify
+    --self.client:set_intent(intent)
 end
 
 function Client:sendAudio(trackId, audio)
-  self.client:send_audio(trackId, audio)
+    -- TODO: FFI-ify
+    --self.client:send_audio(trackId, audio)
 end
 
+--- Send and receive buffered data synchronously now. Loops over all queued
+-- network messages until the queue is empty.
+-- @param timeout_ms how many ms to wait for incoming messages before giving up. Default 10.
+-- @discussion Call regularly at 20hz to process incoming and outgoing network traffic.
+-- @return bool whether any messages were parsed
 function Client:poll(timeout)
-  self.client:poll(timeout)
+    return self.handle.alloclient_poll(self._client, timeout)
 end
 
 function Client:simulate()
-  self.client:simulate()
+    self.handle.alloclient_simulate(self._client)
 end
 
 function Client:disconnect(code)
-  self.client:disconnect(code)
+    self.handle.alloclient_disconnect(code)
 end
 
 function Client:run()
     while true do
-        self.client:poll(1.0/20.0)
+        self:poll(1.0/20.0)
     end
+end
+
+function Client:getClientTime()
+    return self.handle.get_ts_monod()
+end
+
+function Client:getServerTime()
+    return self.handle.alloclient_get_time(self._client)
 end
 
 return Client
