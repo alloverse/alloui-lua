@@ -3,7 +3,6 @@ local Entity, componentClasses = unpack(require(modules.."entity"))
 local tablex = require("pl.tablex")
 local pretty = require("pl.pretty")
 local ffi = require("ffi")
-local C = ffi.os == 'Windows' and ffi.load('allonet') or ffi.C
 
 ffi.cdef [[
 
@@ -621,8 +620,12 @@ ffi.cdef [[
     void alloclient_get_stats(alloclient* client, char *buffer, size_t bufferlen);
     
     
+    // util.h
+    int64_t get_ts_mono(void);
+    double get_ts_monod(void);
 ]]
 
 function Client:createNativeHandle()
+    local C = ffi.load('allonet')
     return C
 end

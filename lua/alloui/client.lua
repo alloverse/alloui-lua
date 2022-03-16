@@ -26,7 +26,7 @@ require(modules.."client_native")
 -- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
 function Client:_init(url, name, threaded, updateStateAutomatically)
     self.handle = self:createNativeHandle()
-    self._client = self.handle.alloclient_create(threaded)
+    self._client = self.handle.alloclient_create(threaded and true or false)
 
     self.url = url
     self.placename = "Untitled place"
@@ -41,10 +41,10 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     self._client.disconnected_callback = function(_client, code, message)
         self.delegates.onDisconnected(code, message)
     end
-    self._client.interaction_callback(function(_client, c_inter)
-        -- TODO: convert c_inter to a lua table
+    self._client.interaction_callback = function(_client, c_inter)
+        -- TODO: convert c_inter to a lua table or add metatable to c_inter
         self:onInteraction(inter)
-    end)
+    end
     if updateStateAutomatically == nil or updateStateAutomatically == true then
         self._client.state_callback = function(_client, state, diff)
             self:updateState(state, diff)
