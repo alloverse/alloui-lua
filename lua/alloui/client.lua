@@ -27,7 +27,6 @@ require(modules.."client_native")
 function Client:_init(url, name, threaded, updateStateAutomatically)
     self.handle = self:createNativeHandle()
     self._client = self.handle.alloclient_create(threaded and true or false)
-
     self.url = url
     self.placename = "Untitled place"
     self.name = name
@@ -260,5 +259,62 @@ end
 function Client:getServerTime()
     return self.handle.alloclient_get_time(self._client)
 end
+
+function Client:getStats()
+    return ""
+end
+
+function Client:getLatency()
+    return 0
+end
+
+function Client:getClockDelta()
+    return 0
+end
+
+local IntentMetatable = {
+
+}
+
+function Client:createIntent(t)
+    local cintent = ffi.gc( -- what to do when lua gc wants to free the object
+        self.handle.allo_client_intent_create(), -- this cdata is returned from .gc
+        self.handle.allo_client_intent_free -- this can be lua or c function pointer. takes the cdata
+    )
+    assert(cintent and t.entity_id)
+    cintent.entity_id = ffi.C.malloc(#t.entity_id + 1) -- free'd with the intent
+    ffi.copy(cintent.entity_id, t.entity_id)
+    cintent.wants_stick_movement = t.wants_stick_movement or false
+    cintent.xmovement = t.xmovement or 0
+    cintent.zmovement = t.zmovement or 0
+    cintent.yaw = t.yaw or 0
+    cintent.pitch = t.pitch or 0
+    cintent.poses = t.poses
+
+    return cintent
+end
+
+function Client:simulateRootPose(avatar_id, dt, cintent)
+    assert(avatar_id, cintent)
+
+    self.handle.allosim_simulate_root_pose(
+        self.handle.alloclient_get_state(self._client),
+        avatar_id,
+        dt,
+        cintent
+    )
+end
+
+-- static int l_alloclient_simulate_root_pose(lua_State* L)
+-- {
+--     l_alloclient_t* lclient = check_alloclient(L, 1);
+--     const char *avatar_id = luaL_checkstring(L, 2);
+--     float dt = luaL_checknumber(L, 3);
+--     allo_client_intent *intent = get_intent(L);
+    
+--     allo_client_intent_free(intent);
+--     push_matrix_table(L, root_pose);
+--     return 1;
+-- }
 
 return Client
