@@ -34,10 +34,15 @@ local mat4 = require("modules.mat4")
 local View = require(modules.."views.view")
 local Label = require(modules.."views.label")
 local Cube = require(modules.."views.cube")
+local FrameView = require(modules.."views.frameview")
 local Bounds = require(modules.."bounds")
 local Pose = require(modules.."pose")
 local Size = require(modules.."size")
+local Color = require(modules.."color")
 
+
+local BORDER_WIDTH = 0.005
+local PLACEHOLDER = "Placeholder"
 
 class.TextField(View)
 
@@ -55,15 +60,19 @@ class.TextField(View)
 -- @tparam table o A table including *at least* a Bounds component.
 function TextField:_init(o)
     self:super(o.bounds and o.bounds or o)
-    local plaqueBounds = Bounds{size=self.bounds.size:copy()}
+    local plaqueBounds = Bounds{size=self.bounds.size:copy()}:insetEdges(BORDER_WIDTH) -- Shrink the "main" plate of the textbox to make room for the border without causing z-fighting
     self.plaque = Cube(plaqueBounds)
-    self.plaque.color = {0.9, 0.9, 0.9, 1.0}
+    self.plaque.color = Color.alloWhite()
     self:addSubview(self.plaque)
 
-    local borderBounds = Bounds{size=self.bounds.size:copy()}:scale(1.05, 1.05, 0.95)
-    self.border = Cube(borderBounds)
-    self.border.color = {0.4, 0.4, 0.4, 1.0}
+    -- Add frame to the text field
+    self.border = FrameView(
+        Bounds(self.bounds:copy()),
+        BORDER_WIDTH
+    )
+    self.border:setColor(Color.alloDarkPink())
     self:addSubview(self.border)
+    
 
     local labelBounds = plaqueBounds:copy()
     labelBounds:move(0.02, 0, plaqueBounds.size.depth/2+0.001)
@@ -72,6 +81,7 @@ function TextField:_init(o)
     o.halign = o.halign and o.halign or "left"
     o.color = o.color and o.color or {0, 0, 0, 1}
     self.label = Label(o)
+    self.label:setColor(Color:alloDark())
     self:addSubview(self.label)
 
     -- whether to insert the return or not. use and return false to do things like submit a form.
@@ -99,12 +109,19 @@ end
 function TextField:onFocus(newFocused)
     View.onFocus(self, newFocused)
     self.isFocused = newFocused
+
+    self.plaque:setColor(Color.alloLightBlue())
+    self.border:setColor(Color.alloDarkBlue())
     self:layout()
+
     if not newFocused then
         self.onLostFocus(self)
+        self.plaque:setColor(Color.alloWhite())
+        self.border:setColor(Color.alloDarkPink())
     end
     return true
 end
+
 
 
 function TextField:specification()
