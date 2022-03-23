@@ -19,6 +19,7 @@ return {
     ModelView = require(modules.."views.modelview"),
     StackView = require(modules.."views.stackview"),
     ProxyIconView = require(modules.."views.proxy_icon"),
+    FrameView = require(modules.."views.frameview"),
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),
