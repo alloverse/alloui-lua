@@ -57,10 +57,10 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
         end
     end
     self._client.audio_callback = function(_client, track_id, pcm, sample_count)
-        self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
+        return self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
     end
     self._client.video_callback = function(_client, track_id, pixels, wide, high)
-        self.delegates.onVideo(track_id, wide, high, pixels)
+        return self.delegates.onVideo(track_id, wide, high, pixels)
     end
     self.avatar_id = ""
 
