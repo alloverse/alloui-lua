@@ -219,6 +219,7 @@ end
 function Client:setIntent(intent)
     -- TODO: FFI-ify
     --self.client:set_intent(intent)
+    self.handle.alloclient_set_intent(self._client, intent)
 end
 
 function Client:sendAudio(trackId, audio)
@@ -276,11 +277,13 @@ local IntentMetatable = {
 
 }
 
-function Client:createIntent(t)
-    local cintent = ffi.gc( -- what to do when lua gc wants to free the object
-        self.handle.allo_client_intent_create(), -- this cdata is returned from .gc
-        self.handle.allo_client_intent_free -- this can be lua or c function pointer. takes the cdata
-    )
+function Client:createIntent(t, use_gc)
+    use_gc = use_gc or true
+    local cintent = self.handle.allo_client_intent_create()
+    if use_gc then 
+        cintent = ffi.gc(cintent, self.handle.allo_client_intent_free)
+    end
+    
     assert(cintent and t.entity_id)
     cintent.entity_id = ffi.C.malloc(#t.entity_id + 1) -- free'd with the intent
     ffi.copy(cintent.entity_id, t.entity_id)
@@ -289,7 +292,7 @@ function Client:createIntent(t)
     cintent.zmovement = t.zmovement or 0
     cintent.yaw = t.yaw or 0
     cintent.pitch = t.pitch or 0
-    cintent.poses = t.poses
+    if t.poses then cintent.poses = t.poses end
 
     return cintent
 end
