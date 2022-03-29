@@ -633,6 +633,10 @@ ffi.cdef [[
 ]]
 
 function Client:createNativeHandle()
-    -- local C = ffi.load('allonet')
-    return ffi.C
+    if ffi.C.alloclient_simulate then
+        return ffi.C
+    else
+        local C = ffi.load('allonet')
+        return C
+    end
 end
