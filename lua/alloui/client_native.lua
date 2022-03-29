@@ -7,6 +7,7 @@ local ffi = require("ffi")
 ffi.cdef [[
 
     void* malloc(size_t size);
+    char *strdup(const char *s);
     void free(void*);
 
     // cJSON.h
