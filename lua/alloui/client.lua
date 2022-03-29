@@ -244,7 +244,7 @@ function Client:simulate()
 end
 
 function Client:disconnect(code)
-    self.handle.alloclient_disconnect(code)
+    self.handle.alloclient_disconnect(self._client, code)
 end
 
 function Client:run()
