@@ -9,6 +9,7 @@
 local class = require('pl.class')
 local types = require ('pl.types')
 local allonet = require('alloui.ffi_allonet_handle')
+local ffi = require("ffi")
 
 Asset = class.Asset()
 
@@ -75,7 +76,9 @@ function Asset:id(refresh)
     if self._id == nil or refresh then
         local data = self.data or self:read()
         if data == nil then return nil end
-        self._id = allonet.asset_generate_identifier(data)
+        local cstr = allonet.asset_generate_identifier(data, #data)
+        self._id = ffi.string(cstr)
+        allonet.free(cstr)
     end
     return self._id
 end

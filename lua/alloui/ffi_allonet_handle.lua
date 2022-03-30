@@ -710,6 +710,11 @@ ffi.cdef [[
 
     // internal
     int allo_socket_for_select(alloserver *server);
+
+
+
+    /// asset.h
+    char *asset_generate_identifier(const uint8_t *bytes, size_t size);
 ]]
 
 function CreateAllonetHandle()
