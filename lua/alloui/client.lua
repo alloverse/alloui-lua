@@ -8,11 +8,11 @@ local tablex = require("pl.tablex")
 local class = require("pl.class")
 local pretty = require("pl.pretty")
 local ffi = require("ffi")
+local allonet = require(modules.."ffi_allonet_handle")
 require(modules.."random_string")
 
 local Client = class.Client()
 require(modules.."client_updateState")
-require(modules.."client_native")
 
 ---
 --
@@ -25,7 +25,7 @@ require(modules.."client_native")
 -- @tparam [Client](Client) client The AlloNet client.
 -- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
 function Client:_init(url, name, threaded, updateStateAutomatically)
-    self.handle = self:createNativeHandle()
+    self.handle = allonet
     self._client = self.handle.alloclient_create(threaded and true or false)
     self.url = url
     self.placename = "Untitled place"

@@ -628,16 +628,103 @@ ffi.cdef [[
     // util.h
     int64_t get_ts_mono(void);
     double get_ts_monod(void);
+    uint64_t allo_create_random_seed(void);
 
 
     void allosim_simulate_root_pose(allo_state *state, const char *avatar_id, float dt, allo_client_intent *intent);
+
+    
+
+
+    //// server.h
+    static const int allo_udp_port = 21337;
+    static const int allo_client_count_max = 128;
+
+    // excluding null terminating byte
+    // #define AGENT_ID_LENGTH 16
+
+    typedef struct alloserver_client {
+        allo_client_intent *intent;
+        char *avatar_entity_id;
+        char agent_id[/*AGENT_ID_LENGTH*/ 16+1];
+        cJSON *identity;
+
+        // private
+        void *_internal;
+        void *_backref;
+        //LIST_ENTRY(alloserver_client) pointers;
+    } alloserver_client;
+
+    typedef struct alloserver alloserver;
+    struct alloserver {
+        // handle incoming events for at most duration_ms. returns true if event was handled
+        bool (*interbeat)(alloserver *serv, int duration_ms);
+        
+        // raw json as delivered from client (intent or interaction)
+        void (*raw_indata_callback)(alloserver *serv, alloserver_client *client, allochannel channel, const uint8_t *data, size_t data_length);
+        
+        // list of clients changed; either `added` or `removed` is set.
+        void (*clients_callback)(alloserver *serv, alloserver_client *added, alloserver_client *removed);
+
+        // internal
+        void (*send)(alloserver *serv, alloserver_client *client, allochannel channel, const uint8_t *buf, int len);
+        allo_state state;
+
+        void *_backref; // use this as a backref for callbacks
+        void *_internal; // used within server.c to hide impl
+        int _port;
+
+        //LIST_HEAD(alloserver_client_list, alloserver_client) clients;
+    };
+
+    // send 0 for any host or any port
+    alloserver *allo_listen(int listenhost, int port);
+
+    struct _ENetPacket;
+
+    void alloserv_send_enet(alloserver *serv, alloserver_client *client, allochannel channel, struct _ENetPacket *packet);
+
+    // immediately shutdown the server
+    void alloserv_stop(alloserver* serv);
+
+    // disconnect one client for one reason, first transmitting all its messages.
+    // clients_callback() is called once the disconnection is successful.
+    void alloserv_disconnect(alloserver *serv, alloserver_client *client, int reason_code);
+
+    size_t alloserv_get_client_stats(alloserver* serv, alloserver_client *client, char *buffer, size_t bufferlen, bool header);
+
+    void alloserv_get_stats(alloserver* serv, char *buffer, size_t bufferlen);
+
+    // run a minimal standalone C server. returns when it shuts down. false means it broke.
+    bool alloserv_run_standalone(int listenhost, int port, const char *placename);
+
+    // start it but don't run it. returns allosocket.
+    alloserver *alloserv_start_standalone(int listenhost, int port, const char *placename);
+    // call this frequently to run it. returns false if server has broken and shut down; then you should call stop on it to clean up.
+    bool alloserv_poll_standalone(int allosocket);
+    // and then call this to stop and clean up state.
+    void alloserv_stop_standalone();
+
+    const char *alloserv_describe_client(alloserver_client *client);
+
+
+    // internal
+    int allo_socket_for_select(alloserver *server);
 ]]
 
-function Client:createNativeHandle()
-    if ffi.C.alloclient_simulate then
-        return ffi.C
+function CreateAllonetHandle()
+    local allonet = ffi.C
+    local allonet_exists_in_current_process, _ = pcall(function()
+        return allonet.alloclient_create
+    end)
+    if not allonet_exists_in_current_process then
+        print("Loading allonet through dynamic loading")
+        allonet = ffi.load('allonet')
     else
-        local C = ffi.load('allonet')
-        return C
+        print("Loading allonet through the current process")
     end
+    math.randomseed( tonumber(allonet.allo_create_random_seed()) )
+    return allonet
 end
+
+return CreateAllonetHandle()

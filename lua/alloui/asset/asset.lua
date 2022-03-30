@@ -8,6 +8,7 @@
 
 local class = require('pl.class')
 local types = require ('pl.types')
+local allonet = require('alloui.ffi_allonet_handle')
 
 Asset = class.Asset()
 
