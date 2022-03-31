@@ -5,9 +5,13 @@ local pretty = require("pl.pretty")
 local ffi = require("ffi")
 local json = require(modules.."json")
 
-function ffistring(cdata)
+function ffistring(cdata, free_cdata)
     assert(cdata)
-    return cdata and ffi.string(cdata) or nil
+    local string = cdata and ffi.string(cdata) or nil
+    if free_cdata and cdata then
+        ffi.C.free(cdata)
+    end
+    return string
 end
 
 function Client:updateState(_, diff)
@@ -59,7 +63,7 @@ function Client:updateState(_, diff)
     local cspec = diff.new_components.data[i];
     local eid = ffistring(cspec.eid)
     local cname = ffistring(cspec.name)
-    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata)))
+    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata), true))
     local entity = self.state.entities[eid]
     -- store raw component before adding metatable etc, so we can know exactly what we had before
     entity.raw_components[cname] = tablex.deepcopy(cdata)
@@ -80,7 +84,7 @@ function Client:updateState(_, diff)
     local cspec = diff.updated_components.data[i];
     local eid = ffistring(cspec.eid)
     local cname = ffistring(cspec.name)
-    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata)))
+    local cdata  = json.decode(ffistring(self.handle.cJSON_PrintUnformatted(cspec.newdata), true))
     local entity = self.state.entities[eid]
     local comp = entity.components[cname]
     local oldComponent = tablex.deepcopy(comp)
