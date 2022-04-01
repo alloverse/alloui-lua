@@ -272,7 +272,10 @@ function Client:getServerTime()
 end
 
 function Client:getStats()
-    return ""
+    local buffersize = 1024
+    local buffer = ffi.new("char[?]", buffersize)
+    self.handle.alloclient_get_stats(self._client, buffer, buffersize)
+    return ffi.string(buffer, buffersize)
 end
 
 function Client:getLatency()
