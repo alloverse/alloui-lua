@@ -105,8 +105,7 @@ function VideoSurface:sendFrame(pixels, width, height, format, stride)
     self.lastFrame = {
         self.trackId, pixels, width, height, format, stride
     }
-    -- TODO: FFI-ify
-    --self.app.client.client:send_video(self.trackId, pixels, width, height, format, stride)
+    self.app.client:sendVideo(self.trackId, pixels, width, height, format, stride)
 end
 
 function VideoSurface:sendLastFrame()
