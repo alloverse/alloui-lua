@@ -724,7 +724,12 @@ ffi.cdef [[
 ]]
 
 function CreateAllonetHandle()
-    local allonet = ffi.C
+    if allonet then
+        print("Allonet was loaded") -- from boot.lua probably
+        return allonet
+    end
+    
+    allonet = ffi.C
     local allonet_exists_in_current_process, _ = pcall(function()
         return allonet.alloclient_create
     end)
