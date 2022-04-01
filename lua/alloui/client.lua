@@ -279,11 +279,11 @@ function Client:getStats()
 end
 
 function Client:getLatency()
-    return 0
+    return self._client.clock_latency
 end
 
 function Client:getClockDelta()
-    return 0
+    return self._client.clock_deltaToServer
 end
 
 local IntentMetatable = {
