@@ -64,17 +64,14 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     end
     self._client.asset_request_bytes_callback = function(client, asset_id, offset, length)
         local asset_id = ffistring(asset_id)
-        print("asset bytes requested", asset_id)
         self.delegates.onAssetRequestBytes(asset_id, offset, length)
     end
     self._client.asset_receive_callback = function(client, asset_id, buffer, offset, length, total_size)
         local asset_id = ffistring(asset_id)
-        print("asset data received", asset_id)
         self.delegates.onAssetReceive(asset_id, ffi.string(buffer, length), offset, total_size)
     end
     self._client.asset_state_callback = function(client, asset_id, state)
         local asset_id = ffistring(asset_id)
-        print("asset state received", asset_id)
         self.delegates.onAssetState(asset_id, state)
     end
 
@@ -339,12 +336,10 @@ end
 -- Assets
 
 function Client:requestAsset(assetId)
-    print("asset requested", assetId)
     self.handle.alloclient_asset_request(self._client, assetId, nil);
 end
 
 function Client:sendAsset(assetId, data, offset, total_size)
-    print("Sending asset", assetId, #data, total_size)
     self.handle.alloclient_asset_send(self._client, assetId, data, offset-1, #data, total_size);
 end
 
