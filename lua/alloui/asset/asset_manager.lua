@@ -56,20 +56,20 @@ function AssetManager:_init(client)
     -- setmetatable(self._assets.cache, { __mode = "v" })
 
     -- For providing assets
-    -- TODO: FFI-ify
-    --client:set_asset_request_callback(function (name, offset, length)
-    --    self:_handleRequest(name, offset, length)
-    --end)
+    client.delegates.onAssetRequestBytes = function (name, offset, length)
+        self:_handleRequest(name, offset, length)
+    end
 
     -- Leave unassigned if you are not interrested receiving assets
-    --client:set_asset_receive_callback(function (name, bytes, offset, total_size)
-    --    self:_handleData(name, bytes, offset, total_size)
-    --end)
+    client.delegates.onAssetReceive = function (name, bytes, offset, total_size)
+        print("asset handle callback")
+        self:_handleData(name, bytes, offset, total_size)
+    end
 
     -- Leave unassigned if you are not interrested in assets
-    --client:set_asset_state_callback(function (name, state)
-    --    self:_handleState(name, state)
-    --end)
+    client.delegates.onAssetState = function (name, state)
+        self:_handleState(name, state)
+    end
 end
 
 function AssetManager:getStats() 
@@ -232,7 +232,12 @@ end
 
 function AssetManager:_handleData(name, bytes, offset, total_size)
     local asset = self:_loading(name)
-    if asset == nil then return end
+    print("asset _handleData", name)
+    if asset == nil then 
+        print("asset failed to save")
+        return 
+    end
+
     asset:write(bytes, offset, total_size)
 end
 
