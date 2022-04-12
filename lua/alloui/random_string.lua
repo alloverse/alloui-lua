@@ -13,6 +13,4 @@ function string.random(length)
   end
 end
 
-math.randomseed( allonet.get_random_seed() )
-
 return string.random

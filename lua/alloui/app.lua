@@ -9,7 +9,7 @@ local pretty = require('pl.pretty')
 local util = require(modules .."util")
 local Asset = require(modules .. "asset.init")
 
-class.ScheduledAction()
+local ScheduledAction = class.ScheduledAction()
 
 --- Schedule work to be done later
 -- 
@@ -21,7 +21,7 @@ function ScheduledAction:_init(client, delay, repeats, callback)
     self.delay = delay
     self.repeats = repeats
     self.callback = callback
-    self.when = client.client:get_time() + delay
+    self.when = client:getClientTime() + delay
 end
 
 class.App()
@@ -63,7 +63,7 @@ function App:_init(client)
         end
     end
     self.scheduledActions = {}
-    self.assetManager = AssetManager(client.client)
+    self.assetManager = AssetManager(client)
 end
 
 function App:connect()
@@ -322,11 +322,11 @@ end
 
 --- Current client time. This is monotonically increasing.
 function App:clientTime()
-    return self.client.client:get_time()
+    return self.client:getClientTime()
 end
 --- Current server time. Might jump around a little to compensate for lag.
 function App:serverTime()
-    return self.client.client:get_server_time()
+    return self.client:getServerTime()
 end
 
 function App:_timeForPlayingSoundNow()

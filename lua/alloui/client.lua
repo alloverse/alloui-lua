@@ -7,9 +7,11 @@ local json = require(modules.."json")
 local tablex = require("pl.tablex")
 local class = require("pl.class")
 local pretty = require("pl.pretty")
+local ffi = require("ffi")
+local allonet = require(modules.."ffi_allonet_handle")
 require(modules.."random_string")
 
-class.Client()
+local Client = class.Client()
 require(modules.."client_updateState")
 
 ---
@@ -22,8 +24,9 @@ require(modules.."client_updateState")
 -- @tparam string name ...
 -- @tparam [Client](Client) client The AlloNet client.
 -- @tparam boolean updateStateAutomatically Whether or not the client should automatically update its state.
-function Client:_init(url, name, client, updateStateAutomatically)
-    self.client = client and client or allonet.create()
+function Client:_init(url, name, threaded, updateStateAutomatically)
+    self.handle = allonet
+    self._client = self.handle.alloclient_create(threaded and true or false)
     self.url = url
     self.placename = "Untitled place"
     self.name = name
@@ -34,23 +37,44 @@ function Client:_init(url, name, client, updateStateAutomatically)
         entities = {}
     }
 
-    self.client:set_disconnected_callback(function(code, message)
-        self.delegates.onDisconnected(code, message)
-    end)
-    self.client:set_interaction_callback(function(inter)
-        self:onInteraction(inter)
-    end)
-    if updateStateAutomatically == nil or updateStateAutomatically == true then
-        self.client:set_state_callback(function(state, diff)
-            self:updateState(state, diff)
-        end, false)
+    self._client.disconnected_callback = function(_client, code, message)
+        self.delegates.onDisconnected(code, ffistring(message, true))
     end
-    self.client:set_audio_callback(function(track_id, audio)
-        self.delegates.onAudio(track_id, audio)
-    end)
-    self.client:set_video_callback(function(track_id, wide, high, pixels)
-        self.delegates.onVideo(track_id, wide, high, pixels)
-    end)
+    self._client.interaction_callback = function(_client, c_inter)
+        -- TODO: convert c_inter to a lua table or add metatable to c_inter
+        self:onInteraction({
+            type = ffi.string(c_inter.type),
+            sender_entity_id = ffi.string(c_inter.sender_entity_id),
+            receiver_entity_id = ffi.string(c_inter.receiver_entity_id),
+            request_id = ffi.string(c_inter.request_id),
+            body = ffi.string(c_inter.body),
+        })
+        return true
+    end
+    if updateStateAutomatically == nil or updateStateAutomatically == true then
+        self._client.state_callback = function(_client, state, diff)
+            self:updateState(state, diff)
+        end
+    end
+    self._client.audio_callback = function(_client, track_id, pcm, sample_count)
+        return self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
+    end
+    self._client.video_callback = function(_client, track_id, pixels, wide, high)
+        return self.delegates.onVideo(track_id, wide, high, ffi.string(pixels, wide*high*4))
+    end
+    self._client.asset_request_bytes_callback = function(client, asset_id, offset, length)
+        local asset_id = ffistring(asset_id)
+        self.delegates.onAssetRequestBytes(asset_id, offset, length)
+    end
+    self._client.asset_receive_callback = function(client, asset_id, buffer, offset, length, total_size)
+        local asset_id = ffistring(asset_id)
+        self.delegates.onAssetReceive(asset_id, ffi.string(buffer, length), offset, total_size)
+    end
+    self._client.asset_state_callback = function(client, asset_id, state)
+        local asset_id = ffistring(asset_id)
+        self.delegates.onAssetState(asset_id, state)
+    end
+
     self.avatar_id = ""
 
     self.delegates = {
@@ -65,6 +89,9 @@ function Client:_init(url, name, client, updateStateAutomatically)
         onDisconnected = function(code, message) end,
         onAudio = function(track_id, audio) end,
         onVideo = function(track_id, pixels, wide, high) end,
+        onAssetRequestBytes = function(asset_id, offset, length) end,
+        onAssetReceive = function(asset_id, buffer, offset, total_size) end,
+        onAssetState = function(asset_id, state) end,
     }
     self.connected = false
 
@@ -72,7 +99,7 @@ function Client:_init(url, name, client, updateStateAutomatically)
 end
 
 function Client:connect(avatar_spec)
-    return self.client:connect(
+    return self.handle.alloclient_connect(self._client,
         self.url,
         json.encode({display_name = self.name}),
         json.encode(avatar_spec)
@@ -151,7 +178,16 @@ function Client:sendInteraction(interaction, callback)
         interaction.request_id = "" -- todo, fix this in allonet
     end
     interaction.body = json.encode(interaction.body)
-    self.client:send_interaction(interaction)
+
+    local cinter = self.handle.allo_interaction_create(
+        interaction.type,
+        interaction.sender_entity_id,
+        interaction.receiver_entity_id,
+        interaction.request_id,
+        interaction.body
+    )
+    self.handle.alloclient_send_interaction(self._client, cinter)
+    self.handle.allo_interaction_free(cinter)
     return interaction.request_id
 end
 
@@ -197,29 +233,115 @@ function Client:onInteraction(inter)
 end
 
 function Client:setIntent(intent)
-  self.client:set_intent(intent)
+    self.handle.alloclient_set_intent(self._client, intent)
 end
 
 function Client:sendAudio(trackId, audio)
-  self.client:send_audio(trackId, audio)
+    self.handle.alloclient_send_audio_data(self._client, trackId, audio, #audio)
 end
 
-function Client:poll(timeout)
-  self.client:poll(timeout)
+local formatTable = {
+    rgba = allonet.allopicture_format_rgba8888,
+    bgra = allonet.allopicture_format_bgra8888,
+    xrgb8 = allonet.allopicture_format_xrgb8888,
+    rgb1555 = allonet.allopicture_format_rgb1555,
+    rgb565 = allonet.allopicture_format_rgb565
+}
+
+function Client:sendVideo(trackId, pixels, width, height, format, stride)
+    local cformat = formatTable[format]
+    self.handle.alloclient_send_video_pixels(self._client, trackId, pixels, width, height, cformat, stride);
 end
+
+--- Send and receive buffered data synchronously now. Loops over all queued
+-- network messages until the queue is empty.
+-- @param timeout_ms how many ms to wait for incoming messages before giving up. Default 10.
+-- @discussion Call regularly at 20hz to process incoming and outgoing network traffic.
+-- @return bool whether any messages were parsed
+function Client:poll(timeout)
+    return self.handle.alloclient_poll(self._client, timeout)
+end
+
+-- Can not call jit functions that in turn callback into lua functions
+jit.off(Client.poll)
 
 function Client:simulate()
-  self.client:simulate()
+    self.handle.alloclient_simulate(self._client)
 end
 
 function Client:disconnect(code)
-  self.client:disconnect(code)
+    self.handle.alloclient_disconnect(self._client, code)
 end
 
 function Client:run()
     while true do
-        self.client:poll(1.0/20.0)
+        self:poll(1.0/20.0)
     end
 end
+
+function Client:getClientTime()
+    return self.handle.get_ts_monod()
+end
+
+function Client:getServerTime()
+    return self.handle.alloclient_get_time(self._client)
+end
+
+function Client:getStats()
+    local buffersize = 1024
+    local buffer = ffi.new("char[?]", buffersize)
+    self.handle.alloclient_get_stats(self._client, buffer, buffersize)
+    return ffi.string(buffer, buffersize)
+end
+
+function Client:getLatency()
+    return self._client.clock_latency
+end
+
+function Client:getClockDelta()
+    return self._client.clock_deltaToServer
+end
+
+function Client:createIntent(t, use_gc)
+    use_gc = use_gc or true
+    local cintent = self.handle.allo_client_intent_create()
+    if use_gc then 
+        cintent = ffi.gc(cintent, self.handle.allo_client_intent_free)
+    end
+    
+    assert(cintent and t.entity_id)
+    cintent.entity_id = ffi.C.malloc(#t.entity_id + 1) -- free'd with the intent
+    ffi.copy(cintent.entity_id, t.entity_id)
+    cintent.wants_stick_movement = t.wants_stick_movement or false
+    cintent.xmovement = t.xmovement or 0
+    cintent.zmovement = t.zmovement or 0
+    cintent.yaw = t.yaw or 0
+    cintent.pitch = t.pitch or 0
+    if t.poses then cintent.poses = t.poses end
+
+    return cintent
+end
+
+function Client:simulateRootPose(avatar_id, dt, cintent)
+    assert(avatar_id, cintent)
+
+    self.handle.allosim_simulate_root_pose(
+        self.handle.alloclient_get_state(self._client),
+        avatar_id,
+        dt,
+        cintent
+    )
+end
+
+-- Assets
+
+function Client:requestAsset(assetId)
+    self.handle.alloclient_asset_request(self._client, assetId, nil);
+end
+
+function Client:sendAsset(assetId, data, offset, total_size)
+    self.handle.alloclient_asset_send(self._client, assetId, data, offset-1, #data, total_size);
+end
+
 
 return Client

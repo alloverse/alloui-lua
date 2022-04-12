@@ -56,19 +56,20 @@ function AssetManager:_init(client)
     -- setmetatable(self._assets.cache, { __mode = "v" })
 
     -- For providing assets
-    client:set_asset_request_callback(function (name, offset, length)
+    client.delegates.onAssetRequestBytes = function (name, offset, length)
         self:_handleRequest(name, offset, length)
-    end)
+    end
 
     -- Leave unassigned if you are not interrested receiving assets
-    client:set_asset_receive_callback(function (name, bytes, offset, total_size)
+    client.delegates.onAssetReceive = function (name, bytes, offset, total_size)
+        print("asset handle callback")
         self:_handleData(name, bytes, offset, total_size)
-    end)
+    end
 
     -- Leave unassigned if you are not interrested in assets
-    client:set_asset_state_callback(function (name, state)
+    client.delegates.onAssetState = function (name, state)
         self:_handleState(name, state)
-    end)
+    end
 end
 
 function AssetManager:getStats() 
@@ -187,7 +188,7 @@ function AssetManager:load(name, callback)
     local asset = Asset()
     asset.completionCallback = callback
     self:_beganLoading(name, asset)
-    self.client:asset_request(name)
+    self.client:requestAsset(name)
 
     return true
 end
@@ -219,19 +220,24 @@ function AssetManager:_handleRequest(name, offset, length)
     local asset = self:get(name)
     if asset == nil then
         print("Can not serve asset "..name)
-        self.client:asset_send(name, nil, offset, 0)
+        self.client:sendAsset(name, nil, offset, 0)
         return
     end
 
     local chunk = asset:read(offset, length)
     local size = asset:size()
 
-    self.client:asset_send(name, chunk, offset, size)
+    self.client:sendAsset(name, chunk, offset, size)
 end
 
 function AssetManager:_handleData(name, bytes, offset, total_size)
     local asset = self:_loading(name)
-    if asset == nil then return end
+    print("asset _handleData", name)
+    if asset == nil then 
+        print("asset failed to save")
+        return 
+    end
+
     asset:write(bytes, offset, total_size)
 end
 
