@@ -64,11 +64,11 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     end
     self._client.asset_request_bytes_callback = function(client, asset_id, offset, length)
         local asset_id = ffistring(asset_id)
-        self.delegates.onAssetRequestBytes(asset_id, offset, length)
+        self.delegates.onAssetRequestBytes(asset_id, offset+1, length)
     end
     self._client.asset_receive_callback = function(client, asset_id, buffer, offset, length, total_size)
         local asset_id = ffistring(asset_id)
-        self.delegates.onAssetReceive(asset_id, ffi.string(buffer, length), offset, total_size)
+        self.delegates.onAssetReceive(asset_id, ffi.string(buffer, length), offset+1, total_size)
     end
     self._client.asset_state_callback = function(client, asset_id, state)
         local asset_id = ffistring(asset_id)
