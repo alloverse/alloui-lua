@@ -21,7 +21,7 @@ VideoSurface.libavAvailable = false
 --- Initiate a video surface. 
 -- A video track will be allocated for the surface. The resolution can not be changed later. 
 -- @tparam [Bounds](bounds) bounds The position and size of the surface
--- @tparam resolution|{int, int} A table with width and height giving the pixel resolution of the video. Must match the width and height sent to `sendFrame`
+-- @tparam Table resolution A table ({int, int}) with width and height giving the pixel resolution of the video. Must match the width and height sent to `sendFrame`
 function VideoSurface:_init(bounds, resolution)
     self:super(bounds)
     self.resolution = resolution or {256, 256}
@@ -92,7 +92,7 @@ function VideoSurface:setupVideo()
 end
 
 --- Send a video frame to the server
--- @tparam pixels string String with pixel data according to format and stride
+-- @tparam String pixels with pixel data according to format and stride
 -- @tparam int width The number of pixels in width. Should match the width set at init.
 -- @tparam int height The number of pixels in height. Shold match the height set at init.
 -- @tparam string format The pixel format. For example "bgrx8". Default: "rgba"

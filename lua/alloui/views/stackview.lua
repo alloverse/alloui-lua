@@ -1,19 +1,4 @@
-local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
-local class = require('pl.class')
-local tablex = require('pl.tablex')
-local pretty = require('pl.pretty')
-local vec3 = require("modules.vec3")
-local mat4 = require("modules.mat4")
-local Bounds = require(modules .."bounds")
-local Size = require(modules .."size")
-local Pose = require(modules .."pose")
-local View = require(modules .."views.view")
-
-
-class.StackView(View)
-
----
--- A view that stacks its subviews either vertical (default) or horizontally.
+--- A view that stacks its subviews either vertical (default) or horizontally.
 -- 
 -- The StackView will adjust its size on the (specified) main axis
 -- while preserving the size given for the other axis.
@@ -30,6 +15,26 @@ class.StackView(View)
 -- rows:addSubview(Label{text="The End"})
 -- self:addSubview(rows)
 -- rows:layout()
+--~~~
+-- @classmod StackView
+
+local modules = (...):gsub(".[^.]+.[^.]+$", '') .. "."
+local class = require('pl.class')
+local tablex = require('pl.tablex')
+local pretty = require('pl.pretty')
+local vec3 = require("modules.vec3")
+local mat4 = require("modules.mat4")
+local Bounds = require(modules .."bounds")
+local Size = require(modules .."size")
+local Pose = require(modules .."pose")
+local View = require(modules .."views.view")
+
+
+class.StackView(View)
+
+---
+--~~~ lua
+-- my_button = StackView(bounds, axis)
 --~~~
 --@tparam [Bounds](bounds) bounds The StackView's Bounds component
 --@tparam string axis The main axis to layout subviews on. "v" (default) or "h"

@@ -22,9 +22,9 @@ class.ProxyIconView(View)
 -- icon = ProxyIconView(bounds)
 --~~~
 --@tparam [Bounds](bounds) bounds The icon's bounds.
---@tparam [String](name) The asset's name
---@tparam [String](author) The asset's author
---@tparam [FileAsset](icon) asset to be used as the icon for this proxy view 
+--@tparam [String](name) name The asset's name
+--@tparam [String](author) author The asset's author
+--@tparam [FileAsset](icon) icon asset to be used as the icon for this proxy view 
 function ProxyIconView:_init(bounds, name, author, icon)
     self:super(bounds)
     self.name = name

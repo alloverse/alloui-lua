@@ -1,4 +1,3 @@
-
 --- A FrameView is a [View](view) subclass that draws a border of a given width and color.
 -- @classmod FrameView
 
@@ -17,7 +16,7 @@ class.FrameView(View)
 ---
 --
 --~~~ lua
--- local frameview = FrameView(o, thickness)
+-- local frameview = FrameView(bounds, thickness)
 --~~~
 --
 --For convenience, you may also set some or all of the FrameView's properties within the constructor, i.e.:
@@ -25,7 +24,8 @@ class.FrameView(View)
 -- local frameview = FrameView{bounds=Bounds(0, 0, 0, 1.0, 0.1, 0.001), color={1.0,0.2,0.4,1}, position="inside"}
 --~~~
 --
--- @tparam table o A table including *at least* a Bounds component.
+-- @tparam table bounds A table including *at least* a Bounds component.
+-- @tparam number thickness The thickness of the border.
 function FrameView:_init(bounds, thickness)
     self:super(bounds)
     local cubeBounds = Bounds{size= bounds.size:copy()}

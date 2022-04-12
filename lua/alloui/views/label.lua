@@ -95,7 +95,7 @@ end
 
 --- Sets the Label's fitToWidth attribute
 -- Note: If true, the `wrap` attribute is made irrelevant.
--- @tparam boolean desiredWidth Wether the Label's font size should dynamically shink in order to always fit in the label's width.
+-- @tparam boolean fitToWidth Wether the Label's font size should dynamically shink in order to always fit in the label's width.
 function Label:setFitToWidth(fitToWidth)
   self.fitToWidth = fitToWidth
   if self:isAwake() then
