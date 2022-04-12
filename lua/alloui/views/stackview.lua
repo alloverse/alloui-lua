@@ -51,7 +51,7 @@ function StackView:_init(bounds, axis)
 end
 
 ---Set the spacing between items
----@tparam newValue number The space between subviews. nil to just return the current value.
+---@tparam number newValue The space between subviews. nil to just return the current value.
 ---@treturn number The current value
 function StackView:margin(newValue)
     if newValue then
