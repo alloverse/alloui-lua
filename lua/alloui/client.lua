@@ -72,7 +72,7 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     end
     self._client.asset_state_callback = function(client, asset_id, state)
         local asset_id = ffistring(asset_id)
-        self.delegates.onAssetState(asset_id, state)
+        self.delegates.onAssetState(asset_id, tonumber(state))
     end
 
     self.avatar_id = ""
