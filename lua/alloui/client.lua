@@ -57,18 +57,29 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
         end
     end
     self._client.audio_callback = function(_client, track_id, pcm, sample_count)
-        return self.delegates.onAudio(track_id, ffi.string(pcm, sample_count*2))
+        local track_id = tonumber(track_id)
+        local data = ffi.string(pcm, sample_count*2)
+        return self.delegates.onAudio(track_id, data)
     end
     self._client.video_callback = function(_client, track_id, pixels, wide, high)
-        return self.delegates.onVideo(track_id, wide, high, ffi.string(pixels, wide*high*4))
+        local track_id = tonumber(track_id)
+        local wide = tonumber(wide)
+        local high = tonumber(high)
+        local pixels = ffi.string(pixels, wide*high*4)
+        return self.delegates.onVideo(track_id, wide, high, pixels)
     end
     self._client.asset_request_bytes_callback = function(client, asset_id, offset, length)
         local asset_id = ffistring(asset_id)
-        self.delegates.onAssetRequestBytes(asset_id, offset+1, length)
+        local offset = tonumber(offset) + 1
+        local length = tonumber(length)
+        self.delegates.onAssetRequestBytes(asset_id, offset, length)
     end
     self._client.asset_receive_callback = function(client, asset_id, buffer, offset, length, total_size)
         local asset_id = ffistring(asset_id)
-        self.delegates.onAssetReceive(asset_id, ffi.string(buffer, length), offset+1, total_size)
+        local buffer = ffi.string(buffer, length)
+        local offset = tonumber(offset) + 1
+        local total_size = tonumber(total_size)
+        self.delegates.onAssetReceive(asset_id, buffer, offset+1, total_size)
     end
     self._client.asset_state_callback = function(client, asset_id, state)
         local asset_id = ffistring(asset_id)
