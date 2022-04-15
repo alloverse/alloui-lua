@@ -78,7 +78,7 @@ function Asset:id(refresh)
         if data == nil then return nil end
         local cstr = allonet.asset_generate_identifier(data, #data)
         self._id = ffi.string(cstr)
-        allonet.free(cstr)
+        ffi.C.free(cstr)
     end
     return self._id
 end

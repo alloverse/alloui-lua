@@ -9,7 +9,7 @@ function ffistring(cdata, free_cdata)
     assert(cdata)
     local string = cdata and ffi.string(cdata) or nil
     if free_cdata and cdata then
-        ffi.C.free(cdata)
+        ffi.C.free(ffi.cast("void*", cdata))
     end
     return string
 end
