@@ -120,11 +120,12 @@ end
 -- @tparam number distance The distance in meters from the hand to show. Default 0.6
 -- @tparam Callback(view, entity) cb The callback to call when the popup is present in-world 
 function App:openPopupNearHand(popup, hand, distance, cb)
-    if distance == nil then distance = 0.6 end
+    if distance == nil then distance = 0.8 end
 
-    local handPose = ui.Pose(hand.components.transform:transformFromWorld())
-    popup.bounds.pose = handPose
-    popup.bounds:move(0, 0, -distance)
+    local h = hand.components.transform:transformFromWorld()
+    local d = mat4.identity():translate(mat4.identity(), vec3(0, 0, -distance))
+    popup.bounds.pose = ui.Pose(h * d)
+    
     self:addRootView(popup, cb)
     return popup
 end
