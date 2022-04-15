@@ -7,7 +7,7 @@ local ffi = require("ffi")
 ffi.cdef [[
 
     void* malloc(size_t size);
-    char *strdup(const char *s);
+    //char *strdup(const char *s); // this doesn't work on windows, use ffi.copy on a malloc'd buffer
     void free(void*);
 
     // cJSON.h
