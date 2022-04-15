@@ -38,7 +38,7 @@ function Client:_init(url, name, threaded, updateStateAutomatically)
     }
 
     self._client.disconnected_callback = function(_client, code, message)
-        self.delegates.onDisconnected(code, ffistring(message, true))
+        self.delegates.onDisconnected(code, ffistring(message))
     end
     self._client.interaction_callback = function(_client, c_inter)
         -- TODO: convert c_inter to a lua table or add metatable to c_inter
