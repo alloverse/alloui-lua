@@ -103,4 +103,14 @@ function Pose:scale(x, y, z)
     return self
 end
 
+--- Concatenates (multiplies) this transform with another
+-- 
+-- @tparam Pose|mat4 otherPoseOrTransform Either a CPML mat4 matrix to concatenate with, or another Pose
+-- @treturn [Pose](pose) The original Pose, post-concatenation.
+function Pose:concat(otherPoseOrTransform)
+    local otherTransform = otherPoseOrTransform.transform and otherPoseOrTransform.transform or otherPoseOrTransform
+    self.transform = mat4.mul(self.transform, self.transform, otherTransform)
+    return self
+end
+
 return Pose
