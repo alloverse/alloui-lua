@@ -33,6 +33,14 @@ function Speaker:_init(bounds, effect)
     end
 end
 
+function Speaker:volume()
+    return self.volume
+end
+function Speaker:setVolume(newVol)
+    self.volume = newVol
+    self:markAsDirty("sound_effect")
+end
+
 function Speaker:awake()
     -- only play sound effect one is provided
     if self.effect then return end
@@ -60,7 +68,6 @@ end
 
 function Speaker:specification()
     if not self.effect then return View.specification(self) end
-    print("Starts at", self.startsAt)
     return table.merge(View.specification(self), {
         sound_effect= {
             asset= self.effect:id(),
