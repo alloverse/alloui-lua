@@ -254,13 +254,15 @@ end
 local formatTable = {
     rgba = allonet.allopicture_format_rgba8888,
     bgra = allonet.allopicture_format_bgra8888,
+    bgrx8 = allonet.allopicture_format_bgra8888,
     xrgb8 = allonet.allopicture_format_xrgb8888,
     rgb1555 = allonet.allopicture_format_rgb1555,
-    rgb565 = allonet.allopicture_format_rgb565
+    rgb565 = allonet.allopicture_format_rgb565,
 }
 
 function Client:sendVideo(trackId, pixels, width, height, format, stride)
     local cformat = formatTable[format]
+    assert(cformat, "Invalid format: " .. tostring(format))
     self.handle.alloclient_send_video_pixels(self._client, trackId, pixels, width, height, cformat, stride);
 end
 
