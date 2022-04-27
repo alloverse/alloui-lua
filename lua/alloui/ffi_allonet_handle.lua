@@ -674,7 +674,7 @@ ffi.cdef [[
 
         // internal
         void (*send)(alloserver *serv, alloserver_client *client, allochannel channel, const uint8_t *buf, int len);
-        allo_state state;
+        allo_state *state;
 
         void *_backref; // use this as a backref for callbacks
         void *_internal; // used within server.c to hide impl
