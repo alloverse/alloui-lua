@@ -113,7 +113,9 @@ function Client:connect(avatar_spec)
     return self.handle.alloclient_connect(self._client,
         self.url,
         json.encode({display_name = self.name}),
-        json.encode(avatar_spec)
+        json.encode({
+            components=avatar_spec
+        })
     )
 end
 
@@ -145,7 +147,9 @@ function Client:spawnEntity(spec, cb)
     receiver_entity_id = "place",
     body = {
         "spawn_entity",
-        spec
+        {
+            components= spec
+        }
     }
   }, function(response, body)
     if cb == nil then return end
