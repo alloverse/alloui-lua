@@ -276,7 +276,7 @@ function Client:poll(timeout)
 end
 
 -- Can not call jit functions that in turn callback into lua functions
-jit.off(Client.poll)
+--jit.off(Client.poll)
 
 function Client:simulate()
     self.handle.alloclient_simulate(self._client)
