@@ -276,7 +276,14 @@ function Client:poll(timeout)
 end
 
 -- Can not call jit functions that in turn callback into lua functions
---jit.off(Client.poll)
+-- This for some reason does work in the visor tho!
+local function DisablePollFFI()
+    local status, _ = pcall(require, "lovr")
+    if not status then
+        jit.off(Client.poll)
+    end
+end
+DisablePollFFI()
 
 function Client:simulate()
     self.handle.alloclient_simulate(self._client)
