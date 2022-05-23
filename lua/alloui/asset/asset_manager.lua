@@ -220,7 +220,7 @@ function AssetManager:_handleRequest(name, offset, length)
     local asset = self:get(name)
     if asset == nil then
         print("Can not serve asset "..name)
-        self.client:sendAsset(name, nil, offset, 0)
+        self.client:sendAssetNotAvailable(name)
         return
     end
 

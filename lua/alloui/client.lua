@@ -353,7 +353,12 @@ function Client:requestAsset(assetId)
 end
 
 function Client:sendAsset(assetId, data, offset, total_size)
-    self.handle.alloclient_asset_send(self._client, assetId, data, offset-1, #data, total_size);
+    assert(data ~= nil, "Data may not be nil. Use sendAssetNotAvailable if asset not available.")
+    self.handle.alloclient_asset_send(self._client, assetId, data, offset-1, #data, total_size)
+end
+
+function Client:sendAssetNotAvailable(assetId)
+    self.handle.alloclient_asset_send(self._client, assetId, 0, 0, 0, 0)
 end
 
 
