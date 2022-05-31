@@ -84,6 +84,9 @@ function Asset:id(refresh)
     return self._id
 end
 
+--- Returns a File-like wrapper to send to methods that wants files
+-- It's not fully implemented; Fill out methods as needed.
+-- @treturn FileWrapper An object that implmeents the same methods as io.File
 function Asset:like_file()
     return FileWrapper(self)
 end
