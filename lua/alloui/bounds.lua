@@ -47,6 +47,11 @@ function Bounds:_init(a, b, z, w, h, d)
     end
 end
 
+function Bounds.unit()
+    return Bounds(0,0,0,1,1,1)
+end
+    
+
 function Bounds:__tostring()
     return "<Bounds "..tostring(self.size).." @ "..tostring(self.pose)..">"
 end
