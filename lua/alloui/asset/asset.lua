@@ -10,6 +10,7 @@ local class = require('pl.class')
 local types = require ('pl.types')
 local allonet = require('alloui.ffi_allonet_handle')
 local ffi = require("ffi")
+local FileWrapper = require 'alloui.asset.file_wrapper'
 
 Asset = class.Asset()
 
@@ -83,5 +84,8 @@ function Asset:id(refresh)
     return self._id
 end
 
+function Asset:like_file()
+    return FileWrapper(self)
+end
 
 return Asset
