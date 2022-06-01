@@ -62,9 +62,9 @@ function GeometryAsset.make9PatchGeometry(width, height, imageWidth, imageHeight
     local sx = imageInsetX/imageWidth
     local sy = imageInsetY/imageHeight
     local x1 = width/2
-    local x2 = x1 - imageInsetX
+    local x2 = x1 - width * sx / 2
     local y1 = height/2
-    local y2 = y1 - imageInsetY
+    local y2 = y1 - height * sy / 2
     
     local verts = { 
         {-x1,-y1,0}, {-x2,-y1,0}, {x2,-y1,0}, {x1,-y1,0},
