@@ -11,6 +11,7 @@ local types = require ('pl.types')
 local allonet = require('alloui.ffi_allonet_handle')
 local ffi = require("ffi")
 local FileWrapper = require 'alloui.asset.file_wrapper'
+local GetImageWidthHeight = require 'alloui.asset.get_image_width_height'
 
 Asset = class.Asset()
 
@@ -68,6 +69,12 @@ end
 function Asset:size()
     if self.data == nil then return 0 end
     return string.len(self.data)
+end
+
+--- Returns the pixel width and height of the asset that represents an image. Returns nil if the asset doesn't represent an image.
+-- @treturn (number, number) The width and height of the image (in pixels)
+function Asset:getImageWidthHeight()
+    return GetImageWidthHeight(self:like_file())
 end
 
 --- Returns a computed unique identifier for this asset
