@@ -637,11 +637,11 @@ function View:addPropertyAnimation(anim)
 end
 
 
---- Set the Surface's texture using an Asset.
+--- Set the Views's texture using an Asset.
 -- The `asset` parameter can be either an [Asset](asset) instance or a raw string hash
 --
 --~~~ lua
--- Surface:setTexture(asset)
+-- View:setTexture(asset)
 --~~~
 --
 -- @tparam [Asset](asset) asset An instance of an Asset
@@ -652,11 +652,11 @@ function View:setTexture(asset)
 end
 
 
---- Set the color of a Surface using a set of rgba values between 0 and 1.
--- E.g. to set the surface to be red and 50% transparent, set this value to `{1, 0, 0, 0.5}`
+--- Set the color of a View using a set of rgba values between 0 and 1.
+-- E.g. to set the view to be red and 50% transparent, set this value to `{1, 0, 0, 0.5}`
 --
 --~~~ lua
--- Surface:setColor(rgba)
+-- View:setColor(rgba)
 --~~~
 --
 -- @tparam table rgba A table defining a color value with alpha between 0-1.
