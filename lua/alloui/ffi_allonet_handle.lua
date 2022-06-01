@@ -721,7 +721,24 @@ ffi.cdef [[
 
     /// asset.h
     char *asset_generate_identifier(const uint8_t *bytes, size_t size);
+
+    typedef enum LogType { DEBUG, INFO, ERROR } LogType;
+    void allo_log(LogType type, const char *module, const char *identifiers, const char *format, ...);
 ]]
+
+local function makeLog(allonet)
+    _G["allo_log"] = function (logtype, module, identifiers, message)
+        if logtype == "DEBUG" then logtype = 0 end
+        if logtype == "INFO" then logtype = 1 end
+        if logtype == "ERROR" then logtype = 2 end
+        assert(type(logtype) == "number")
+        assert(module ~= nil)
+        assert(message ~= nil)
+        assert(message ~= "")
+        allonet.allo_log(logtype, "lua/"..module, identifiers, message);
+    end
+end
+
 
 function CreateAllonetHandle()
     if not allonet then 
@@ -737,6 +754,9 @@ function CreateAllonetHandle()
         print("Loading allonet through the current process")
     end
     math.randomseed( tonumber(allonet.allo_create_random_seed()) )
+
+    makeLog(allonet)
+
     return allonet
 end
 

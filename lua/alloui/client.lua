@@ -14,6 +14,10 @@ require(modules.."random_string")
 local Client = class.Client()
 require(modules.."client_updateState")
 
+local function log(t, message)
+    allo_log(t, "client", nil, message)
+end
+
 ---
 --
 --~~~ lua
@@ -208,13 +212,13 @@ function Client:onInteraction(inter)
         if body[2] == "error" then
           local code = body[3]
           local errstr = body[3]
-          print("Place did not accept our announce:", code, errstr)
+          log("ERROR", "Place did not accept our announce:", code, errstr)
           -- allonet will now disconnect us
           return
         end
         self.avatar_id = body[2]
         self.placename = body[3]
-        print("Welcome to",self.placename,", ",self.name,". Our avatar ID: " .. self.avatar_id)
+        log("INFO", string.format("Welcome to %s, %s. Our avatar ID is %s", self.placename, self.name, self.avatar_id))
         self.connected = true
         self.delegates.onConnected()
     end
