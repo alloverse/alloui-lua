@@ -20,6 +20,7 @@ return {
     StackView = require(modules.."views.stackview"),
     ProxyIconView = require(modules.."views.proxy_icon"),
     FrameView = require(modules.."views.frameview"),
+    Ninepatch = require(modules.."views.ninepatch"),
     Bounds = require(modules.."bounds"),
     Pose = require(modules.."pose"),
     App = require(modules.."app"),
@@ -29,4 +30,5 @@ return {
     Asset = require(modules.."asset.init"),
     PropertyAnimation = require(modules.."property_animation"),
     StandardAnimations = require(modules.."standard_animations")
+    
 }
