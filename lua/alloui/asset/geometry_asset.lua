@@ -67,10 +67,10 @@ function GeometryAsset.make9PatchGeometry(width, height, imageWidth, imageHeight
     local y2 = y1 - height * sy / 2
     
     local verts = { 
-        {-x1,-y1,0}, {-x2,-y1,0}, {x2,-y1,0}, {x1,-y1,0},
-        {-x1,-y2,0}, {-x2,-y2,0}, {x2,-y2,0}, {x1,-y2,0},
-        {-x1,y2,0}, {-x2,y2,0}, {x2,y2,0}, {x1,y2,0},
         {-x1,y1,0}, {-x2,y1,0}, {x2,y1,0}, {x1,y1,0},
+        {-x1,y2,0}, {-x2,y2,0}, {x2,y2,0}, {x1,y2,0},
+        {-x1,-y2,0}, {-x2,-y2,0}, {x2,-y2,0}, {x1,-y2,0},
+        {-x1,-y1,0}, {-x2,-y1,0}, {x2,-y1,0}, {x1,-y1,0},
     }
     local norms = {
         {0, 0, 1}, {0, 0, 1}, {0, 0, 1}, {0, 0, 1}, 
