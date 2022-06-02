@@ -32,6 +32,9 @@ function Ninepatch:setTexture(texture)
 end
 
 function Ninepatch:specification()
+    if not self.app then 
+        return View.specification(self)
+    end
     if not self.asset then
         self.asset = Asset.Geometry.make9PatchGeometry(
             self.bounds.size.width, 
