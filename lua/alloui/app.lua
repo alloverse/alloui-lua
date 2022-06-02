@@ -93,6 +93,11 @@ function App:onConnectionEstablished()
     return ret
 end
 
+function App:setMainView(newMainView)
+    self.mainView = newMainView
+    self.mainView:setApp(self)
+end
+
 function App:addRootView(view, cb)
     table.insert(self.rootViews, view)
     view._wantsSpawn = true
