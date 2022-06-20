@@ -73,6 +73,10 @@ function App:connect()
     end
     
     local mainSpec = self.mainView:specification()
+    if App.launchArguments.avatarToken then
+        -- used to associate a launch request with a specific avatar
+        mainSpec.avatar = {token= App.launchArguments.avatarToken}
+    end
     table.insert(self.rootViews, self.mainView)
     local ret = self.client:connect(mainSpec)
     if not ret then
