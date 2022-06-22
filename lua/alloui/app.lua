@@ -78,7 +78,7 @@ function App:connect()
         -- used to associate a launch request with a specific avatar
         mainSpec.avatar = {token= App.launchArguments.avatarToken}
     end
-    table.insert(self.rootViews, self.mainView)
+    self:addRootView(self.mainView)
     local ret = self.client:connect(mainSpec)
     if not ret then
         error("Failed to connect")
@@ -88,7 +88,6 @@ function App:connect()
 end
 function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
-        v._wantsSpawn = true
         v._isSpawned = true
         v:setApp(self)
         if v ~= self.mainView then
