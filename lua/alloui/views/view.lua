@@ -671,4 +671,8 @@ function View:layout()
     end
 end
 
+function View:__tostring()
+    return "<"..self._name..": "..self.viewId.."/"..(self.entity and self.entity.id or "unspawned")..">"
+end
+
 return View
