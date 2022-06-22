@@ -59,7 +59,7 @@ end
 
 --- The value to animate from. Can be a number, matrix (list of 16 numbers), vector (list of 3 numbers) or rotation
 -- (list of 4 numbers: angle, and the x y z of the axis). It MUST be the same kind of value as the property we're
--- animating (see [setPath](setPath)).
+-- animating (see [setPath](#propertyanimationsetpath-path)).
 --@tparam number|mat4|vec3|{a,ax,ay,az} from Value to animate from
 function PropertyAnimation:setFrom(from)
     self.from = from

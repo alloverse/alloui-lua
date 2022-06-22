@@ -1,5 +1,5 @@
 --- A component that defines the pose and size of a [View](view), i.e. its bounds within the world.
--- Note that any changes made to the Bounds using the methods below won't be applied (and thus visible in the world) until [View:setBounds()](/view#setBounds) is been run.
+-- Note that any changes made to the Bounds using the methods below won't be applied (and thus visible in the world) until [View:setBounds()](view#viewsetbounds-bounds) is been run.
 --
 -- @classmod Bounds
 
@@ -84,7 +84,7 @@ function Bounds:rotate(angle, x, y, z)
     return self
 end
 
---- Moves the Bounds. May be used in conjunction with [Size:getEdge()](Size#getEdge) to move the Bounds relative to its parent.
+--- Moves the Bounds. May be used in conjunction with [Size:getEdge()](Size#sizegetedge-vertical-horizontal-depthwise) to move the Bounds relative to its parent.
 -- @tparam number x The movement along the x axis.
 -- @tparam number y The movement along the y axis.
 -- @tparam number z The movement along the z axis.
