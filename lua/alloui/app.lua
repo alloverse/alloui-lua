@@ -27,6 +27,7 @@ end
 class.App()
 
 App.ScheduledAction = ScheduledAction
+App.launchArguments = {}
 
 ---
 --
