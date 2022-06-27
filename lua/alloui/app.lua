@@ -91,6 +91,7 @@ function App:onConnectionEstablished()
         v._isSpawned = true
         v:setApp(self)
         if v ~= self.mainView then
+            v._wantsSpawn = true
             self.client:spawnEntity(v:specification())
         end
     end
@@ -272,7 +273,7 @@ function App:onComponentAdded(cname, comp)
                 view.entity = comp:getEntity()
                 view:awake()
             else
-                print("Entity", comp:getEntity().id, "was added for view", vid, "that was already removed from superview: deleting entity")
+                print("Entity", comp:getEntity().id, "was added for view", view, "that was already removed from superview: deleting entity", debug.traceback())
                 local ent = comp:getEntity()
                 self.client:sendInteraction({
                     sender_entity_id = ent.id,

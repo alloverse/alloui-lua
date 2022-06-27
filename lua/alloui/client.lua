@@ -142,10 +142,13 @@ function Client:_respondToEquery(e)
     end
 end
 
-function Client:spawnEntity(spec, cb)
+function Client:spawnEntity(spec, cb, requested_by_id)
   assert(self.avatar_id ~= nil)
+  if requested_by_id == nil then
+    requested_by_id = self.avatar_id
+  end
   self:sendInteraction({
-    sender_entity_id = self.avatar_id,
+    sender_entity_id = requested_by_id,
     receiver_entity_id = "place",
     body = {
         "spawn_entity",
