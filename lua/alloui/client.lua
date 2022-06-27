@@ -147,6 +147,7 @@ function Client:spawnEntity(spec, cb, requested_by_id)
   if requested_by_id == nil then
     requested_by_id = self.avatar_id
   end
+  print("spawnEntity()", pretty.write(spec), debug.traceback())
   self:sendInteraction({
     sender_entity_id = requested_by_id,
     receiver_entity_id = "place",

@@ -92,6 +92,7 @@ function App:onConnectionEstablished()
         v:setApp(self)
         if v ~= self.mainView then
             v._wantsSpawn = true
+            print("onConnectionEstablished() _wantsSpawn=true", v)
             self.client:spawnEntity(v:specification())
         end
     end
@@ -106,6 +107,7 @@ end
 function App:addRootView(view, cb)
     table.insert(self.rootViews, view)
     view._wantsSpawn = true
+    print("addRootView() _wantsSpawn=true", view)
     if self.connected then
         view:setApp(self)
         self.client:spawnEntity(view:specification(), function(entityOrFalse)

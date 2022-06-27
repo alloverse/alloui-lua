@@ -40,6 +40,7 @@ function View:_init(bounds)
     self._tasksForAwakening = {}
     self._isSpawned = false
     self.material = {}
+    print("Here's our view:", self)
 end
 
 --- awake() is called when entity exists and is bound to this view.
@@ -298,6 +299,7 @@ function View:spawn()
     assert(self.superview and self.superview:isAwake())
     if self._wantsSpawn then return end
     self._wantsSpawn = true
+    print("spawn() _wantsSpawn=true", self, debug.traceback())
     self.app.client:spawnEntity(self:specification(), function()
         self._isSpawned = true
     end, self.superview.entity.id)
@@ -306,6 +308,7 @@ end
 function View:despawn()
     if not (self._wantsSpawn and self._isSpawned) then return end
     self._wantsSpawn = false
+    print("despawn() _wantsSpawn=false", self)
     self.app.client:sendInteraction({
         sender_entity_id = self.entity.id,
         receiver_entity_id = "place",
@@ -344,6 +347,7 @@ function View:removeFromSuperview()
     if self:isAwake() then
         self:despawn()
     end
+    print("removeFromSuperview() _wantsSpawn=false", self)
     self._wantsSpawn = false
     self.superview = nil
 end
