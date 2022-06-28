@@ -9,6 +9,10 @@ local pretty = require('pl.pretty')
 local util = require(modules .."util")
 local Asset = require(modules .. "asset.init")
 
+local function log(t, message)
+    allo_log(t, "app", nil, message)
+end
+
 local ScheduledAction = class.ScheduledAction()
 
 --- Schedule work to be done later
@@ -59,6 +63,9 @@ function App:_init(client)
     end
     client.delegates.onConnected = function()
         self.connected = true
+
+        log("INFO", string.format("App started successfully! Open the Alloverse Visor and connect to %s to see it in action!", client.url))
+
         if self.onConnected then 
             self:onConnected()
         end

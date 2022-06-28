@@ -221,7 +221,7 @@ function Client:onInteraction(inter)
         end
         self.avatar_id = body[2]
         self.placename = body[3]
-        log("INFO", string.format("Welcome to %s, %s. Our avatar ID is %s", self.placename, self.name, self.avatar_id))
+        log("INFO", string.format("%s successfully connected to %s with avatar ID %s", self.name, self.placename, self.avatar_id))
         self.connected = true
         self.delegates.onConnected()
     end
