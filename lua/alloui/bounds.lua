@@ -10,7 +10,7 @@ local pretty = require('pl.pretty')
 local Pose = require(modules .."pose")
 local Size = require(modules .."size")
 
-class.Bounds()
+local Bounds = class.Bounds()
 
 ---
 --~~~ lua
@@ -150,6 +150,57 @@ function Bounds:getEdge(name)
     elseif name == "back" then
         return self.pose:pos().z + self.size.depth/2
     end
+end
+
+function Bounds:x(value)
+    if value then 
+        self:move(self.pose:pos().x - value)
+    end
+    return self.pose:pos().x
+end
+
+function Bounds:y(value)
+    if value then 
+        self:move(0, self.pose:pos().y - value)
+    end
+    return self.pose:pos().y
+end
+
+function Bounds:z(value)
+    if value then 
+        self:move(0, 0, self.pose:pos().z - value)
+    end
+    return self.pose:pos().z
+end
+
+function Bounds:width(value)
+    if value then 
+        self.size.width = value
+    end
+    return self.size.width
+end
+
+function Bounds:height(value)
+    if value then 
+        self.size.height = value
+    end
+    return self.size.height
+end
+
+function Bounds:depth(value)
+    if value then 
+        self.size.depth = value
+    end
+    return self.size.depth
+end
+
+function Bounds:set(x, y, z, w, h, d)
+    self:x(x)
+    self:y(y)
+    self:z(z)
+    self:width(w)
+    self:height(h)
+    self:depth(d)
 end
 
 return Bounds

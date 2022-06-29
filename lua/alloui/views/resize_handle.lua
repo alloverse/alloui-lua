@@ -11,7 +11,7 @@ local Surface = require(modules.."views.surface")
 local Base64Asset = require(modules.."asset.init").Base64
 
 
-class.ResizeHandle(Surface)
+local ResizeHandle = class.ResizeHandle(Surface)
 ResizeHandle.assets = {
   default = Base64Asset("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAoklEQVR42u3WPQoCMRCG4SAp9gQSJOWWFpZRLLz/Fay33SuMYBEShcTCyRB4n+6r8kH+xjkAfyAXSbLkdK5SKpOOsN3kkZc5PlOR4n4vkpLTdS2WCVWKVVLiq2VaiQpUeCfN+/BLhaT7JnQquKj/LJrsPhXmqjDulza5hp0KLoofO6t87v5h/LhkcgCp0KxgNTqbXMOvCiN+QwAAAAAAgNm8ADLo6BHvQOAJAAAAAElFTkSuQmCC"), --  iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMzSURBVHgB7Zs/TFNBHMe/j7gJhM2wFZKyGY0mhkkpjNXgKjG6FCMMAm4aK9YmjLZdrAEGE43ORDsSqZOaqE3cJNFuJE4m4Fzv99ojz6N/ctzdA+/uk1ze670m5ft9vzvufncXQKDRaEywy1VWpllJwA5qrZILgqDe9htM+BArhYb9kMYhrjvg4tnlHStn4QYUDSkWDb/7WhXLcEc8QVpJMwL29hPs+jP6dGfnF/K5Ira3f2B39w/+dy5eGsfS3QyGh0+Jj1JkwHN2c5PXkPgb1+9YITxK/8BJvHhZEk0oURM4E60pPFm1TjyxxzTlcyWxepoM+Kftv69+hK18Z01aINEHh9hrE9lOGdAObwAc5wQk+fDpjdT3xy9cgQqmf883AVjGABvwyGCdAbKDOOk+oBv5x0VU3m5CJ2KbTiZH8fTZivSb7oTWCMg+XET68hRMoVs8ob0JmDLBhHhC2QCaNovoNqGT+PW111BF2YBKZdOoCd3Er6+9gipamoApE0yLJ7T1AbpNiEM8obUT7GRCZnZGuvOiFJZp8QSlxBrRCtWxO5FOTyG7vBjeU4pt/va98CoDpbDK5RUkx0bDz7rEi3MLrQMhDkUCkbk1cyjxBCUv5ubuhyZUWZZK95vnGImA44wYAX42CMfxBsBxvAFwHG8AHMcbAMfxBsAQ4Xy+rJ7DM51oNWIAT2acO39ayQQu3qQJymuDvfL2NJ8nE+bZ1FZm0UIUTZ8Jcd2h19/TC60R0CmNRfN52RWbL5+/HagzEQnaDNCdwzOdbeZoMcBUAjMOE5RTYqaztzy9xnOMHN4nqKIcAXGkrrtFgirKBsSRuiY6maCK1v8CpsRzTJigNS2emb0Wlihx7xGSxW+RgWUc6RaZOBHWcw6NtAFxrxyZ/j2fD4DjeAPECt27sI47ZEA9WkGTG1uhw1MCNTJgI1pDsy4bo2BwsD/cdiNQow0SE2gemtyHdnQUC6uobh3d+aEgCKADepnJsRE8yC60OzY3wk+O0gxjAW5RZCYvuXp09isrk/tHZ+mGXVKslGA3NH6maJ9sacaBhtY6SvsIzQOVcUaEnsF9e+podvYbTPhW9MFffPRLow5rPaEAAAAASUVORK5CYII=
   hover = Base64Asset("iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAqElEQVR42u3WvQ2DMBCGYVdUDMAqaVNRpfIYbJEBGOOqVAzgPahTs8LRIRskSJHzCel9uq/yJ/nvQgDwBzqqaLeld5EkTzb670fTtsxzlizFZcqSkddjyJbpixSLZKQtljlLVKDCpEnF8j78UkFs34SLCiHaP4suu0+Fe1Wo90u7XMOLCiFqW3dW2e9+U39ccjmAVDit4DU6u1zDQ4UavyEAAAAAAMDdrGEYQpwDzN6CAAAAAElFTkSuQmCC"), -- iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAKlSURBVHgB7Zs/TBRBFMa/udgZEioNHZpQGg2JYufdaSfKdUZiZSBBCmNNogImlh42xgit9gTsNFoaG6+VC3AVoST8qYd5e7uELLd3zM28Jdk3v2Qyd5vN3n3fzJvdebOjkEJrXTZVzZQJU4ZRDBpxWVBKtTqeYYQPmlLXxYc0Dia6VSLeVL9MuQUZUG+omN6wV4oPvIUc8QRpJc1QpvWHTb0NmVSoB8xDLjUy4CbkMkEhoCGYEoQTDIBwxBtwCZbcvfPI6vw/f9fgAvfvhRBAwTg4OLI6v3AGDAxctjrfegzoxus3r/Bw/D58ko7p5sYWZl/MWbd0Fl57wLvFJXxf/wkufIsnvIcAlwkc4glnA6jbp/FtQpb4qemncMXZAIp5ThO6iZ+anoQrXkKAywRu8YS3McC3CXmIJ7wOglkmrCx/sx686h9W2MUTLAkRanFqeWJo6Ao+fX5v6qs2l4jEz87Modncir5ziI/QTKyv/dC1x8/1zs6u7pf9/UP9bPKlXv7yVXMRUmIQTjAAwgkGQDjBAAgnGADhBAMgHDYDovn8jHsOjzvRyjIb3Pi/qR9Un+ix2+PRbI5mdf2wuFCPrkGFZpccWM8G02t158nbj4xcj3ICNosWnVq+07pDr//TC68hkJXGulces16xGR29ceYYRzh4M8B3Do8725zgxQCuBGYeJjivDXJnb5OYT3KMCenv/eI8CFJs55G9PZ1o7Ubug2Ae4omscHDF612ALXUdw2GCcwj0IrwjlDPhFZmLfEUmT5RS8EFYGYJwggEQTjDAlBbk0iADViGXBt0Gy2hvmpTItZJ5oPhtPnyEPJZoH7HUrbP/TKmebJ2lD6aqoPg9gZ56KatSjTXjzAO1bm+lnUd7Q2WePYLzkbyF9mC/Gof8CcdhjhrmlP2kYgAAAABJRU5ErkJggg==
@@ -28,7 +28,7 @@ ResizeHandle.assets = {
 -- @tparam table translationConstraint Only allow the indicated fraction of movement in the corresponding axis in the actuated entity’s local coordinate space. E g, to only allow movement along the floor (no lifting), set the y fraction to 0: `{1, 0, 1}`.
 -- @tparam table rotationConstraint Similarly, constrain rotation to the given fraction in the given euler axis in the actuated entity’s local coordinate space. E g, to only allow rotation along Y (so that it always stays up-right), use: `{0, 1, 0}`.
 function ResizeHandle:_init(bounds, translationConstraint, rotationConstraint)
-  self:super(bounds)
+  self:super(bounds or Bounds(0,0,0, 0.1, 0.1, 0.01))
   self:setDefaultTexture(self.assets.default)
   self:setHoverTexture(self.assets.hover)
   --self:setActivatedTexture(self.assets.active)
@@ -128,4 +128,5 @@ function ResizeHandle:onGrabEnded(sender)
   if not self.active then return end
   self.active = false
 end
+
 return ResizeHandle

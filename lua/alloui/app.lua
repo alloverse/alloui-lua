@@ -42,6 +42,7 @@ function App:_init(client)
     self.running = true
     self.connected = false
     self.videoSurfaces = {}
+    self.dirtyViews = {}
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -50,6 +51,9 @@ function App:_init(client)
     end
     client.delegates.onComponentRemoved = function(cname, comp)
         self:onComponentRemoved(cname, comp)
+    end
+    client.delegates.onComponentChanged = function(cname, comp, old)
+        self:onComponentChanged(cname, comp, old)
     end
     client.delegates.onDisconnected = function(code, message)
         self.connected = false
@@ -111,6 +115,11 @@ function App:addRootView(view, cb)
         end)
     end
     return view
+end
+
+function App:markDirtyView(view)
+    if not self.connected then return end
+    self.dirtyViews[view.entity.id] = view
 end
 
 --- Open a ui.View as a popup near a hand. Call from e g a button handler to
@@ -235,6 +244,12 @@ function App:runOnce(timeout)
           table.bininsert(self.scheduledActions, nextAction, compareActions)
       end
   end
+
+  for id,view in pairs(self.dirtyViews) do
+    view:updateComponents()
+  end
+  self.dirtyViews = {}
+
   self.client:poll(timeout)
 end
 
@@ -300,6 +315,19 @@ function App:onComponentRemoved(cname, comp)
     elseif cname == "visor" then
         local eid = comp.getEntity().id
         self:onVisorDisconnected(eid)
+    end
+end
+
+function App:onComponentChanged(cname, comp, old)
+    local ui = comp:getEntity().components.ui
+    if ui then 
+        if cname == "transform" then 
+            local vid = ui.view_id
+            local view = self:findView(vid)
+            if not view then return end
+            view.bounds.pose.transform = mat4.new(comp.matrix)
+        end
+        print("changed", cname, comp, old)
     end
 end
 

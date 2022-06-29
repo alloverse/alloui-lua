@@ -236,14 +236,16 @@ function View:markAsDirty(components)
         -- Everyone is dirty before they wake up
         return
     end
-    if type(components) == "string" then components = {components} end
-    local spec = self:specification()
-    if components == nil then components = tablex.keys(spec) end
-    local comps = {}
-    for i, component in ipairs(components) do
-        comps[component] = spec[component]
-    end
-    self:updateComponents(comps)
+    self.app:markDirtyView(self)
+    return
+    -- if type(components) == "string" then components = {components} end
+    -- local spec = self:specification()
+    -- if components == nil then components = tablex.keys(spec) end
+    -- local comps = {}
+    -- for i, component in ipairs(components) do
+    --     comps[component] = spec[component]
+    -- end
+    -- self:updateComponents(comps)
 end
 
 --- Give this view an extra transform on top of the bounds. This is useful for things like
@@ -251,11 +253,7 @@ end
 -- @tparam cpml.mat4 transform The transformation matrix to set
 function View:setTransform(transform)
     self.transform = transform
-    if self:isAwake() then
-      self:updateComponents({
-          transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
-      })
-    end
+    self:markAsDirty({"transform", "collider"})
 end
 
 --- If the entity backing this view has moved (e g grabbed by a user, or moved
