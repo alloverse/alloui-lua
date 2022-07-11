@@ -47,7 +47,6 @@ function App:_init(client)
     self.running = true
     self.connected = false
     self.videoSurfaces = {}
-    self.dirtyViews = {}
     client.delegates.onInteraction = function(inter, body, receiver, sender) 
         self:onInteraction(inter, body, receiver, sender) 
     end
@@ -127,11 +126,6 @@ function App:addRootView(view, cb)
         end)
     end
     return view
-end
-
-function App:markDirtyView(view)
-    if not self.connected then return end
-    self.dirtyViews[view.entity.id] = view
 end
 
 --- Open a ui.View as a popup near a hand. Call from e g a button handler to
@@ -256,12 +250,6 @@ function App:runOnce(timeout)
           table.bininsert(self.scheduledActions, nextAction, compareActions)
       end
   end
-
-  for id,view in pairs(self.dirtyViews) do
-    view:updateComponents()
-  end
-  self.dirtyViews = {}
-
   self.client:poll(timeout)
 end
 
