@@ -142,10 +142,13 @@ function Client:_respondToEquery(e)
     end
 end
 
-function Client:spawnEntity(spec, cb)
+function Client:spawnEntity(spec, cb, requested_by_id)
   assert(self.avatar_id ~= nil)
+  if requested_by_id == nil then
+    requested_by_id = self.avatar_id
+  end
   self:sendInteraction({
-    sender_entity_id = self.avatar_id,
+    sender_entity_id = requested_by_id,
     receiver_entity_id = "place",
     body = {
         "spawn_entity",
@@ -218,7 +221,7 @@ function Client:onInteraction(inter)
         end
         self.avatar_id = body[2]
         self.placename = body[3]
-        log("INFO", string.format("Welcome to %s, %s. Our avatar ID is %s", self.placename, self.name, self.avatar_id))
+        log("INFO", string.format("%s successfully connected to %s with avatar ID %s", self.name, self.placename, self.avatar_id))
         self.connected = true
         self.delegates.onConnected()
     end

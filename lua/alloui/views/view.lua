@@ -296,16 +296,9 @@ function View:spawn()
     assert(self.superview and self.superview:isAwake())
     if self._wantsSpawn then return end
     self._wantsSpawn = true
-    self.app.client:sendInteraction({
-        sender_entity_id = self.superview.entity.id,
-        receiver_entity_id = "place",
-        body = {
-            "spawn_entity",
-            self:specification()
-        }
-    }, function ()
+    self.app.client:spawnEntity(self:specification(), function()
         self._isSpawned = true
-    end)
+    end, self.superview.entity.id)
 end
 
 function View:despawn()
@@ -667,6 +660,10 @@ function View:layout()
     for i,v in ipairs(self.subviews) do
         v:layout()
     end
+end
+
+function View:__tostring()
+    return "<"..self._name..": "..self.viewId.."/"..(self.entity and self.entity.id or "unspawned")..">"
 end
 
 return View

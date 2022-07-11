@@ -9,6 +9,10 @@ local pretty = require('pl.pretty')
 local util = require(modules .."util")
 local Asset = require(modules .. "asset.init")
 
+local function log(t, message)
+    allo_log(t, "app", nil, message)
+end
+
 local ScheduledAction = class.ScheduledAction()
 
 --- Schedule work to be done later
@@ -27,6 +31,7 @@ end
 class.App()
 
 App.ScheduledAction = ScheduledAction
+App.launchArguments = {}
 
 ---
 --
@@ -62,6 +67,9 @@ function App:_init(client)
     end
     client.delegates.onConnected = function()
         self.connected = true
+
+        log("INFO", string.format("App started successfully! Open the Alloverse Visor and connect to %s to see it in action!", client.url))
+
         if self.onConnected then 
             self:onConnected()
         end
@@ -77,7 +85,11 @@ function App:connect()
     end
     
     local mainSpec = self.mainView:specification()
-    table.insert(self.rootViews, self.mainView)
+    if App.launchArguments.avatarToken then
+        -- used to associate a launch request with a specific avatar
+        mainSpec.avatar = {token= App.launchArguments.avatarToken}
+    end
+    self:addRootView(self.mainView)
     local ret = self.client:connect(mainSpec)
     if not ret then
         error("Failed to connect")
@@ -87,10 +99,10 @@ function App:connect()
 end
 function App:onConnectionEstablished()
     for _, v in ipairs(self.rootViews) do
-        v._wantsSpawn = true
         v._isSpawned = true
         v:setApp(self)
         if v ~= self.mainView then
+            v._wantsSpawn = true
             self.client:spawnEntity(v:specification())
         end
     end
@@ -283,7 +295,7 @@ function App:onComponentAdded(cname, comp)
                 view.entity = comp:getEntity()
                 view:awake()
             else
-                print("Entity", comp:getEntity().id, "was added for view", vid, "that was already removed from superview: deleting entity")
+                print("Entity", comp:getEntity().id, "was added for view", view, "that was already removed from superview: deleting entity", debug.traceback())
                 local ent = comp:getEntity()
                 self.client:sendInteraction({
                     sender_entity_id = ent.id,
