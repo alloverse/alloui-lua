@@ -49,12 +49,14 @@ end
 --
 -- @tparam number width With of the final geometry
 -- @tparam number height Height of the final geometry
+-- @tparam number insetX The geometry inset on X axis
+-- @tparam number insetY The geometry inset on Y axis
 -- @tparam number imageWidth The pixel width of the texture to be used
--- @tparam number imageHeight The pixel height of  the texture to be used
+-- @tparam number imageHeight The pixel height of the texture to be used
 -- @tparam number imageInsetX The left and right number of pixles that should not be stretched
 -- @tparam number imageInsetY The top and bottom number of pixles that should not be stretched
 -- @treturn Asset The generated model
-function GeometryAsset.make9PatchGeometry(width, height, imageWidth, imageHeight, imageInsetX, imageInsetY)
+function GeometryAsset.make9PatchGeometry(width, height, insetX, insetY, imageWidth, imageHeight, imageInsetX, imageInsetY)
     assert(imageWidth > 0, "may not be zero")
     assert(imageHeight > 0, "may not be zero")
     assert(imageWidth > imageInsetX*2, "Must leave some room for the centerpiece")
@@ -62,10 +64,10 @@ function GeometryAsset.make9PatchGeometry(width, height, imageWidth, imageHeight
     local sx = imageInsetX/imageWidth
     local sy = imageInsetY/imageHeight
     local x1 = width/2
-    local x2 = x1 - width * sx / 2
+    local x2 = x1 - insetX/2
     local y1 = height/2
-    local y2 = y1 - height * sy / 2
-    
+    local y2 = y1 - insetY/2
+    print(width,height)
     local verts = { 
         {-x1,y1,0}, {-x2,y1,0}, {x2,y1,0}, {x1,y1,0},
         {-x1,y2,0}, {-x2,y2,0}, {x2,y2,0}, {x1,y2,0},

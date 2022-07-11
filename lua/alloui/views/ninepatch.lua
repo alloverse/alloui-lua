@@ -16,10 +16,14 @@ class.Ninepatch(View)
 --~~~
 --
 -- @tparam [Bounds](bounds) bounds The Surface's bounds.
-function Ninepatch:_init(bounds, texture, inset)
+-- @tparam number inset The size of the border of the surface
+-- @tparam [Texture](texture) An asset with the 9patch image texture to use
+-- @tparam number textureInset The number of pixels to inset from each side in the texture image
+function Ninepatch:_init(bounds, inset, texture, textureInset)
     self:super(bounds)
     self.asset = nil
     self.inset = inset
+    self.textureInset = textureInset
     self.texturePixelWidth = 0
     self.texturePixelHeight = 0
 
@@ -39,10 +43,11 @@ function Ninepatch:specification()
         self.asset = Asset.Geometry.make9PatchGeometry(
             self.bounds.size.width, 
             self.bounds.size.height,
+            self.inset, self.inset,
             self.texturePixelWidth,
             self.texturePixelHeight,
-            self.inset,
-            self.inset
+            self.textureInset,
+            self.textureInset
         )
         self.app.assetManager:add(self.asset, false)
     end
