@@ -21,6 +21,7 @@ function ModelView:_init(bounds, asset)
     self:super(bounds or Bounds(0, 0, 0,   1, 1, 1))
     self.asset = asset
     self.color = {1, 1, 1, 1}
+    self.nodes = {}
 end
 
 function ModelView:setAsset(asset)
@@ -38,8 +39,30 @@ function ModelView:specification()
             }
         })
     end
+    if next(self.nodes) then
+        spec.skeleton = {
+            nodes= self.nodes
+        }
+    end
 
     return spec
+end
+
+function ModelView:poseNode(nodeName, pose, alpha)
+    if alpha == nil then alpha = 1.0 end
+
+    local m = mat4(pose.transform) -- clone
+    m._m = nil -- json-compatible
+    self.nodes[nodeName] = {
+        matrix= m,
+        alpha= alpha
+    }
+    self:markAsDirty("skeleton")
+end
+
+function ModelView:resetNode(nodeName)
+    self.nodes[nodeName] = nil
+    self:markAsDirty("skeleton")
 end
 
 return ModelView
