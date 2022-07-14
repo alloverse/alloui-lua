@@ -208,7 +208,8 @@ end
 --- Asks the backend to update components on the server.
 -- Use this to update things you've specified in :specification() but now want to change.
 -- @tparam table changes A table with the desired changes, for example: {transform={...}, collider={...}}
-function View:updateComponents(changes)
+-- @tparam table removals A table with the keys of componets to remove, for example: {"collider", "skeleton"}
+function View:updateComponents(changes, removals)
     if self.app == nil or self.entity == nil then return end
     changes = changes or self:specification()
     
@@ -219,7 +220,7 @@ function View:updateComponents(changes)
             "change_components",
             self.entity.id,
             "add_or_change", changes,
-            "remove", {}
+            "remove", removals or {}
         }
     }, function(resp, respbody)
         local ok = respbody[2]
@@ -243,7 +244,13 @@ function View:markAsDirty(components)
     for i, component in ipairs(components) do
         comps[component] = spec[component]
     end
-    self:updateComponents(comps)
+    local removals = {}
+    for _, key in ipairs(components) do
+        if comps[key] == nil then
+            table.insert(removals, key)
+        end
+    end
+    self:updateComponents(comps, removals)
 end
 
 --- Give this view an extra transform on top of the bounds. This is useful for things like
