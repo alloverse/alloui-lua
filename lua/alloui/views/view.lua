@@ -232,20 +232,29 @@ end
 
 --- Mark one or more Components as needing to have their server-side value updated ASAP
 -- @tparam string|{string} components either a string with one component to update, or a list if string components
-function View:markAsDirty(components)
+function View:markAsDirty(componentNames)
     if not self:isAwake() then 
         -- Everyone is dirty before they wake up
         return
     end
-    if type(components) == "string" then components = {components} end
+
+    -- if given only a single string, make it an array so rest of code can assume components is an array
+    if type(componentNames) == "string" then componentNames = {componentNames} end
+
     local spec = self:specification()
-    if components == nil then components = tablex.keys(spec) end
+
+    -- if we didn't get a list of components at all, use all comps in spec
+    if componentNames == nil then componentNames = tablex.keys(spec) end
+
+    -- from spec, pick the components we've been asked to mark dirty
     local comps = {}
-    for i, component in ipairs(components) do
-        comps[component] = spec[component]
+    for i, compName in ipairs(componentNames) do
+        comps[compName] = spec[compName]
     end
+
+    -- if a dirtied comp no longer has a spec, mark it for removal
     local removals = {}
-    for _, key in ipairs(components) do
+    for _, key in ipairs(componentNames) do
         if comps[key] == nil then
             table.insert(removals, key)
         end
