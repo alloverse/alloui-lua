@@ -22,6 +22,11 @@ function ModelView:_init(bounds, asset)
     self.asset = asset
     self.color = {1, 1, 1, 1}
     self.nodes = {}
+
+    -- XXX<nevyn> fixme!
+    -- this is a hack because removing the `skeleton` comp doesn't seem to be working
+    -- after removing the last node. does removeComponent not work in alloplace2?
+    self.hasHadNodes = false
 end
 
 function ModelView:setAsset(asset)
@@ -39,7 +44,7 @@ function ModelView:specification()
             }
         })
     end
-    if next(self.nodes) then
+    if self.hasHadNodes or next(self.nodes) then
         spec.skeleton = {
             nodes= self.nodes
         }
@@ -50,7 +55,7 @@ end
 
 function ModelView:poseNode(nodeName, pose, alpha)
     if alpha == nil then alpha = 1.0 end
-
+    self.hasHadNodes = true
     local m = mat4(pose.transform) -- clone
     m._m = nil -- json-compatible
     self.nodes[nodeName] = {
