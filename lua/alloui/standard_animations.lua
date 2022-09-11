@@ -74,5 +74,15 @@ function standard_animations.addSpawnAnimation(view)
     })
 end
 
+function standard_animations.addScaleOut(view, duration)
+    view:addPropertyAnimation(ui.PropertyAnimation{
+        path= "transform.matrix.scale",
+        from= {1, 1, 1},
+        to=   {0, 0, 0},
+        duration= duration,
+        easing="quadIn" 
+    })
+end
+
 
 return standard_animations
