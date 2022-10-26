@@ -41,6 +41,12 @@ function Pose:__tostring()
     return string.format("<Pose %0.3f, %0.3f, %0.3f>", pos.x, pos.y, pos.z)
 end
 
+function Pose:tojson()
+    local safe = mat4(self.transform)
+    safe._m = nil
+    return safe
+end
+
 --- Creates and returns a copy of a given Pose
 -- 
 -- @treturn [Pose](pose) A copy of the original Pose object.
