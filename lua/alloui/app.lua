@@ -262,12 +262,24 @@ end
 
 function App:onInteraction(inter, body, receiver, sender) 
     if receiver == nil or receiver.components.ui == nil then return end
+    if receiver.id == self.client.avatar_id then
+        self:onAppInteraction(inter, body, receiver, sender)
+        return
+    end
     local vid = receiver.components.ui.view_id
     local view = self:findView(vid)
     if view then
         view:onInteraction(inter, body, sender)
     else
         print("warning: got interaction", body[1], "for nonexistent vid ", vid, "eid", receiver.id)
+    end
+end
+
+function App:onAppInteraction(inter, body, receiver, sender)
+    if body[1] == "quit" then
+        print("Was asked to quit by", sender.id, ", obliging")
+        inter:respond({"quit", "ok"})
+        self:quit()
     end
 end
 
