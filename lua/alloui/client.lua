@@ -165,6 +165,43 @@ function Client:spawnEntity(spec, cb, requested_by_id)
   end)
 end
 
+--- Ask the place to launch an app found at `appurl`.
+-- @tparam appurl string   The `alloapp:` URL to launch into the connected place
+-- @tparam pose Pose       Transform/position of where in the place to launch the app
+-- @tparam args table      key-value table of additional arguments to send to the app
+-- @tparam cb function     Callback for how the launch went. On error, called as
+--                         `cb(false, errstr)`. On success, called as 
+--                         `cb(true, launchedAvatarId)`.
+function Client:launchApp(appurl, pose, args, cb)
+    print("Asking place to launch", appurl)
+    local jsonPos = pose:tojson()
+    if args == nil then args = {} end
+    args.initialLocation = jsonPos
+
+    self:sendInteraction({
+        receiver_entity_id = "place",
+        body = {
+            "launch_app",
+            appurl,
+            args
+        }
+    }, function(resp, body)
+        if body[2] ~= "ok" then
+            print("Failed to launch", self.desc.shortname, ":", resp.body)
+            local errstr = "unknown error"
+            if resp.body then errstr = body[3] end
+            local ok, jsonerr = pcall(json.decode, errstr)
+            if ok and jsonerr and jsonerr["error"] then
+                errstr = jsonerr["error"]
+            end
+            cb(false, errstr)
+        else
+            local launchedAvatarId = body[3]
+            cb(true, launchedAvatarId)
+        end
+    end)
+end
+
 --- Send an RPC message (aka "interaction") to another entity.
 -- If you're sending a "request" interaction (default), you should really
 -- listen to the callback to make sure your call succeeded.
