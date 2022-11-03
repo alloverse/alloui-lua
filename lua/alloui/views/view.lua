@@ -307,7 +307,11 @@ function View:addSubview(subview)
     if self:isAwake() then
         subview:spawn()
     end -- else, wait for awake()
+    subview:didMoveToSuperview(self)
     return subview
+end
+
+function View:didMoveToSuperview(newSuper)
 end
 
 function View:spawn()
