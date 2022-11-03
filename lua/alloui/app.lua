@@ -221,6 +221,8 @@ function App:run(hz)
         print("Error while running "..self.client.name..":\n", err,"\n", debug.traceback())
     end)
     print("Exiting "..self.client.name)
+    if self.onBeforeQuit then self.onBeforeQuit() end
+    
     self.client:disconnect(0)
 end
 
@@ -248,6 +250,13 @@ function App:runOnce(timeout)
       end
   end
   self.client:poll(timeout)
+end
+
+function App:runFor(secs)
+    local now = self:clientTime()
+    while self:clientTime() < now + secs do
+        app:runOnce(0.1)
+    end
 end
 
 function App:findView(vid)
