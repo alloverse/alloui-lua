@@ -25,6 +25,7 @@ local pretty = require('pl.pretty')
 local vec3 = require("modules.vec3")
 local mat4 = require("modules.mat4")
 local View = require(modules.."views.view")
+local ModelView = require(modules.."views.modelview")
 local Label = require(modules.."views.label")
 local Bounds = require(modules.."bounds")
 local Color = require(modules.."color")
@@ -37,6 +38,12 @@ class.Button(View)
 --~~~
 -- @tparam [Bounds](bounds) bounds The button's initial bounds.
 function Button:_init(bounds)
+    -- backwards compat: instantiate CubeButton if user asks for a plain unstyled Button
+    if getmetatable(self) == Button then
+        setmetatable(self, CubeButton)
+        return CubeButton._init(self, bounds)
+    end
+
     self:super(bounds or Bounds(0,0,0, 0.5, 0.25, 0.1))
     self.selected = false
     self.highlighted = false
@@ -48,17 +55,9 @@ function Button:_init(bounds)
     self.activatedTexture = nil
     self.highlightTexture = nil
 
-    self.cube = Cube(self.bounds:copy():moveToOrigin())
-    self.cube.color = self.color
-
     self.label = Label()
     self.label.color = Color.alloWhite()
-
-    self:addSubview(self.cube)
-    self.cube:addSubview(self.label)
-
-    self:layout()
-    self:_updateLooks()
+    self:addSubview(self.label)
 end
 
 function Button:awake()
@@ -67,21 +66,21 @@ function Button:awake()
     self._upSound = self.app:_getInternalAsset("sounds/soft-up.ogg")
 end
 
+function Button:didMoveToSuperview(newSuper)
+    self:layout()
+    self:_updateLooks()
+end
+
 function Button:layout()
-    self.cube.bounds = Bounds(
-        0, 0, 0,
-        self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
-    )
     self.label.bounds = Bounds(
-        0, 0, self.cube.bounds.size.depth / 2 -0.008,
-        self.cube.bounds.size.width*0.9, self.cube.bounds.size.height*0.7, 0.001
+        0, 0, self.bounds.size.depth / 2 +0.008,
+        self.bounds.size.width*0.9, self.bounds.size.height*0.7, 0.001
     )
 end
 
 function Button:updateComponents()
     View.updateComponents(self)
     self.label:updateComponents()
-    self.cube:updateComponents()
 end
 
 function Button:onInteraction(inter, body, sender)
@@ -142,16 +141,6 @@ function Button:_updateLooks()
         self.compressionAnimation = nil
     end
 
-    if self.selected and self.highlighted then
-        if self.activatedTexture then self.cube.texture = self.activatedTexture end
-    elseif self.highlighted then
-        if self.highlightTexture then self.cube.texture = self.highlightTexture end
-    else
-        if self.defaultTexture then self.cube.texture = self.defaultTexture end
-    end
-
-    self.cube.color = self:_effectiveColor()
-    self.cube:markAsDirty()
     self:markAsDirty()
 end
 
@@ -200,5 +189,74 @@ function Button:setColor(rgba)
     self.color = rgba
     self:_updateLooks()
 end
+
+
+-----
+class.CubeButton(Button)
+Button.Cube = CubeButton
+
+function CubeButton:_init(bounds)
+    Button._init(self, bounds)
+    self.cube = self:addSubview(Cube(self.bounds:copy():moveToOrigin()))
+    self.cube.color = self.color
+end
+
+function CubeButton:layout()
+    Button.layout(self)
+    self.cube.bounds = Bounds(
+        0, 0, 0,
+        self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth
+    )
+end
+
+function CubeButton:_updateLooks()
+    if self.selected and self.highlighted then
+        if self.activatedTexture then self.cube.texture = self.activatedTexture end
+    elseif self.highlighted then
+        if self.highlightTexture then self.cube.texture = self.highlightTexture end
+    else
+        if self.defaultTexture then self.cube.texture = self.defaultTexture end
+    end
+
+    self.cube.color = self:_effectiveColor()
+    self.cube:markAsDirty()
+end
+
+function CubeButton:updateComponents()
+    Button.updateComponents(self)
+    self.cube:updateComponents()
+end
+
+
+----
+class.MeshButton(Button)
+Button.Mesh = MeshButton
+
+function MeshButton:_init(bounds, model)
+    self:super(bounds)
+
+    self.model = model
+    self.mesh = ModelView(self.bounds:copy():moveToOrigin())
+    -- todo: self:addSubview(self.mesh) but that fails due to race condition
+
+end
+
+function MeshButton:awake()
+    Button.awake(self)
+    if self.model == nil then
+        self.model = self.app:_getInternalAsset("models/button.glb")
+        print("Loaded internal model", self.model)
+        self.mesh:setAsset(self.model)
+        self:addSubview(self.mesh)
+    end
+end
+
+function MeshButton:setBounds(bounds)
+    Button.setBounds(self, bounds)
+    self.mesh:poseNode("left", Pose(self.bounds.size.width*3, 0, 0))
+    self.mesh:poseNode("right", Pose(self.bounds.size.width/2, 0, 0))
+end
+
+
 
 return Button
