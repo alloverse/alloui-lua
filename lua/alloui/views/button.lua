@@ -37,11 +37,12 @@ class.Button(View)
 -- my_button = Button(bounds)
 --~~~
 -- @tparam [Bounds](bounds) bounds The button's initial bounds.
-function Button:_init(bounds)
+-- @tparam string text The button's initial text
+function Button:_init(bounds, text)
     -- backwards compat: instantiate CubeButton if user asks for a plain unstyled Button
     if getmetatable(self) == Button then
         setmetatable(self, CubeButton)
-        return CubeButton._init(self, bounds)
+        return CubeButton._init(self, bounds, text)
     end
 
     self:super(bounds or Bounds(0,0,0, 0.5, 0.25, 0.1))
@@ -56,6 +57,7 @@ function Button:_init(bounds)
     self.highlightTexture = nil
 
     self.label = Label()
+    if text then self.label:setText(text) end
     self.label.color = Color.alloWhite()
     self:addSubview(self.label)
 end
@@ -195,8 +197,8 @@ end
 class.CubeButton(Button)
 Button.Cube = CubeButton
 
-function CubeButton:_init(bounds)
-    Button._init(self, bounds)
+function CubeButton:_init(bounds, text)
+    Button._init(self, bounds, text)
     self.cube = self:addSubview(Cube(self.bounds:copy():moveToOrigin()))
     self.cube.color = self.color
 end
