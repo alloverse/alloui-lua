@@ -127,6 +127,12 @@ function View:transformFromWorld()
     end
 end
 
+function View:boundsFromWorld()
+    local bounds = self.bounds:copy()
+    bounds.pose.transform = self:transformFromWorld()
+    return bounds
+end
+
 
 --- Converts `point` from `other` view to this view
 -- If `other` is nil then the point is assumed to be in world space
