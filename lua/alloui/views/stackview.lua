@@ -63,6 +63,9 @@ end
 
 ---Layout the subviews
 function StackView:layout()
+    -- First layout children so they have the correct sizes
+    View.layout(self)
+
     if #self.subviews == 0 then return end
     local onAxis = self.onAxis
     local offAxis = self.offAxis
@@ -96,10 +99,10 @@ function StackView:layout()
         v.bounds.pose = pen:copy()
         v.bounds.size.width = size.x
         v.bounds.size.height = size.y
-        if v.layout then
-            v:layout()
-            v:markAsDirty()
-        end
+        
+        -- In case the size change requires v to layout again, do it
+        v:layout()
+        v:setBounds() -- to dirty transform
         pen:move(offset.x - margin.x, offset.y - margin.y, 0)
     end
     self:markAsDirty()

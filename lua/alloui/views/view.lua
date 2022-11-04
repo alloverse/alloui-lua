@@ -687,6 +687,9 @@ function View:setColor(rgba)
     self:markAsDirty("material")
 end
 
+--- Layout this view and its children. Override to implement your own custom layout.
+-- Don't forget to call super's implementation, and don't forget to markAsDirty if
+-- needed.
 function View:layout()
     for i,v in ipairs(self.subviews) do
         v:layout()
