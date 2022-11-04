@@ -39,11 +39,18 @@ function View:_init(bounds)
     self._currentSound = nil
     self._tasksForAwakening = {}
     self._isSpawned = false
+    self._dirty = {}
     self.material = {}
 end
 
 --- awake() is called when entity exists and is bound to this view.
 function View:awake()
+    -- in case we got dirtied between being created and being spawned
+    if next(self._dirty) ~= nil then
+        self.app:_scheduleForCleaning(self)
+    end
+    
+    -- create our children
     for _, subview in ipairs(self.subviews) do
         subview:spawn()
     end
@@ -230,36 +237,41 @@ function View:updateComponents(changes, removals)
     end)
 end
 
---- Mark one or more Components as needing to have their server-side value updated ASAP
--- @tparam string|{string} components either a string with one component to update, or a list if string components
-function View:markAsDirty(componentNames)
-    if not self:isAwake() then 
-        -- Everyone is dirty before they wake up
-        return
-    end
-
-    -- if given only a single string, make it an array so rest of code can assume components is an array
-    if type(componentNames) == "string" then componentNames = {componentNames} end
-
+function View:clean()
     local spec = self:specification()
-
-    -- if we didn't get a list of components at all, use all comps in spec
-    if componentNames == nil then componentNames = tablex.keys(spec) end
+    local toAddOrUpdate = {}
 
     -- from spec, pick the components we've been asked to mark dirty
-    local comps = {}
-    for i, compName in ipairs(componentNames) do
-        comps[compName] = spec[compName]
+    for _, compname in ipairs(self._dirty) do
+        toAddOrUpdate[compname] = spec[compname]
     end
 
     -- if a dirtied comp no longer has a spec, mark it for removal
     local removals = {}
-    for _, key in ipairs(componentNames) do
-        if comps[key] == nil then
-            table.insert(removals, key)
+    for _, compname in ipairs(self._dirty) do
+        if spec[compname] == nil then
+            table.insert(removals, compname)
         end
     end
-    self:updateComponents(comps, removals)
+
+    self:updateComponents(toAddOrUpdate, removals)
+    self._dirty = {}
+end
+
+--- Mark one or more Components as needing to have their server-side value updated ASAP
+-- @tparam string|{string} components either a string with one component to update, or a list if string components
+function View:markAsDirty(components)
+
+    -- if given only a single string, make it an array so rest of code can assume components is an array
+    if type(components) == "string" then components = {components} end
+
+    -- if we didn't get a list of components at all, use all comps in spec
+    if components == nil then components = tablex.keys(self:specification()) end
+
+    tablex.update(self._dirty, components)
+    if self.app then
+        self.app:_scheduleForCleaning(self)
+    end
 end
 
 --- Give this view an extra transform on top of the bounds. This is useful for things like
@@ -289,10 +301,7 @@ end
 function View:setBounds(bounds)
   if bounds == nil then bounds = self.bounds end
   self.bounds = bounds
-  if self:isAwake() then
-    local c = self:specification()
-    self:markAsDirty({"transform", "collider"})
-  end
+  self:markAsDirty({"transform", "collider"})
 end
 
 --- Adds a View as a child component to the given View.

@@ -234,6 +234,8 @@ function Client:sendInteraction(interaction, callback)
     end
     interaction.body = json.encode(interaction.body)
 
+    --print(">>>", pretty.write(interaction))
+
     local cinter = self.handle.allo_interaction_create(
         interaction.type,
         interaction.sender_entity_id,

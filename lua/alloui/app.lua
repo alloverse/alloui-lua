@@ -43,6 +43,7 @@ App.launchArguments = {}
 function App:_init(client)
     self.client = client
     self.mainView = View()
+    self.dirtyViews = {}
     self.rootViews = {}
     self.running = true
     self.connected = false
@@ -249,6 +250,7 @@ function App:runOnce(timeout)
           table.bininsert(self.scheduledActions, nextAction, compareActions)
       end
   end
+  self:_cleanViews()
   self.client:poll(timeout)
 end
 
@@ -333,6 +335,21 @@ function App:onComponentRemoved(cname, comp)
     elseif cname == "visor" then
         local eid = comp.getEntity().id
         self:onVisorDisconnected(eid)
+    end
+end
+
+function App:_scheduleForCleaning(view)
+    self.dirtyViews[view.viewId] = view
+end
+
+function App:_cleanViews()
+    if next(self.dirtyViews) == nil then return end
+
+    for vid, view in pairs(self.dirtyViews) do
+        if view.entity then
+            view:clean()
+            self.dirtyViews[vid] = nil
+        end
     end
 end
 
