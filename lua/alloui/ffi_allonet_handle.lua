@@ -716,6 +716,7 @@ ffi.cdef [[
 
     // internal
     int allo_socket_for_select(alloserver *server);
+    allo_m4x4 allo_gltf_get_node_transform(const unsigned char *bytes, uint64_t size, const char *node_name);
 
 
 

@@ -1,4 +1,5 @@
 local tablex = require("pl.tablex")
+local allonet = require('alloui.ffi_allonet_handle')
 
 -- http://lua-users.org/files/wiki_insecure/users/chill/table.binsearch-0.3.lua
 local fcomp_default = function( a,b ) return a < b end
@@ -55,7 +56,17 @@ function base64_encode(data)
     end)..({ '', '==', '=' })[#data%3+1])
 end
 
+function gltf_node_transform(asset, nodename)
+    local allom = allonet.allo_gltf_get_node_transform(asset.data, asset:size(), nodename)
+    local m = mat4.identity()
+    for i=1,16 do
+        m[i] = tonumber(allom.v[i-1])
+    end
+    return m
+end
+
 return {
     getTime= getTime,
-    base64_encode = base64_encode
+    base64_encode= base64_encode,
+    gltf_node_transform= gltf_node_transform,
 }

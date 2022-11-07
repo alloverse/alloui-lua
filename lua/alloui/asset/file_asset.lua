@@ -48,7 +48,6 @@ function FileAsset:size()
     return self._size
 end
 
--- callback: function(data)
 function FileAsset:read(offset, length)
     if not offset then offset = 1 end
     if not length then length = self:size() - (offset - 1) end

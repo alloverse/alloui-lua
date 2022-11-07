@@ -371,7 +371,7 @@ function App:_getInternalAsset(name)
         if lovr then
             self._internalAssets[name] = self.assetManager:add(Asset.LovrFile("lib/alloui/assets/"..name))
         else
-            self._internalAssets[name] = self.assetManager:add(Asset.File("./allo/deps/alloui/assets/"..name))
+            self._internalAssets[name] = self.assetManager:add(Asset.File("./allo/deps/alloui/assets/"..name, true))
         end
     end
     return self._internalAssets[name]

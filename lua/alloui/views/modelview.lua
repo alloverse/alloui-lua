@@ -6,6 +6,7 @@ local tablex = require('pl.tablex')
 local pretty = require('pl.pretty')
 local View = require(modules.."views.view")
 local Bounds = require(modules.."bounds")
+local util = require(modules.."util")
 
 class.ModelView(View)
 
@@ -63,6 +64,12 @@ function ModelView:poseNode(nodeName, pose, alpha)
         alpha= alpha
     }
     self:markAsDirty("skeleton")
+end
+
+function ModelView:transformNode(nodeName, pose, alpha)
+    local default = util.gltf_node_transform(self.asset, nodeName)
+    mat4.mul(pose.transform, default, pose.transform)
+    self:poseNode(nodeName, pose, alpha)
 end
 
 function ModelView:resetNode(nodeName)
