@@ -239,24 +239,19 @@ function MeshButton:_init(bounds, model)
 
     self.model = model
     self.mesh = ModelView(self.bounds:copy():moveToOrigin())
-    -- todo: self:addSubview(self.mesh) but that fails due to race condition
-
+    self.model = app:_getInternalAsset("models/button.glb")
+    self.mesh:setAsset(self.model)
+    self:addSubview(self.mesh)
 end
 
-function MeshButton:awake()
-    Button.awake(self)
-    if self.model == nil then
-        self.model = self.app:_getInternalAsset("models/button.glb")
-        print("Loaded internal model", self.model)
-        self.mesh:setAsset(self.model)
-        self:addSubview(self.mesh)
-    end
-end
 
 function MeshButton:setBounds(bounds)
     Button.setBounds(self, bounds)
-    self.mesh:poseNode("left", Pose(self.bounds.size.width*3, 0, 0))
-    self.mesh:poseNode("right", Pose(self.bounds.size.width/2, 0, 0))
+    local scale = 0.2
+    self.mesh.bounds:scale(scale, scale, 1.0)
+    local scaledWidth = bounds.size.width/scale
+    self.mesh:poseNode("left", Pose(0.0, scaledWidth/2, 0.0))
+    self.mesh:transformNode("right", Pose(0, scaledWidth/2, 0))
 end
 
 
