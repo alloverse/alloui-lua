@@ -73,6 +73,8 @@ function App:_init(client)
     end
     self.scheduledActions = {}
     self.assetManager = AssetManager(client)
+    
+    app = self -- global singleton lol
 end
 
 function App:connect()
