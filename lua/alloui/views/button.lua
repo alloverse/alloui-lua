@@ -250,7 +250,7 @@ function MeshButton:setBounds(bounds)
     local scale = 0.2
     self.mesh.bounds:scale(scale, scale, 1.0)
     local scaledWidth = bounds.size.width/scale
-    self.mesh:poseNode("left", Pose(0.0, scaledWidth/2, 0.0))
+    self.mesh:transformNode("left", Pose(0.0, scaledWidth/2, 0.0))
     self.mesh:transformNode("right", Pose(0, scaledWidth/2, 0))
 end
 
