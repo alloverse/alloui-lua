@@ -693,6 +693,15 @@ function View:setColor(rgba)
     self:markAsDirty("material")
 end
 
+function View:setColorSwap(from, to, position)
+    assert(#from == 4 and #to == 4)
+    if position == nil then position = 1 end
+    
+    if self.material.colorswap == nil then self.material.colorswap = {} end
+    self.material.colorswap[position] = {from, to}
+    self:markAsDirty("material")
+end
+
 --- Layout this view and its children. Override to implement your own custom layout.
 -- Don't forget to call super's implementation, and don't forget to markAsDirty if
 -- needed.
