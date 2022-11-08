@@ -241,6 +241,8 @@ function MeshButton:_init(bounds, model)
     self.mesh = ModelView(self.bounds:copy():moveToOrigin())
     self.model = app:_getInternalAsset("models/button.glb")
     self.mesh:setAsset(self.model)
+    self.mesh:setColorSwap(Color("00FF00FF"), Color("A9B6D1FF"), 1) -- bg
+    self.mesh:setColorSwap(Color("FF00FFFF"), Color("A9B6D1FF"), 1) -- frame
     self:addSubview(self.mesh)
 end
 
