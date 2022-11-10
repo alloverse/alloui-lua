@@ -121,6 +121,10 @@ function Client:connect(avatar_spec)
     )
 end
 
+--- Fetch an entity when it is received
+-- This is asynchronous because you might receive an interaction with
+-- an entity ID pointing to an entity that you haven't received yet.
+-- @tparam cb function(entity)   callback when entity is arrived
 function Client:getEntity(eid, cb)
     local existing = self.state.entities[eid]
     if existing then
