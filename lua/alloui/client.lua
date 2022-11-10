@@ -187,7 +187,7 @@ function Client:launchApp(appurl, pose, args, cb)
         }
     }, function(resp, body)
         if body[2] ~= "ok" then
-            print("Failed to launch", self.desc.shortname, ":", resp.body)
+            print("Failed to launch", appurl, ":", resp.body)
             local errstr = "unknown error"
             if resp.body then errstr = body[3] end
             local ok, jsonerr = pcall(json.decode, errstr)
