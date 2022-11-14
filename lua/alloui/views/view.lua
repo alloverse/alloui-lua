@@ -23,7 +23,6 @@ View.assets = {}
 --@tparam [Bounds](bounds) bounds The View's Bounds component
 function View:_init(bounds)
     self.viewId = string.random(16)
-    self.bounds = bounds and bounds or Bounds(0,0,0, 0,0,0)
     -- a transform applied on top of the bounds. Use for temporary adjustments, e g scale.
     self.transform = mat4.identity()
     self.subviews = {}
@@ -41,6 +40,8 @@ function View:_init(bounds)
     self._isSpawned = false
     self._dirty = {}
     self.material = {}
+    
+    self:setBounds(bounds or Bounds(0,0,0, 0,0,0))
 end
 
 --- awake() is called when entity exists and is bound to this view.

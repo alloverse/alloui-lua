@@ -235,12 +235,13 @@ class.MeshButton(Button)
 Button.Mesh = MeshButton
 
 function MeshButton:_init(bounds, model)
+    self.mesh = ModelView()
+    self.model = model or app:_getInternalAsset("models/button.glb")
+    self.mesh:setAsset(self.model)
+
+    -- this calls self:setBounds so we need to set the above before calling super
     self:super(bounds)
 
-    self.model = model
-    self.mesh = ModelView(self.bounds:copy():moveToOrigin())
-    self.model = app:_getInternalAsset("models/button.glb")
-    self.mesh:setAsset(self.model)
     self:addSubview(self.mesh)
     self.secondary = false
     self.theme = {
@@ -273,11 +274,11 @@ end
 
 function MeshButton:setBounds(bounds)
     Button.setBounds(self, bounds)
-    local scale = 0.2
-    self.mesh.bounds:scale(scale, scale, 1.0)
+    local scale = bounds.size.height
+    self.mesh.bounds = bounds:copy():moveToOrigin():scale(scale, scale, 1.0)
     local scaledWidth = bounds.size.width/scale
-    self.mesh:transformNode("left", Pose(0.0, scaledWidth/2, 0.0))
-    self.mesh:transformNode("right", Pose(0, scaledWidth/2, 0))
+    self.mesh:transformNode("left", Pose(0.0, scaledWidth, 0.0))
+    self.mesh:transformNode("right", Pose(0, scaledWidth, 0))
 end
 
 
