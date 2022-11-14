@@ -241,9 +241,33 @@ function MeshButton:_init(bounds, model)
     self.mesh = ModelView(self.bounds:copy():moveToOrigin())
     self.model = app:_getInternalAsset("models/button.glb")
     self.mesh:setAsset(self.model)
-    self.mesh:setColorSwap(Color("00FF00FF"), Color("A9B6D1FF"), 1) -- bg
-    self.mesh:setColorSwap(Color("FF00FFFF"), Color("A9B6D1FF"), 1) -- frame
     self:addSubview(self.mesh)
+    self.secondary = false
+    self.theme = {
+        --            background, frame,      text
+        neutral=     {"A9B6D1FF", "A9B6D1FF", "0C2B48FF"},
+        highlighted= {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
+        selected=    {"A9B6D1FF", "E7AADAFF", "E7AADAFF"},
+        secondary=   {"C8D0E0FF", "C8D0E0FF", "0C2B48FF"},
+    }
+end
+
+function MeshButton:setSecondary(sec)
+    if sec == self.secondary then return end
+    self.secondary = sec
+    self:_updateLooks()
+end
+
+function MeshButton:_updateLooks()
+    Button._updateLooks(self)
+    
+    local current = self.selected and self.theme.selected or
+                        self.highlighted and self.theme.highlighted or
+                        self.secondary and self.theme.secondary or
+                        self.theme.neutral
+    self.mesh:setColorSwap(Color("00FF00FF"), Color(current[1]), 1) -- background
+    self.mesh:setColorSwap(Color("FF00FFFF"), Color(current[2]), 2) -- frame
+    self.label:setColor(Color(current[3]))
 end
 
 
