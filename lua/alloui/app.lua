@@ -374,6 +374,7 @@ function App:_getInternalAsset(name)
             self._internalAssets[name] = self.assetManager:add(Asset.File("./allo/deps/alloui/assets/"..name, true))
         end
     end
+    assert(self._internalAssets[name])
     return self._internalAssets[name]
 end
 

@@ -77,4 +77,15 @@ function ModelView:resetNode(nodeName)
     self:markAsDirty("skeleton")
 end
 
+class.BackingPlate(ModelView)
+ModelView.BackingPlate = BackingPlate
+
+function BackingPlate:_init(bounds)
+    self:super(
+        bounds,
+        app:_getInternalAsset("models/backing.glb")
+    )
+    print("uuuh")
+end
+
 return ModelView
