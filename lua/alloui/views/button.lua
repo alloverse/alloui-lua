@@ -120,27 +120,9 @@ end
 function Button:_updateLooks()
     -- compress button when pressed
     if self.selected and self.highlighted then
-        self.decompressionAnimation = nil
-        if self.compressionAnimation == nil and self:isAwake() then
-            self.compressionAnimation = self:addPropertyAnimation(PropertyAnimation{
-                path= "transform.matrix.scale",
-                from= {1,1,1},
-                to=   {1.1,1.1,0.3},
-                duration = 0.5,
-                easing= "expOut",
-            })
-        end
+
     else
-        if self.compressionAnimation ~= nil and self.decompressionAnimation == nil and self:isAwake() then
-            self.decompressionAnimation = self:addPropertyAnimation(PropertyAnimation{
-                path= "transform.matrix.scale",
-                from= {1.1,1.1,0.3},
-                to=   {1,1,1},
-                duration = 0.5,
-                easing= "expOut",
-            })
-        end
-        self.compressionAnimation = nil
+
     end
 
     self:markAsDirty()
@@ -275,7 +257,7 @@ end
 function MeshButton:setBounds(bounds)
     Button.setBounds(self, bounds)
     local scale = bounds.size.height
-    self.mesh.bounds = bounds:copy():moveToOrigin():scale(scale, scale, 1.0)
+    self.mesh.bounds = bounds:copy():moveToOrigin():scale(scale, scale, scale*2)
     local scaledWidth = bounds.size.width/scale
     self.mesh:transformNode("left", Pose(0.0, scaledWidth, 0.0))
     self.mesh:transformNode("right", Pose(0, scaledWidth, 0))
