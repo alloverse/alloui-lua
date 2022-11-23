@@ -163,7 +163,8 @@ function View:specification()
             view_id = self.viewId
         },
         transform = {
-            matrix = _arrayFromMat4(self:_poseWithTransform())
+            matrix = _arrayFromMat4(self:_poseWithTransform()),
+            size = {self.bounds.size.width, self.bounds.size.height, self.bounds.size.depth},
         },
     }
     if self.superview and self.superview:isAwake() then
