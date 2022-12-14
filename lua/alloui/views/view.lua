@@ -25,6 +25,7 @@ function View:_init(bounds)
     self.viewId = string.random(16)
     -- a transform applied on top of the bounds. Use for temporary adjustments, e g scale.
     self.transform = mat4.identity()
+    self.transform = mat4(mat4.identity())
     self.subviews = {}
     self.entity = nil
     self.app = nil
@@ -286,7 +287,7 @@ end
 -- adding a scale effect.
 -- @tparam cpml.mat4 transform The transformation matrix to set
 function View:setTransform(transform)
-    self.transform = transform
+    self.transform = mat4(transform)
     if self:isAwake() then
       self:updateComponents({
           transform= {matrix= _arrayFromMat4(self:_poseWithTransform())}
