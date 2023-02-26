@@ -183,6 +183,7 @@ function CubeButton:_init(bounds, text)
     Button._init(self, bounds, text)
     self.cube = self:addSubview(Cube(self.bounds:copy():moveToOrigin()))
     self.cube.color = self.color
+    self:layout()
 end
 
 function CubeButton:layout()
@@ -233,6 +234,7 @@ function MeshButton:_init(bounds, model)
         selected=    {"A9B6D1FF", "E7AADAFF", "E7AADAFF"},
         secondary=   {"C8D0E0FF", "C8D0E0FF", "0C2B48FF"},
     }
+    self:layout()
 end
 
 function MeshButton:setSecondary(sec)
