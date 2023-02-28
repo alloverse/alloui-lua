@@ -218,9 +218,8 @@ class.MeshButton(Button)
 Button.Mesh = MeshButton
 
 function MeshButton:_init(bounds, model)
-    self.mesh = ModelView()
     self.model = model or app:_getInternalAsset("models/button.glb")
-    self.mesh:setAsset(self.model)
+    self.mesh = ModelView(Bounds.unit(), self.model)
 
     -- this calls self:setBounds so we need to set the above before calling super
     self:super(bounds)
