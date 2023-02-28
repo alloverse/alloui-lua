@@ -13,41 +13,42 @@ local Slider = class.Slider(View)
 
 
 function Slider:_init(bounds)
+    self.trackModel = app:_getInternalAsset("models/slider-track.glb")
+    self.knobModel =  app:_getInternalAsset("models/slider-knob.glb")
+
+    self.track = ModelView(Bounds.unit(), self.trackModel)
+    self.knob =  ModelView(Bounds.unit(), self.knobModel)
+
     bounds = bounds or Bounds(0,0,0, 0.8, 0.13, 0.1)
     self:super(bounds)
     self._minValue = 0.0
     self._maxValue = 1.0
     self._currentValue = 0.5
 
-    
 
-    self.track = Cube()
-    self.knob = Cube()
 
     self:addSubview(self.track)
     self:addSubview(self.knob)
 
-    self.track.color = {1, 0, 0, 1}
-    self.knob.color = {0.5, 0, 0.4, 1}
     self:setPointable(true)
     self:layout()
 end
 
 
 function Slider:layout()
-    self.track.bounds.size = self.bounds.size:copy()
-    self.track.bounds.size.height = self.bounds.size.height / 2.0
-    self.track.bounds.size.depth = self.bounds.size.depth / 2.0
-
-    self.knob.bounds.size = self.bounds.size:copy()
-    self.knob.bounds.size.width = self.knob.bounds.size.height/2
-
     local fraction = (self._currentValue - self._minValue) / (self._maxValue - self._minValue)
     local x = fraction * self.bounds.size.width - self.bounds.size.width / 2
-    self.knob.bounds:moveToOrigin():move(x, 0, 0)
+    local bounds = self.bounds
+    self.track.bounds = bounds:copy():moveToOrigin():scale(bounds.size.height, bounds.size.height, bounds.size.height)
+    self.knob.bounds  = bounds:copy():moveToOrigin():scale(bounds.size.height, bounds.size.height, bounds.size.height)
+    self.knob.bounds:move(x, 0, 0)
 
-    self.track:markAsDirty("transform")
-    self.knob:markAsDirty("transform")
+    self.track:setBounds()
+    self.knob:setBounds()
+
+    local scaledWidth = bounds.size.width / bounds.size.height
+    self.track:transformNode("Left", Pose(0.0, scaledWidth/2, 0.0))
+    self.track:transformNode("Right", Pose(0, scaledWidth/2, 0))
 end
 
 function Slider:activate(sender, value)
