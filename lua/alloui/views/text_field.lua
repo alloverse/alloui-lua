@@ -40,8 +40,6 @@ local Pose = require(modules.."pose")
 local Size = require(modules.."size")
 local Color = require(modules.."color")
 
-
-local BORDER_WIDTH = 0.005
 local PLACEHOLDER = "Placeholder"
 
 class.TextField(View)
@@ -60,22 +58,14 @@ class.TextField(View)
 -- @tparam table o A table including *at least* a Bounds component.
 function TextField:_init(o)
     self:super(o.bounds and o.bounds or o)
-    local plaqueBounds = Bounds{size=self.bounds.size:copy()}:insetEdges(BORDER_WIDTH) -- Shrink the "main" plate of the textbox to make room for the border without causing z-fighting
-    self.plaque = Cube(plaqueBounds)
-    self.plaque.color = Color.alloWhite()
-    self:addSubview(self.plaque)
 
-    -- Add frame to the text field
-    self.border = FrameView(
-        Bounds(self.bounds:copy():moveToOrigin()),
-        BORDER_WIDTH
-    )
-    self.border:setColor(Color.alloDarkPink())
-    self:addSubview(self.border)
+    self.frameModel = app:_getInternalAsset("models/textfield.glb")
+    self.frame = ModelView(Bounds.unit(), self.frameModel)
+    self:addSubview(self.frame)
     
 
-    local labelBounds = plaqueBounds:copy()
-    labelBounds:move(0.02, 0, plaqueBounds.size.depth/2+0.001)
+    local labelBounds = self.bounds:copy():moveToOrigin()
+    labelBounds:move(0.02, 0, labelBounds.size.depth * 0.1)
     labelBounds.size.height = labelBounds.size.height * 0.7
     o.bounds = labelBounds
     o.halign = o.halign and o.halign or "left"
@@ -91,8 +81,16 @@ function TextField:_init(o)
     self.onChange = o.onChange and o.onChange or function(field, oldText, newText) return true end
 
     self.onLostFocus = o.onLostFocus and o.onLostFocus or function(field) end
+
+    self.theme = {
+        --            background, frame,      text
+        neutral=     {"A9B6D1FF", "A9B6D1FF", "0C2B48FF"},
+        highlighted= {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
+        selected=    {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
+    }
     
     self:layout()
+    self:_updateLooks()
 end
 
 function TextField:onInteraction(inter, body, sender)
@@ -110,14 +108,10 @@ function TextField:onFocus(newFocused)
     View.onFocus(self, newFocused)
     self.isFocused = newFocused
 
-    self.plaque:setColor(Color.alloLightBlue())
-    self.border:setColor(Color.alloDarkBlue())
-    self:layout()
+    self:_updateLooks()
 
     if not newFocused then
         self.onLostFocus(self)
-        self.plaque:setColor(Color.alloWhite())
-        self.border:setColor(Color.alloDarkPink())
     end
     return true
 end
@@ -140,7 +134,25 @@ end
 
 function TextField:layout()
     self.label.insertionMarker = self.isFocused
+    
     self.label:updateComponents({text=self.label:specification().text})
+
+    local bounds = self.bounds
+    local scale = bounds.size.height
+    self.frame.bounds = bounds:copy():moveToOrigin():scale(scale, scale, -scale)
+    local scaledWidth = bounds.size.width/scale
+    self.frame:transformNode("left", Pose(0.0, scaledWidth, 0.0))
+    self.frame:transformNode("right", Pose(0, scaledWidth, 0))
+end
+
+function TextField:_updateLooks()
+    
+    local current = self.isFocused and self.theme.selected or
+                        self.highlighted and self.theme.highlighted or
+                        self.theme.neutral
+    self.frame:setColorSwap(Color("00FF00FF"), Color(current[1]), 1) -- background
+    self.frame:setColorSwap(Color("FF00FFFF"), Color(current[2]), 2) -- frame
+    self.label:setColor(Color(current[3]))
 end
 
 --- Appends the provided text to the TextField
