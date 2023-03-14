@@ -67,7 +67,7 @@ function TextField:_init(o)
 
     -- Add frame to the text field
     self.border = FrameView(
-        Bounds(self.bounds:copy()),
+        Bounds(self.bounds:copy():moveToOrigin()),
         BORDER_WIDTH
     )
     self.border:setColor(Color.alloDarkPink())
