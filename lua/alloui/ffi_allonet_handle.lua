@@ -716,9 +716,22 @@ ffi.cdef [[
 
     // internal
     int allo_socket_for_select(alloserver *server);
+
+    // allo_gltf.c
+    typedef struct {
+        float x, y, z;
+    } allo_gltf_point;
+    
+    typedef struct {
+        allo_gltf_point min;
+        allo_gltf_point max;
+    } allo_gltf_bb;
+    bool allo_gltf_load(const unsigned char *bytes, uint32_t size, const char *name_);
+    bool allo_gltf_unload(const unsigned char *bytes, uint32_t size, const char *name_);
+    bool allo_gltf_get_aabb(const char *name_, allo_gltf_bb *bb);
     allo_m4x4 allo_gltf_get_node_transform(const unsigned char *bytes, uint64_t size, const char *node_name);
 
-
+    
 
     /// asset.h
     char *asset_generate_identifier(const uint8_t *bytes, size_t size);

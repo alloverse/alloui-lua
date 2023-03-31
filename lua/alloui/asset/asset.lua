@@ -12,6 +12,7 @@ local allonet = require('alloui.ffi_allonet_handle')
 local ffi = require("ffi")
 local FileWrapper = require 'alloui.asset.file_wrapper'
 local GetImageWidthHeight = require 'alloui.asset.get_image_width_height'
+local Model = require 'alloui.asset.model_asset'
 
 Asset = class.Asset()
 
@@ -96,6 +97,10 @@ end
 -- @treturn FileWrapper An object that implmeents the same methods as io.File
 function Asset:like_file()
     return FileWrapper(self)
+end
+
+function Asset:model()
+    return Model(self)
 end
 
 return Asset
