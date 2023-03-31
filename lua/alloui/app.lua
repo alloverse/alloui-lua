@@ -401,4 +401,27 @@ function App:removeVideoSurface(surface)
     end
 end
 
+
+--- Asks the backend to update components on the server.
+-- Use this to update things you've specified in :specification() but now want to change.
+-- @tparam table changes A table with the desired changes, for example: {transform={...}, collider={...}}
+-- @tparam table removals A table with the keys of componets to remove, for example: {"collider", "skeleton"}
+function App:updateComponents(entity, changes, removals)    
+    self.client:sendInteraction({
+        sender_entity_id = entity.id,
+        receiver_entity_id = "place",
+        body = {
+            "change_components",
+            entity.id,
+            "add_or_change", changes,
+            "remove", removals or {}
+        }
+    }, function(resp, respbody)
+        local ok = respbody[2]
+        if ok ~= "ok" then
+            print("Warning: Failed to ",self,":updateComponents(",pretty.write(changes),")")
+        end
+    end)
+end
+
 return App
