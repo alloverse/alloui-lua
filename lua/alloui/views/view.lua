@@ -181,12 +181,25 @@ function View:specification()
         end
     end
 
-    if self.grabbable or self.hasCollider then
-        local s = self.bounds.size
-        mySpec.collider = {
-            type= "box",
-            width= s.width, height= s.height, depth= s.depth
-        }
+    if self.grabbable or self.hasCollider or self.collider then
+        if self.collider then
+            local collider = self.collider
+            mySpec.collider = {
+                type= "box",
+                x = collider.x or collider.center.x or 0,
+                y = collider.y or collider.center.y or 0,
+                z = collider.z or collider.center.z or 0,
+                width = collider.width or collider.size.width or collider.size.x or self.bounds.size.width,
+                height = collider.height or collider.size.height or collider.size.y or self.bounds.size.height,
+                depth = collider.depth or collider.size.depth or collider.size.z or self.bounds.size.depth
+            }
+        else
+            local s = self.bounds.size
+            mySpec.collider = {
+                type= "box",
+                width = s.width, height = s.height, depth = s.depth
+            }
+        end
     end
 
     if self.acceptedFileExtensions then
