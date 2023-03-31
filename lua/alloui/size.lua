@@ -1,4 +1,4 @@
---- The size (in meters) of a view or element in the world.  
+--- The setfenv(...) (in meters) of a view or element in the world.  
 -- Note that size and scale are different things: size is the semantic size of your app
 -- (e g "this button is 2 dm wide") while scale is the scaling up or down of this semantic
 -- size (e g a transformation matrix with a 2.0 X-axis scale and a 2dm width is 4dm wide, but its
@@ -51,6 +51,17 @@ function Size:inset(byWidth, byHeight, byDepth)
     return self
 end
 
+
+--- Sets width, height and depth
+--
+-- @tparam number width The width of the component.
+-- @tparam number height The height of the component.
+-- @tparam number depth The depth of the component.
+function Size:set(width, height, depth)
+    self.width = width or self.width
+    self.height = height or self.height
+    self.depth = depth or self.depth
+end
 
 --- Returns the position relative to the object's edge(s).
 --
