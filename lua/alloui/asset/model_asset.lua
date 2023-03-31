@@ -1,22 +1,36 @@
 local class = require('pl.class')
-local types = require ('pl.types')
 local allonet = require('alloui.ffi_allonet_handle')
 local ffi = require("ffi")
-local FileWrapper = require 'alloui.asset.file_wrapper'
-local GetImageWidthHeight = require 'alloui.asset.get_image_width_height'
 
 Model = class.Model()
 
 function Model:_init(asset)
     self.asset = asset
-    if not allonet.allo_gltf_load(asset:id(), asset:read(), asset:size()) then
-        error("Failed to load model from asset " .. asset:id())
-    end
+    self.loaded = false
 end
 
+function Model:load()
+    if self.loaded then 
+        return true
+    end
+    if not allonet.allo_gltf_load(self.asset:id(), self.asset:read(), self.asset:size()) then
+        return false
+    end
+    self.loaded = true
+    return true
+end
+
+--- Return the models bounding box as a table
+--
+-- @return The AABB {min={x=,y=,z=}, max={x=,y=,z=}, center={x=,y=,z=}, size={x=,y=,z=}}
 function Model:getAABB()
+    if not self:load() then 
+        return  nil
+    end
     local bb = ffi.new("allo_gltf_bb")
-    allonet.allo_gltf_get_aabb(self.asset:id(), bb)
+    if not allonet.allo_gltf_get_aabb(self.asset:id(), bb) then 
+        return nil
+    end
     return {
         min = {
             x = bb.min.x,
@@ -43,6 +57,7 @@ end
 
 function Model:__gc()
     print("Model unloading")
+    self.loaded = false
     allonet.allo_gltf_unload(self.asset:id())
 end
 
