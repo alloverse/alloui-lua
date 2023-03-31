@@ -726,9 +726,9 @@ ffi.cdef [[
         allo_gltf_point min;
         allo_gltf_point max;
     } allo_gltf_bb;
-    bool allo_gltf_load(const unsigned char *bytes, uint32_t size, const char *name_);
-    bool allo_gltf_unload(const unsigned char *bytes, uint32_t size, const char *name_);
-    bool allo_gltf_get_aabb(const char *name_, allo_gltf_bb *bb);
+    bool allo_gltf_load(const char *name, const unsigned char *bytes, uint32_t size);
+    bool allo_gltf_unload(const char *name, const unsigned char *bytes, uint32_t size);
+    bool allo_gltf_get_aabb(const char *name, allo_gltf_bb *bb);
     allo_m4x4 allo_gltf_get_node_transform(const unsigned char *bytes, uint64_t size, const char *node_name);
 
     
