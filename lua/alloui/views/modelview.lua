@@ -85,6 +85,7 @@ function BackingPlate:_init(bounds)
         bounds,
         app:_getInternalAsset("models/backing.glb")
     )
+    self:layout()
 end
 
 function BackingPlate:layout()
@@ -92,7 +93,7 @@ function BackingPlate:layout()
     local s = self.bounds.size
     self:transformNode("left",  Pose(0.0, s.width/2, 0.0))
     self:transformNode("right", Pose(0.0, s.width/2, 0.0))
-    self:transformNode("top",  Pose(0.0, s.height/2, 0.0))
+    self:transformNode("top",   Pose(0.0, s.height/2, 0.0))
     self:transformNode("bottom", Pose(0.0, s.height/2, 0.0))
 end
 
