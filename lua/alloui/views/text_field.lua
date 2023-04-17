@@ -83,10 +83,10 @@ function TextField:_init(o)
     self.onLostFocus = o.onLostFocus and o.onLostFocus or function(field) end
 
     self.theme = {
-        --            background, frame,      text
-        neutral=     {"A9B6D1FF", "A9B6D1FF", "0C2B48FF"},
-        highlighted= {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
-        selected=    {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
+        --            underline ,  frame,      text,      placeholder
+        neutral=     {"A9B6D1FF", "A9B6D1FF", "FFFFFFFF", "A9B6D1FF"},
+        highlighted= {"D488C6FF", "A9B6D1FF", "FFFFFFFF", "A9B6D1FF"},
+        selected=    {"D488C6FF", "A9B6D1FF", "FFFFFFFF", "A9B6D1FF"},
     }
     
     self:layout()
@@ -146,11 +146,10 @@ function TextField:layout()
 end
 
 function TextField:_updateLooks()
-    
     local current = self.isFocused and self.theme.selected or
                         self.highlighted and self.theme.highlighted or
                         self.theme.neutral
-    self.frame:setColorSwap(Color("00FF00FF"), Color(current[1]), 1) -- background
+    self.frame:setColorSwap(Color("00FF00FF"), Color(current[1]), 1) -- underline
     self.frame:setColorSwap(Color("FF00FFFF"), Color(current[2]), 2) -- frame
     self.label:setColor(Color(current[3]))
 end
