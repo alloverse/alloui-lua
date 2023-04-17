@@ -25,6 +25,12 @@ function Slider:_init(bounds)
     self._maxValue = 1.0
     self._currentValue = 0.5
 
+    self.theme = {
+        --            track     ,  knob 
+        neutral=     {"A9B6D1FF", "E7AADAFF"},
+        highlighted= {"A9B6D1FF", "D488C6FF"},
+        selected=    {"A9B6D1FF", "D488C6FF"},
+    }
 
 
     self:addSubview(self.track)
@@ -32,6 +38,7 @@ function Slider:_init(bounds)
 
     self:setPointable(true)
     self:layout()
+    self:_updateLooks()
 end
 
 
@@ -47,9 +54,17 @@ function Slider:layout()
     self.knob:setBounds()
 
     local scaledWidth = bounds.size.width / bounds.size.height
-    self.track:transformNode("Left", Pose(0.0, scaledWidth/2, 0.0))
-    self.track:transformNode("Right", Pose(0, scaledWidth/2, 0))
+    self.track:transformNode("left", Pose(0.0, scaledWidth/2, 0.0))
+    self.track:transformNode("right", Pose(0, scaledWidth/2, 0))
 end
+
+function Slider:_updateLooks()
+    local current =  self.highlighted and self.theme.highlighted or
+                     self.theme.neutral
+    self.track:setColorSwap(Color("FF00FFFF"), Color(current[1]), 1) -- track
+    self.knob:setColorSwap(Color("00FF00FF"),  Color(current[2]), 1) -- knob
+end
+
 
 function Slider:activate(sender, value)
 
