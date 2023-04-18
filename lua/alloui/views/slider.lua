@@ -18,6 +18,7 @@ function Slider:_init(bounds)
 
     self.track = ModelView(Bounds.unit(), self.trackModel)
     self.knob =  ModelView(Bounds.unit(), self.knobModel)
+    self.label = Label(Bounds.unit())
 
     bounds = bounds or Bounds(0,0,0, 0.8, 0.13, 0.1)
     self:super(bounds)
@@ -26,15 +27,16 @@ function Slider:_init(bounds)
     self._currentValue = 0.5
 
     self.theme = {
-        --            track     ,  knob 
-        neutral=     {"A9B6D1FF", "E7AADAFF"},
-        highlighted= {"A9B6D1FF", "D488C6FF"},
-        selected=    {"A9B6D1FF", "D488C6FF"},
+        --            track     ,  knob     ,  label
+        neutral=     {"A9B6D1FF", "E7AADAFF", "0C2B48FF"},
+        highlighted= {"A9B6D1FF", "D488C6FF", "0C2B48FF"},
+        selected=    {"A9B6D1FF", "D488C6FF", "0C2B48FF"},
     }
 
 
     self:addSubview(self.track)
     self:addSubview(self.knob)
+    self.knob:addSubview(self.label)
 
     self:setPointable(true)
     self:layout()
@@ -50,6 +52,15 @@ function Slider:layout()
     self.knob.bounds  = bounds:copy():moveToOrigin():scale(bounds.size.height, bounds.size.height, bounds.size.height)
     self.knob.bounds:move(x, 0, 0)
 
+    
+
+    self.label:setBounds(bounds:copy():moveToOrigin():move(0, 0, self.bounds.size.depth/2 * 1/bounds.size.height))
+    self.label:setText(string.format("%.2f", self._currentValue))
+
+    self.knob:transformNode("left", Pose(0.0, -1.0, 0.0))
+    self.knob:transformNode("right", Pose(0, -1.0, 0))
+
+    -- ?? this needs to be after knob:transformNode or we can't move the knob
     self.track:setBounds()
     self.knob:setBounds()
 
@@ -63,6 +74,7 @@ function Slider:_updateLooks()
                      self.theme.neutral
     self.track:setColorSwap(Color("FF00FFFF"), Color(current[1]), 1) -- track
     self.knob:setColorSwap(Color("00FF00FF"),  Color(current[2]), 1) -- knob
+    self.label:setColor(Color(current[3])) -- label
 end
 
 
