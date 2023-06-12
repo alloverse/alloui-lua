@@ -326,6 +326,17 @@ function View:setBounds(bounds)
   self:markAsDirty({"transform", "collider"})
 end
 
+--- Uses superview's bounds' size to find an edge and move to that edge.
+-- Returns the bounds so you can continue modifying it.
+-- See Size:getEdge()
+function View:moveBoundsToEdge(horizontal, vertical, depthwise)
+    self.bounds
+        :moveToOrigin()
+        :move(self.superview.bounds.size:getEdge(vertical, horizontal, depthwise))
+    self:setBounds()
+    return self.bounds
+end
+
 --- Adds a View as a child component to the given View.
 --
 -- @tparam [View](view) subview The View to be added 
